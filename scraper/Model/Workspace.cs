@@ -1,0 +1,146 @@
+﻿using Mi.Common;
+using scraper.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace scraper.Model
+{
+    public class CSVResource
+    {
+        public Uri Path { get; set; }
+        public int Rows { get; set; }
+        public bool isChecked { get; set; } = false;
+        public bool isRemoved { get; set; }
+        public bool isbadFormat { get; set; }
+        public void Check()
+        {
+            isChecked = true;
+            if (!File.Exists(Path.OriginalString)) { isRemoved = true; return; }
+            isRemoved = false;
+            int total_rows = 0;
+            int valid_rows = 0;
+            isbadFormat = ! Utils.checkCSV(Path.OriginalString, out total_rows, out valid_rows);
+            Rows = valid_rows;
+        }
+    }
+    /// <summary>
+    /// also the app root data source
+    /// </summary>
+    public class Workspace
+    {
+        private static Workspace _current = null;
+        
+        public static Workspace Current { get {
+                if (_current == null)
+                {
+                    _current = Load();
+                }
+                return _current;
+            }
+            }
+        public  string Directory { get; set; }
+        public  List<CSVResource> CSVResources { get; set; }
+        /// <summary>
+        /// the main plugin instance, used t carry out most of business operations. loaded only once at startup
+        /// </summary>
+        public IPlugin Plugin { get; set; }
+        /// <summary>
+        /// to be called only once, internaly startup
+        /// </summary>
+        private static Workspace Load()
+        {
+            
+            //creating the sub directories
+            Workspace res = new Workspace();
+            res.CSVResources = new List<CSVResource>();
+            res.Directory = ConfigService.Instance.WorkspaceDirectory;
+            if (!System.IO.Directory.Exists(res.Directory))
+            {
+                
+            }
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.CSVOutputRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.ProductsImagesRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.ProductsHTMLRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.TargetPagesRelativeLocation));
+
+            var all_file_in_csv = System.IO.Directory.GetFiles(System.IO.Path.Combine(res.Directory, ConfigService.Instance.CSVOutputRelativeLocation));
+            foreach (var item in all_file_in_csv)
+            {
+                if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")
+                {
+                    var o = new CSVResource() { Path = new Uri(item) };
+                    o.Check();
+                    res.CSVResources.Add(o);
+                }
+            }
+            return res;
+        }
+
+        private static void SetUpFolders(string dir)
+        {
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.CSVOutputRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.ProductsImagesRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.ProductsHTMLRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.TargetPagesRelativeLocation));
+
+        }
+        /// <summary>
+        /// alter the Current object so that csv list is up to date
+        /// </summary>
+        internal static void refresh()
+        {
+            
+            Current.CSVResources = new List<CSVResource>();
+            Current.Directory = ConfigService.Instance.WorkspaceDirectory;
+            if (!System.IO.Directory.Exists(Current.Directory))
+            {
+
+            }
+            SetUpFolders(Current.Directory);
+            var all_file_in_csv = System.IO.Directory.GetFiles(System.IO.Path.Combine(Current.Directory, ConfigService.Instance.CSVOutputRelativeLocation));
+            foreach (var item in all_file_in_csv)
+            {
+                if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")
+                {
+                    var o = new CSVResource() { Path = new Uri(item) };
+                    o.Check();
+                    Current.CSVResources.Add(o);
+                }
+            }
+        }
+
+        private string GetTasksDirectory()
+        {
+            return (System.IO.Path.Combine(ConfigService.Instance.WorkspaceDirectory, ".scraper/tasks"));
+
+        }
+
+        public IEnumerable<ScrapingTaskModel> GetScrapingTasksFromFiles()
+        {
+            Console.WriteLine("mlkml");
+            string[] all_file_in_csv;
+            try
+            {
+                all_file_in_csv = System.IO.Directory.GetFiles(GetTasksDirectory());
+            }
+            catch (DirectoryNotFoundException )
+            {
+                System.Diagnostics.Debug.WriteLine("not found dir: " + GetTasksDirectory());
+                yield break;
+            }
+            
+            foreach (var item in all_file_in_csv)
+            {
+                if (Path.GetExtension(item).ToLower().Replace(".", "") == "json")
+                {
+                    ScrapingTaskModel m = ScrapingTaskModel.LoadFromFile(item);
+                    yield return m;
+                }
+            }
+        } 
+    }
+}

@@ -1,0 +1,992 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:scraper"
+        xmlns:View="clr-namespace:scraper.View"
+        
+        xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.MainWindow"
+        
+        mc:Ignorable="d"
+        TextElement.Foreground="{StaticResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Display" 
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="Roboto"
+        Title="MainWindow" Height="499" Width="795.55" UseLayoutRounding="True" WindowStyle="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="True" Background="{x:Null}"
+    d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}"
+        
+        
+        
+        >
+    <Window.Resources>
+        <Converters:VisibleIfEnumValueMatchesStringParam x:Key="VisibleIfEnumValueMatchesStringParam"/>
+        <Converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+        <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+        <Style x:Key="ListBoxItemStyle1" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="materialDesign:ListBoxItemAssist.ShowSelection" Value="{Binding (materialDesign:ListBoxItemAssist.ShowSelection), RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ListBox}}}"/>
+            <Setter Property="IsSelected" Value="{Binding IsActive, Mode=TwoWay}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" ClipToBounds="{TemplateBinding ClipToBounds}" Margin="{TemplateBinding Margin}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.3" Storyboard="{x:Null}" To="Normal">
+                                            <VisualTransition.GeneratedEasingFunction>
+                                                <CircleEase EasingMode="EaseOut"/>
+                                            </VisualTransition.GeneratedEasingFunction>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="MouseOverBorder"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.6" GeneratedEasingFunction="{x:Null}" Storyboard="{x:Null}" To="{x:Null}"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <!--DoubleAnimation Duration="0" To="0.18" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="SelectedBorder"/-->
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unselected">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="packIconMaterial">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="SelectedUnfocused">
+                                        <Storyboard>
+                                            <!--DoubleAnimation Duration="0" To="0.18" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="SelectedBorder"/-->
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="grid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="27"/>
+                                </Grid.ColumnDefinitions>
+                                <Border x:Name="MouseOverBorder" Opacity="0" Grid.ColumnSpan="2">
+                                    <Border.Background>
+                                        <TemplateBinding Property="Foreground">
+                                            <TemplateBinding.Converter>
+                                                <materialDesign:BrushRoundConverter HighValue="White" LowValue="Black"/>
+                                            </TemplateBinding.Converter>
+                                        </TemplateBinding>
+                                    </Border.Background>
+                                </Border>
+                                <Border x:Name="SelectedBorder" Opacity="0" Grid.ColumnSpan="2">
+                                    <Border.Background>
+                                        <TemplateBinding Property="Foreground">
+                                            <TemplateBinding.Converter>
+                                                <materialDesign:BrushRoundConverter HighValue="White" LowValue="Black"/>
+                                            </TemplateBinding.Converter>
+                                        </TemplateBinding>
+                                    </Border.Background>
+                                </Border>
+                                <materialDesign:Ripple x:Name="Ripple" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Focusable="False" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.ColumnSpan="1">
+                                    <materialDesign:Ripple.Feedback>
+                                        <TemplateBinding Property="Foreground">
+                                            <TemplateBinding.Converter>
+                                                <materialDesign:BrushRoundConverter HighValue="White" LowValue="Black"/>
+                                            </TemplateBinding.Converter>
+                                        </TemplateBinding>
+                                    </materialDesign:Ripple.Feedback>
+                                </materialDesign:Ripple>
+                                <custom:PackIconMaterial x:Name="packIconMaterial" Kind="Check" Height="14" Width="14" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"></custom:PackIconMaterial>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.56"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding (materialDesign:ListBoxItemAssist.ShowSelection), RelativeSource={RelativeSource Self}}" Value="False">
+                                <Setter Property="Visibility" TargetName="MouseOverBorder" Value="Collapsed"/>
+                                <Setter Property="Visibility" TargetName="SelectedBorder" Value="Collapsed"/>
+                                <Setter Property="Feedback" TargetName="Ripple" Value="Transparent"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ItemsPanelTemplate x:Key="ScrapingTaskListBoxItemsPanelStyle">
+            <WrapPanel IsItemsHost="True"/>
+        </ItemsPanelTemplate>
+        <DataTemplate x:Key="ScrapingTasksListBoxItemTemplate">
+            <Grid d:DesignWidth="265" d:DesignHeight="152">
+                <View:ScrapingActionCardView/>
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="ScrapingTasksListBoxItemContainerTemplate" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="materialDesign:ListBoxItemAssist.ShowSelection" Value="{Binding (materialDesign:ListBoxItemAssist.ShowSelection), RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ListBox}}}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" ClipToBounds="{TemplateBinding ClipToBounds}" Margin="{TemplateBinding Margin}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.3" Storyboard="{x:Null}" To="Normal">
+                                            <VisualTransition.GeneratedEasingFunction>
+                                                <CircleEase EasingMode="EaseOut"/>
+                                            </VisualTransition.GeneratedEasingFunction>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal"/>
+
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.6" GeneratedEasingFunction="{x:Null}" Storyboard="{x:Null}" To="{x:Null}"/>
+                                    </VisualStateGroup.Transitions>
+
+                                    <VisualState x:Name="Unselected"/>
+
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.56"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding (materialDesign:ListBoxItemAssist.ShowSelection), RelativeSource={RelativeSource Self}}" Value="False">
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ListBoxItemStyle2" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="materialDesign:ListBoxItemAssist.ShowSelection" Value="{Binding (materialDesign:ListBoxItemAssist.ShowSelection), RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ListBox}}}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" ClipToBounds="{TemplateBinding ClipToBounds}" Margin="{TemplateBinding Margin}">
+                             <Grid>
+                                <materialDesign:Ripple x:Name="Ripple" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Focusable="False" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <materialDesign:Ripple.Feedback>
+                                        <TemplateBinding Property="Foreground">
+                                            <TemplateBinding.Converter>
+                                                <materialDesign:BrushRoundConverter HighValue="White" LowValue="Black"/>
+                                            </TemplateBinding.Converter>
+                                        </TemplateBinding>
+                                    </materialDesign:Ripple.Feedback>
+                                </materialDesign:Ripple>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.56"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding (materialDesign:ListBoxItemAssist.ShowSelection), RelativeSource={RelativeSource Self}}" Value="False">
+                                <Setter Property="Feedback" TargetName="Ripple" Value="Transparent"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid MouseDown="Grid_MouseDown" Background="#00000000">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="146*"/>
+            <ColumnDefinition Width="29*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}" 
+			materialDesign:NavigationRailAssist.CornerRadius="8" 
+			materialDesign:ColorZoneAssist.Mode="Custom"
+			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
+			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2">
+            <TabItem x:Name="overview"  
+					
+				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
+                <TabItem.Header >
+                    <Grid HorizontalAlignment="Center" ToolTip="View products">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <custom:PackIconMaterial Grid.Row="0" Kind="Store" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Roboto" Foreground="White"/>
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="12" Visibility="Collapsed" FontFamily="Roboto" ><Run Text="Products"/></TextBlock>
+                    </Grid>
+                </TabItem.Header>
+                <Grid x:Name="content" Margin="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="173*" MaxWidth="250" MinWidth="212"/>
+                        <ColumnDefinition Width="264*"/>
+                        <ColumnDefinition Width="196"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="dragging_area_middle" Margin="0,0,80,0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown" Grid.Column="1"/>
+                    <Grid x:Name="controlPanel" Margin="0,0,4,0" Grid.RowSpan="3" Background="#FF232323">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="48"/>
+                            <RowDefinition Height="48"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="head" Margin="4,14,0,14" VerticalAlignment="Center">
+                            <TextBlock x:Name="head_string" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="View products" FontFamily="Poppins Medium" VerticalAlignment="Center" FontSize="16" Foreground="White" TextOptions.TextFormattingMode="Ideal"/>
+                        </Grid>
+                        <Grid x:Name="searchSection" Grid.Row="1" Margin="4,0,0,0">
+                            <TextBox x:Name="search_tb"
+								materialDesign:ColorZoneAssist.Mode="Dark"
+								materialDesign:TextFieldAssist.LeadingIcon="Search"
+								materialDesign:TextFieldAssist.HasLeadingIcon="True"
+								materialDesign:TextFieldAssist.HasClearButton="True"
+								materialDesign:TextFieldAssist.LeadingIconSize="16"
+								materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
+								materialDesign:HintAssist.Hint="Search"
+                                    
+								materialDesign:TextFieldAssist.UnderlineBrush="White"
+								FontSize="16" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0,0,4,0" IsTabStop="False" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid x:Name="filtersSection" Grid.Row="2" Margin="4,0,0,0" VerticalAlignment="Top"/>
+
+                        <StackPanel Grid.Row="2">
+                            <Expander HorizontalAlignment="Stretch" Header="Websites" Background="#00571919">
+                                <WrapPanel VerticalAlignment="Top" d:LayoutOverrides="Width" Margin="4,0">
+                                    <CheckBox
+                                			Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
+                                			IsChecked="True"
+                                			Content="microcenter.com" Margin="2,4" />
+                                    <CheckBox
+                                			Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
+                                			IsChecked="True"
+                                			Content="hdphotovidio.com" Margin="2,4" />
+                                </WrapPanel>
+                            </Expander>
+                            <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
+
+                            <Expander HorizontalAlignment="Stretch" Header="Price" Background="#00571919">
+                                <StackPanel Orientation="Vertical"  Margin="24,8,24,16">
+                                    <Grid x:Name="price_filter" Height="40" VerticalAlignment="Top" d:LayoutOverrides="TopPosition, BottomPosition" HorizontalAlignment="Left" Margin="2,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox
+									materialDesign:ColorZoneAssist.Mode="Dark"
+									materialDesign:TextFieldAssist.TrailingIcon="Dollar"
+									materialDesign:TextFieldAssist.HasTrailingIcon="True"
+									materialDesign:TextFieldAssist.TrailingIconSize="16"
+									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
+									materialDesign:HintAssist.Hint="any"
+                                    
+									materialDesign:TextFieldAssist.UnderlineBrush="White"
+									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0,7.5" Grid.Column="1" MinWidth="50" MaxWidth="70" />
+                                        <TextBox
+									materialDesign:ColorZoneAssist.Mode="Dark"
+									materialDesign:TextFieldAssist.TrailingIcon="Dollar"
+									materialDesign:TextFieldAssist.HasTrailingIcon="True"
+									materialDesign:TextFieldAssist.TrailingIconSize="16"
+									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
+									materialDesign:HintAssist.Hint="any"
+                                    
+									materialDesign:TextFieldAssist.UnderlineBrush="White"
+									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0,8.5" Grid.Column="3" MinWidth="50" MaxWidth="70" />
+                                        <TextBlock x:Name="textBlock3" Margin="2,0" TextWrapping="Wrap" Text="between" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="textBlock3_Copy" Margin="2,0" TextWrapping="Wrap" Text="and" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+                            <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
+                            <Expander
+      HorizontalAlignment="Stretch"
+      Header="Rating" Background="#00763838">
+                                <StackPanel
+        Orientation="Vertical"
+        Margin="24,8,24,16">
+                                    <Grid x:Name="rating_filter" Height="40" VerticalAlignment="Top" d:LayoutOverrides="TopPosition, BottomPosition" HorizontalAlignment="Left" Margin="2,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox
+									materialDesign:ColorZoneAssist.Mode="Dark"
+									materialDesign:TextFieldAssist.TrailingIcon="Star"
+									materialDesign:TextFieldAssist.HasTrailingIcon="True"
+									materialDesign:TextFieldAssist.TrailingIconSize="16"
+									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
+									materialDesign:HintAssist.Hint="any"
+                                    
+									materialDesign:TextFieldAssist.UnderlineBrush="White"
+									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" Grid.Column="1" MinWidth="46" MaxWidth="60" />
+                                        <TextBox
+									materialDesign:ColorZoneAssist.Mode="Dark"
+									materialDesign:TextFieldAssist.TrailingIcon="Star"
+									materialDesign:TextFieldAssist.HasTrailingIcon="True"
+									materialDesign:TextFieldAssist.TrailingIconSize="16"
+									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
+									materialDesign:HintAssist.Hint="any"
+                                    
+									materialDesign:TextFieldAssist.UnderlineBrush="White"
+									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" Grid.Column="3" MinWidth="46" MaxWidth="60" />
+                                        <TextBlock x:Name="textBlock4" Margin="2,0" TextWrapping="Wrap" Text="between" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="textBlock3_Copy4" Margin="2,0" TextWrapping="Wrap" Text="and" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                        </StackPanel>
+
+                        <StackPanel Margin="2,0" Orientation="Vertical" Grid.Row="3" d:LayoutOverrides="Height" Visibility="Collapsed">
+                            <TextBlock x:Name="textBlock3_Copy1" TextWrapping="Wrap" Text="Price:" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="13.333" Margin="0,10,0,0"/>
+                            <TextBlock x:Name="textBlock3_Copy3" TextWrapping="Wrap" Text="Ratning:" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="13.333" Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="sidePanel" Grid.Column="2" Margin="4" Grid.RowSpan="2" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="180"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth0" Padding="4"
+                    		Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                    		UniformCornerRadius="10" FontFamily="Roboto" Background="#FF252525" Margin="0,2,0,4" Grid.Row="1" MaxHeight="350">
+                            <Grid Margin="0,0,0,2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="48"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                    <Border Margin="6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6">
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="20"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="microcenter.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
+                                                <Grid Height="27" Margin="0">
+                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
+                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" FontWeight="Bold"><Run Text="624"/></TextBlock>
+                                                </Grid>
+                                                <Grid Height="27" Margin="0">
+                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
+                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="3" FontWeight="Bold"/>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <Border Height="60" Margin="10,4" CornerRadius="10" Padding="6" Visibility="Collapsed" d:IsHidden="True">
+                                        <Border.Background>
+                                            <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                                                <GradientStop Color="#26000000" Offset="0"/>
+                                                <GradientStop Color="#4C000000" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="20"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="bhphotovideo.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <TextBlock Style="{StaticResource MaterialDesignHeadline2TextBlock}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="21.333" FontFamily="Dosis Medium" TextOptions.TextFormattingMode="Ideal" Margin="0" Grid.Row="1" Text="233"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Margin="6,6,6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6">
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="20"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="bhphotovideo.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
+                                                <Grid Height="27" Margin="0">
+                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
+                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0" FontWeight="Bold"/>
+                                                </Grid>
+                                                <Grid Height="27" Margin="0">
+                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
+                                                    <TextBlock   VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0" FontWeight="Bold"/>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+
+                                </StackPanel>
+                                <Button x:Name="button3" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  Height="Auto" Margin="10,0" Grid.Row="1" VerticalAlignment="Center" Padding="10,5">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center" Text="SAVE AS CSV" />
+                                        <Image Source="media/img/svg-22-white-regular.png" Width="22" Height="22" VerticalAlignment="Center" Margin="4,0,0,0" ></Image>
+                                    </StackPanel>
+                                </Button>
+
+
+                            </Grid>
+
+
+                        </materialDesign:Card>
+                        <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth0" Padding="4"
+                        	Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                        	UniformCornerRadius="10" FontFamily="Roboto" Background="#FF252525" Margin="0,2,0,0">
+                            <Grid Margin="0,0,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="48"/>
+                                </Grid.RowDefinitions>
+                                <Border Margin="6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6" d:LayoutOverrides="Height, TopMargin, BottomMargin" Grid.ColumnSpan="2">
+
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="20"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="compare with amazon" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                        <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="matched by upc"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" FontWeight="Bold" Text="0"/>
+                                            </Grid>
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="not found"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0" FontWeight="Bold"/>
+                                            </Grid>
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="unresolved"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="624" FontWeight="Bold"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <Button x:Name="button3_Copy" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Background="{StaticResource SecondaryHueDarkBrush}"  Content="STOP" Height="Auto" Margin="4,0,10,0" Grid.Row="1" VerticalAlignment="Center" Padding="10,8" Foreground="WhiteSmoke" Grid.Column="1" d:LayoutOverrides="Width"/>
+                                <Button x:Name="button3_Copy1" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Background="{StaticResource SecondaryHueDarkBrush}"  Content="START" Height="Auto" Margin="10,8,4,8" Grid.Row="1" VerticalAlignment="Center" Padding="10,8" Foreground="WhiteSmoke" d:LayoutOverrides="Width"/>
+
+
+                            </Grid>
+
+
+                        </materialDesign:Card>
+
+                    </Grid>
+                    <Grid x:Name="mainPanel" Margin="4" Grid.RowSpan="3" Grid.Column="1" Panel.ZIndex="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="no_items_notice" HorizontalAlignment="Center" Margin="2,20,0,6" TextWrapping="Wrap" VerticalAlignment="Center" Text="(there are no products to show)" Visibility="{Binding ProductViewModels.Count, Converter={StaticResource BooleanToVisibilityInverted}, Mode=OneWay}" Grid.RowSpan="2"/>
+                        <Grid x:Name="ResultsControlSection" Height="28" Background="#00000000" MouseLeftButtonDown="ResultsControlSection_MouseLeftButtonDown">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="28"/>
+                                <ColumnDefinition Width="28"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="sorting_cb" 
+								materialDesign:HintAssist.Hint="Sort by" FontFamily="Roboto" Grid.Column="3" Margin="8,2,0,2" Panel.ZIndex="3">
+                                <ComboBoxItem Content="Date newer to older" />
+                                <ComboBoxItem Content="Date older to newer" />
+
+                                <ComboBoxItem Content="Rank low to high" />
+                                <ComboBoxItem Content="Rank high to low" />
+                                <ComboBoxItem Content="Price lower to higher" />
+                                <ComboBoxItem Content="Price higher to lower" />
+                                <ComboBoxItem Content="Category A - Z " />
+                                <ComboBoxItem Content="Category Z - A " />
+                                <ComboBoxItem Content="Tile A - Z " />
+                                <ComboBoxItem Content="Tile Z - A " />
+                            </ComboBox>
+                            <Button
+								Style="{StaticResource MaterialDesignIconForegroundButton}"
+								ToolTip="save results to a svc ile" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28">
+                                <Image Source="media/img/save-16-white.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="16" Height="16"/>
+                            </Button>
+                            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding ProductViewModels.Count, Mode=OneWay, StringFormat=\{0\} Items}" VerticalAlignment="Center" Visibility="{Binding ProductViewModels.Count, Converter={StaticResource IntToVisibilityConverter}, Mode=OneWay}"/>
+                            <Button
+                            	Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            	ToolTip="save results to a svc ile" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28">
+                                <Image Source="media/img/cards-view-16-white.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="16" Height="16"/>
+                            </Button>
+                        </Grid>
+                        <Grid x:Name="contentSection" Grid.Row="1" Margin="0,6,0,0">
+                            <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" ItemsSource="{Binding ProductViewModels}" HorizontalContentAlignment="Stretch">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <View:ProductCardView HorizontalAlignment="Stretch" DataContext="{Binding}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <StackPanel Orientation="Vertical" d:LayoutOverrides="Height" Margin="4,0" Visibility="Collapsed">
+                                <View:ProductCardView />
+                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width">
+                                    <Grid Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="18*"/>
+                                            <RowDefinition Height="22*"/>
+                                            <RowDefinition Height="19*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="64"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Image x:Name="image2" Margin="4" Grid.RowSpan="3" Source="laptop1-0648451_390864.jpg"/>
+
+                                        <TextBlock x:Name="textBlock1" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="textBlock_Copy2" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        <TextBlock x:Name="upc_val2" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="sku_val2" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="origin_val2" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+
+                                    </Grid>
+                                </materialDesign:Card>
+                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" d:LayoutOverrides="Width">
+                                    <Grid Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="18*"/>
+                                            <RowDefinition Height="22*"/>
+                                            <RowDefinition Height="19*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="64"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="image3" Margin="4" Grid.RowSpan="3" Source="laptop2-636984_269753_01_front_thumbnail.jpg"/>
+
+                                        <TextBlock x:Name="textBlock5" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" FontFamily="Roboto" FontSize="10.667" ToolTip="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="textBlock_Copy3" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        <TextBlock x:Name="upc_val3" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="sku_val3" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="origin_val3" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+
+                                    </Grid>
+                                </materialDesign:Card>
+                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width">
+                                    <Grid Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="18*"/>
+                                            <RowDefinition Height="22*"/>
+                                            <RowDefinition Height="19*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="64"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="image4" Margin="4" Grid.RowSpan="3" Source="laptop1-0648451_390864.jpg"/>
+
+                                        <TextBlock x:Name="textBlock6" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="textBlock_Copy4" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        <TextBlock x:Name="upc_val4" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="sku_val4" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="origin_val4" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+
+                                    </Grid>
+                                </materialDesign:Card>
+                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" d:LayoutOverrides="Width">
+                                    <Grid Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="18*"/>
+                                            <RowDefinition Height="22*"/>
+                                            <RowDefinition Height="19*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="64"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="image5" Margin="4" Grid.RowSpan="3" Source="laptop2-636984_269753_01_front_thumbnail.jpg"/>
+
+                                        <TextBlock x:Name="textBlock7" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" FontFamily="Roboto" FontSize="10.667" ToolTip="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="textBlock_Copy5" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        <TextBlock x:Name="upc_val5" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="sku_val5" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="origin_val5" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+
+                                    </Grid>
+                                </materialDesign:Card>
+                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width">
+                                    <Grid Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="18*"/>
+                                            <RowDefinition Height="22*"/>
+                                            <RowDefinition Height="19*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="64"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="image6" Margin="4" Grid.RowSpan="3" Source="laptop1-0648451_390864.jpg"/>
+
+                                        <TextBlock x:Name="textBlock8" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="textBlock_Copy6" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        <TextBlock x:Name="upc_val6" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="sku_val6" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="origin_val6" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+
+                                    </Grid>
+                                </materialDesign:Card>
+                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" d:LayoutOverrides="Width">
+                                    <Grid Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="18*"/>
+                                            <RowDefinition Height="22*"/>
+                                            <RowDefinition Height="19*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="64"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="image7" Margin="4" Grid.RowSpan="3" Source="laptop2-636984_269753_01_front_thumbnail.jpg"/>
+
+                                        <TextBlock x:Name="textBlock9" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" FontFamily="Roboto" FontSize="10.667" ToolTip="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="textBlock_Copy7" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        <TextBlock x:Name="upc_val7" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="sku_val7" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="origin_val7" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+
+                                    </Grid>
+                                </materialDesign:Card>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                    <Grid x:Name="dragging_area_right" Margin="0" Background="#00E41F1F" Height="48" VerticalAlignment="Top" MouseLeftButtonDown="dragging_area_right_MouseLeftButtonDown"/>
+
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="database"  
+				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="64" FontFamily="Roboto" Height="64">
+                <TabItem.Header>
+                    <materialDesign:Badged HorizontalAlignment="Stretch" BadgeColorZoneMode="Inverted" VerticalAlignment="Stretch" Height="32" Width="32" materialDesign:BadgedAssist.IsMiniBadge="True" ToolTip="Scrap products">
+                        <materialDesign:Badged.Badge  >
+                            <Border CornerRadius="4 4 4 4" Height="16" Padding="2,0">
+                                <TextBlock  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="9.333" Text="{Binding TotalRecordsCountString}" FontWeight="Bold"/>
+                            </Border>
+                        </materialDesign:Badged.Badge>
+
+
+                        <Grid Width="32" Height="32">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="32"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <custom:PackIconMaterial Grid.Row="0" Kind="Database" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                            <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="12" FontFamily="Roboto" Visibility="Collapsed" ><Run Text="Database"/></TextBlock>
+                        </Grid>
+                    </materialDesign:Badged>
+                </TabItem.Header>
+                <Grid x:Name="content_database" Margin="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="329*"/>
+                        <ColumnDefinition Width="254*"/>
+                        <ColumnDefinition Width="254*"/>
+                        <ColumnDefinition Width="254*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48"/>
+                        <RowDefinition Height="132"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="161"/>
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="controlPanel1" Margin="0,0,4,0" Grid.RowSpan="4" Background="#FF232323">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="48"/>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="100"/>
+                        </Grid.RowDefinitions>
+                        <Button x:Name="add_csv_file"
+            				Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+            				ToolTip="MaterialDesignFloatingActionDarkButton" VerticalAlignment="Bottom" Margin="0,0,24,24" HorizontalAlignment="Right" Grid.Row="3" Command="{Binding LoadCSVFileCommand}" Width="48" Height="48">
+                            <materialDesign:PackIcon
+            					Kind="Plus"
+            					Height="24"
+            					Width="24" />
+                        </Button>
+                        <Grid x:Name="head1" Margin="4,14,0,14" VerticalAlignment="Center">
+                            <TextBlock x:Name="head_string1" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="Scrap products" FontFamily="Poppins Medium" VerticalAlignment="Center" FontSize="16" Foreground="White" TextOptions.TextFormattingMode="Ideal"/>
+                        </Grid>
+                        <StackPanel Margin="4,0,0,0" Orientation="Vertical" Grid.Row="1" Visibility="Collapsed">
+                            <Grid x:Name="searchSection1" Height="48">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="24"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="48"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="head_string1e" HorizontalAlignment="Left" Margin="2,17,0,17" TextWrapping="Wrap" Text="main-source.csv" FontFamily="Roboto Light" VerticalAlignment="Center" FontSize="12" Grid.Column="1" />
+                                <Border HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" BorderBrush="#FF63E05D" BorderThickness="1" Grid.Column="2" Background="#FF073A04" CornerRadius="5" >
+                                    <TextBlock x:Name="head_string1e_Copy" TextWrapping="Wrap" Text="231" FontFamily="Roboto Light" FontSize="12" Foreground="#FF63E05D" Margin="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                                </Border>
+                                <Image x:Name="image" HorizontalAlignment="Center" Height="22" Margin="1,13" VerticalAlignment="Center" Width="22" Source="media/img/svg-22-white-regular.png"/>
+
+                            </Grid>
+                            <Grid x:Name="searchSection1_Copy" Height="48">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="24"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="48"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="head_string1e1" HorizontalAlignment="Left" Margin="2,17,0,17" TextWrapping="Wrap" Text="path/to/myFile.csv" FontFamily="Roboto Light" VerticalAlignment="Center" FontSize="12" Grid.Column="1" />
+                                <Border HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" BorderBrush="#FF63E05D" BorderThickness="1" Grid.Column="2" Background="#FF073A04" CornerRadius="5" >
+                                    <TextBlock x:Name="head_string1e_Copy1" TextWrapping="Wrap" Text="6224" FontFamily="Roboto Light" FontSize="12" Foreground="#FF63E05D" Margin="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                                </Border>
+                                <Image x:Name="image1" HorizontalAlignment="Center" Height="22" Margin="1,13" VerticalAlignment="Center" Width="22" Source="media/img/svg-22-white-regular.png"/>
+
+                            </Grid>
+
+                        </StackPanel>
+                        <Grid Grid.Row="1" VerticalAlignment="Top" Height="24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="24"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Style="{StaticResource MaterialDesignIconForegroundButton}"  Grid.Column="2" Width="24" Height="24" Command="{Binding RefreshWorkspaceCommand}" >
+                                <custom:PackIconMaterial Kind="Sync" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Button>
+                            <TextBlock  VerticalAlignment="Center" Text="{Binding CurrentWorkspaceDirectory, Mode=OneWay, StringFormat=location: \{0\}}" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource MaterialDesignBodyLight}" Margin="6,0,0,0" />
+                        </Grid>
+                        <ListBox materialDesign:ListBoxAssist.IsToggle="True" materialDesign:TransitionAssist.DisableTransitions="True" materialDesign:RippleAssist.IsDisabled="True" Grid.Row="1" ItemsSource="{Binding CSVResourcesVMS}" AlternationCount="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top" Margin="0,24,0,0" SelectionMode="Multiple" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid x:Name="grd1" Height="24">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="24"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="48"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="head_string1e22" HorizontalAlignment="Left" Margin="2,0" TextWrapping="NoWrap" Text="{Binding FilenameOnly}" FontFamily="Roboto Light" VerticalAlignment="Center" FontSize="12" Grid.Column="1" ToolTip="{Binding FullPath}" TextTrimming="CharacterEllipsis" />
+                                        <Border HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" BorderBrush="{DynamicResource AppImportantDataColor}" BorderThickness="1" Grid.Column="2" Background="{DynamicResource AppImportantDataDarkeBackgroundColor}" CornerRadius="10" >
+                                            <TextBlock x:Name="head_string1e_Copy22" TextWrapping="Wrap" Text="{Binding RowsCount}" FontFamily="Roboto Light" FontSize="12" Foreground="{DynamicResource AppImportantDataColor}" Margin="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="{Binding RowsCount}" />
+
+                                        </Border>
+                                        <Image x:Name="image" HorizontalAlignment="Center" Height="22" Margin="0" VerticalAlignment="Center" Width="22" Source="media/img/svg-22-white-regular.png"/>
+
+                                    </Grid>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="False">
+                                            <Setter TargetName="grd1" Property="Opacity" Value="0.5" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                    </Grid>
+                    <Grid x:Name="scraping_panel" Grid.Column="1" Margin="10,0" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Center">
+                        <materialDesign:Card Padding="4" materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                    		Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                    		UniformCornerRadius="10" FontFamily="Roboto" Background="#001C1C1C" Margin="6,2,25,2" d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="80"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid x:Name="scrap_page_input" Margin="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="48"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBox materialDesign:ColorZoneAssist.Mode="Standard"
+                                        materialDesign:TextFieldAssist.LeadingIcon="Globe"
+                                        materialDesign:TextFieldAssist.HasLeadingIcon="True"
+  materialDesign:HintAssist.Hint="Products page URL"
+  materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+  FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" />
+                                    <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Center" Height="32" Margin="0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Width="84" Content="Start"/>
+
+
+                                </Grid>
+
+
+                            </Grid>
+
+
+                        </materialDesign:Card>
+
+                    </Grid>
+                    <ListBox materialDesign:RippleAssist.IsDisabled="True" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="4" ItemsPanel="{DynamicResource ScrapingTaskListBoxItemsPanelStyle}" ItemTemplate="{DynamicResource ScrapingTasksListBoxItemTemplate}" ItemsSource="{Binding ScrapingTasksVMS}" ItemContainerStyle="{DynamicResource ListBoxItemStyle2}" />
+                    <Border Grid.ColumnSpan="3" Grid.Column="1" Margin="4,2" Grid.Row="3" Background="#FF232323" CornerRadius="10" Padding="2,8" VerticalAlignment="Center" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid x:Name="statpanel1" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Center">
+                                <Border Margin="6" Background="#FF343434" CornerRadius="8" Padding="6" Height="87" MinWidth="140">
+
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="20"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock FontFamily="Roboto Medium" Text="microcenter.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                        <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019"><Run Text="624"/></TextBlock>
+                                            </Grid>
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="3"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+
+                            </Grid>
+                            <Grid x:Name="statpanel1_Copy" Margin="0" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Center">
+                                <Border Margin="6" Background="#FF343434" CornerRadius="8" Padding="6" Height="87" MinWidth="140">
+
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="20"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock FontFamily="Roboto Medium" Text="amazon.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                        <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
+                                            </Grid>
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+
+
+                            </Grid>
+                            <Grid x:Name="statpanel1_Copy1" VerticalAlignment="Center" Grid.Column="2" Margin="0" HorizontalAlignment="Center">
+                                <Border Margin="6" Background="#FF343434" CornerRadius="8" Padding="6" Height="87" MinWidth="140">
+
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="20"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock FontFamily="Roboto Medium" Text="bhphotovideo.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                        <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
+                                            </Grid>
+                                            <Grid Height="27" Margin="0">
+                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
+                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <TextBlock x:Name="textBlock10" Grid.ColumnSpan="3" Grid.Column="1" Margin="10,10,10,2" Grid.Row="2" TextWrapping="Wrap" Text="{Binding CurrentTaskDetail}" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="instructionText" Grid.ColumnSpan="2" Grid.Column="1" Margin="60,10,83,10" TextWrapping="Wrap" Text="You can scrap:"/>
+
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="settings"  
+            	Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="64" FontFamily="Roboto" Height="64" VerticalContentAlignment="Stretch" Margin="0">
+                <TabItem.Header >
+
+                    <Grid HorizontalAlignment="Center" materialDesign:BadgedAssist.Badge="5" materialDesign:BadgedAssist.BadgePlacementMode="TopRight" Width="32" ToolTip="Settings">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <custom:PackIconFontAwesome Grid.Row="0" Kind="ToolsSolid" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="12" FontFamily="Roboto" Visibility="Collapsed" ><Run Text="Database"/></TextBlock>
+                    </Grid>
+
+                </TabItem.Header>
+            </TabItem>
+        </TabControl>
+        <Grid x:Name="windowControl" Grid.ColumnSpan="2">
+            <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Margin="0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Right">
+                <Button x:Name="button" Style="{StaticResource MaterialDesignIconButton}"  HorizontalAlignment="Right" Height="24" Margin="0" Width="24" VerticalAlignment="Center" Command="{Binding CloseWindowCommand}">
+                    <custom:PackIconMaterial Kind="WindowClose" Width="10" Height="10"/>
+                </Button>
+                <Button x:Name="button2" Style="{StaticResource MaterialDesignIconButton}"
+                    
+					HorizontalAlignment="Right" Height="24" Margin="0" Width="24" VerticalAlignment="Center" Foreground="#FF818181" FontFamily="Roboto" Click="button2_Click">
+                    <custom:PackIconMaterial Kind="WindowMaximize" Width="10" Height="10"/>
+                </Button>
+                <Button x:Name="mnimizeButton" Style="{StaticResource MaterialDesignIconButton}" HorizontalAlignment="Right" Height="24" Margin="0" Width="24" VerticalAlignment="Center" Foreground="#FF818181" Click="mnimizeButton_Click" FontFamily="Roboto">
+                    <custom:PackIconMaterial Kind="WindowMinimize" Width="10" Height="10"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
