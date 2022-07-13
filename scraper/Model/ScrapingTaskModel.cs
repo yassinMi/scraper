@@ -8,16 +8,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
+using scraper.Services;
 
 namespace scraper.Model
 {
 
     public enum ScrapTaskStage { Ready, DownloadingData, Paused, ConvertingData, Success, Failed }
 
-    public interface IScrapingTask
-    {
-
-    }
+  
 
     public class ScrapingTaskJsonModel
     {
@@ -32,7 +30,7 @@ namespace scraper.Model
         public bool IsCompleted;
     }
 
-    public class ScrapingTaskModel : IScrapingTask
+    public class ScrapingTaskModel 
     {
         public ScrapingTaskModel(string targetPage)
         {
@@ -67,24 +65,7 @@ namespace scraper.Model
         public ScrapTaskStage Stage { get; set; } = ScrapTaskStage.Ready;
 
 
-        public static Process constructProcess(string filename, string args, string workingDir)
-        {
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            //startInfo.WindowStyle = ProcessWindowStyle.Normal;
-            startInfo.FileName = filename;
-            startInfo.Arguments = args;
-            startInfo.WorkingDirectory = workingDir;
-            startInfo.CreateNoWindow = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            startInfo.RedirectStandardInput = true;
-            startInfo.UseShellExecute = false;
-            process.StartInfo = startInfo;
-            process.EnableRaisingEvents = true;
-
-            return process;
-        }
+       
 
         private Process Process { get; set; }
 
@@ -112,7 +93,7 @@ namespace scraper.Model
         {
             Builder = new StringBuilder();
             string python_args = "scraper.py " + "\"" + TargetPage + "\"";
-            Process = constructProcess("python.exe", python_args, @"E:\TOOLS\scraper\scraper\scripts");
+            Process = Utils. constructProcess("python.exe", python_args, @"E:\TOOLS\scraper\scraper\scripts");
             OnProcess?.Invoke(this, Process);
             DataReceivedEventHandler hndl = ((sender, args) =>
             {
@@ -237,7 +218,7 @@ namespace scraper.Model
             Trace.Assert(System.IO.File.Exists(Path.Combine(@"E:\TOOLS\scraper\scraper\scripts", TargetPageSavedHtmlFilename)), $"cannot run converter, html page is mising '{TargetPageSavedHtmlFilename}'");
             Builder = new StringBuilder();
             string python_args = "converter.py " + TargetPageSavedHtmlFilename + " " + OutputCSVFilename;
-            Process = constructProcess("python.exe", python_args, @"E:\TOOLS\scraper\scraper\scripts");
+            Process =  Utils.constructProcess("python.exe", python_args, @"E:\TOOLS\scraper\scraper\scripts");
             OnProcess?.Invoke(this, Process);
             DataReceivedEventHandler hndl = ((sender, args) =>
             {

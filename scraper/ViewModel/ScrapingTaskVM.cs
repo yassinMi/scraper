@@ -34,7 +34,7 @@ namespace scraper.ViewModel
         public ScrapingTaskVM()
         {
             Title = "Design Time";
-            Model = new ScrapingTaskModel() { Stage = ScrapTaskStage.DownloadingData };
+            Model = new ScrapingTaskModel() { Stage = ScrapTaskStage.Success };
             DownloadProgress = new DownloadingProg() { Total = 45, Current = 30 };
             notif(nameof(CurrentScrapTaskStage));
 

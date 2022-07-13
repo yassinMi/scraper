@@ -9,6 +9,7 @@
       <Color x:Key="miBlueShade2">#FF6C93CD</Color>
       <SolidColorBrush x:Key="AppImportantDataColor" Color="#FF5DE0B6" />
       <SolidColorBrush x:Key="AppImportantDataDarkeBackgroundColor" Color="#FF043A26" />
-    </ResourceDictionary>
+            <SolidColorBrush x:Key="OrangeTextOnDark" Color="#FFF1A80B"/>
+        </ResourceDictionary>
   </Application.Resources>
 </Application>

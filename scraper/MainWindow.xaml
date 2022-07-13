@@ -483,6 +483,7 @@
                                     <RowDefinition/>
                                     <RowDefinition Height="48"/>
                                 </Grid.RowDefinitions>
+                                
                                 <Border Margin="6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6" d:LayoutOverrides="Height, TopMargin, BottomMargin" Grid.ColumnSpan="2">
 
                                     <Grid>
@@ -742,7 +743,7 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48"/>
-                        <RowDefinition Height="132"/>
+                        <RowDefinition Height="80"/>
                         <RowDefinition/>
                         <RowDefinition Height="161"/>
                     </Grid.RowDefinitions>
@@ -836,7 +837,7 @@
                         </ListBox>
 
                     </Grid>
-                    <Grid x:Name="scraping_panel" Grid.Column="1" Margin="10,0" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Center">
+                    <Grid x:Name="scraping_panel" Grid.Column="1" Margin="10,0" Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Grid.RowSpan="2">
                         <materialDesign:Card Padding="4" materialDesign:ShadowAssist.ShadowDepth="Depth0"
                     		Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
                     		UniformCornerRadius="10" FontFamily="Roboto" Background="#001C1C1C" Margin="6,2,25,2" d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}">
@@ -857,7 +858,7 @@
   materialDesign:HintAssist.Hint="Products page URL"
   materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
   FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" />
-                                    <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Center" Height="32" Margin="0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Width="84" Content="Start"/>
+                                    <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task"/>
 
 
                                 </Grid>
@@ -953,7 +954,6 @@
                         </Grid>
                     </Border>
                     <TextBlock x:Name="textBlock10" Grid.ColumnSpan="3" Grid.Column="1" Margin="10,10,10,2" Grid.Row="2" TextWrapping="Wrap" Text="{Binding CurrentTaskDetail}" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="instructionText" Grid.ColumnSpan="2" Grid.Column="1" Margin="60,10,83,10" TextWrapping="Wrap" Text="You can scrap:"/>
 
                 </Grid>
             </TabItem>

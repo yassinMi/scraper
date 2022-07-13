@@ -13,6 +13,7 @@ namespace scraper.Model
         /// unique among all elements, should meet filenaame constrains
         /// </summary>
         string id { get; set; }
+        
     }
     /// <summary>
     /// the basic data structure that represent one element eg could be a product, video, book, the plugn will carry the details

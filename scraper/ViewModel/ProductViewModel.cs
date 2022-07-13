@@ -24,7 +24,7 @@ namespace scraper.ViewModel
             SKU = p.sku;
             Link = p.link;
             ImgUrl = p.imageUrl;
-            ID = p.id;
+            ID =  p.ID;
             try
             {
                 Website = new Uri(p.link).Host;
@@ -43,8 +43,8 @@ namespace scraper.ViewModel
             get { return _Price; }
         }
 
-        private string _ID;
-        public string ID
+        private IElementID _ID;
+        public IElementID ID
         {
             set { _ID = value; notif(nameof(ID)); }
             get { return _ID; }

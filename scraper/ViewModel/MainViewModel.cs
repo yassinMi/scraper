@@ -209,10 +209,10 @@ namespace scraper.ViewModel
          private void HndlLoadCSVFileCommand()
         {
             Debug.Write("ok csv");
-            Mi.Common.IOUtils.PromptOpeningPathAsync((string maybeFile,bool canceled) =>
+            IOUtils.PromptOpeningPathAsync((string maybeFile,bool canceled) =>
             {
                 if (canceled)
-                return;
+                    return;
                 var lst = Utils.parseCSVfile(maybeFile).Select((p) =>
                 {
                     return new ProductViewModel(p);
