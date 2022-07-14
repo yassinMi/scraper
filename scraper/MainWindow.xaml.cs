@@ -81,6 +81,8 @@ namespace scraper
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             WindowState = (WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized);
+            maximizeButtImg.Source = new BitmapImage(
+                new Uri($"pack://application:,,,/media/img/{(WindowState == WindowState.Maximized ? "normal" : "maximize")}-10-white.png"));
 
         }
 

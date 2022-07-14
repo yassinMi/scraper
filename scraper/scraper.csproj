@@ -219,6 +219,12 @@
     <Resource Include="media\img\cards-view-16-white.png" />
     <Resource Include="media\img\grid-view-16-white.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="media\img\maximize-10-white.png" />
+    <Resource Include="media\img\minimize-10-white-thick.png" />
+    <Resource Include="media\img\minimize-10-white.png" />
+    <Resource Include="media\img\normal-10-white.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.5.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.5.0\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
