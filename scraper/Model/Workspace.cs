@@ -128,7 +128,7 @@ namespace scraper.Model
 
         }
 
-        public IEnumerable<ScrapingTaskModel> GetScrapingTasksFromFiles()
+        public IEnumerable<IPluginScrapingTask> GetScrapingTasksFromFiles()
         {
             Console.WriteLine("mlkml");
             string[] all_file_in_csv;
@@ -146,8 +146,10 @@ namespace scraper.Model
             {
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "json")
                 {
-                    ScrapingTaskModel m = ScrapingTaskModel.LoadFromFile(item);
-                    yield return m;
+                    //FakePluginScrapingTask m = ScrapingTaskModel.LoadFromFile(item);
+                    //yield return m;
+                    //todo repair this using nterface
+                    yield break;
                 }
             }
         } 

@@ -30,6 +30,7 @@ namespace scraper.Model
         public bool IsCompleted;
     }
 
+    [Obsolete("use interface",true)]
     public class ScrapingTaskModel 
     {
         public ScrapingTaskModel(string targetPage, IPlugin plugin)
@@ -93,6 +94,9 @@ namespace scraper.Model
         /// </summary>
         public async Task<int> RunScraper()
         {
+            
+            //await TaskPlugin.RunScraper(this.TargetPage);
+            return 0;
             Builder = new StringBuilder();
             string python_args = "scraper.py " + "\"" + TargetPage + "\"";
             Process = Utils. constructProcess("python.exe", python_args, @"E:\TOOLS\scraper\scraper\scripts");
@@ -213,6 +217,9 @@ namespace scraper.Model
         /// </summary>
         public async Task<int> RunConverter()
         {
+            
+            //await TaskPlugin.RunConverter(this.TargetPage);
+            return 0;
             if (string.IsNullOrWhiteSpace(OutputCSVFilename))
             {
                 OutputCSVFilename = Path.GetFileName(TargetPageSavedHtmlFilename) + ".csv";

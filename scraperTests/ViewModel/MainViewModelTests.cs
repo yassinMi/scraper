@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using scraper.Model;
+using scraper.Plugin;
 using scraper.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,17 @@ namespace scraper.ViewModel.Tests
         public void ScrapingNew()
         {
             var ws = Workspace.GetWorkspace(@"E:\TOOLS\scraper\tests.yass\myTestWorkspace");
-            var p = 
-            var mvm = new MainViewModel( ws);
-            mvm.SearchQuery = TestUrls.GetRandomUrl();
+            var p = new FakePlugin();
+            var mvm = new MainViewModel(p, ws);
+            string targetPageUrl = TestUrls.GetRandomUrl();
+            mvm.TargetPageQueryText = targetPageUrl;
             mvm.StartScrapingCommand.Execute(null);
-            
+            Task.Delay(50 * 300 + 1300 + 2000).GetAwaiter().GetResult();
+            var o = mvm.ScrapingTasksVMS.FirstOrDefault(t => t.Model.TargetPage == targetPageUrl);
+            Assert.IsTrue(mvm.ScrapingTasksVMS.Any(),"the task vm collection is empty");
+            Debug.WriteLine($"the first tvm has TargetPage: {mvm.ScrapingTasksVMS.First().Model?.TargetPage}");
+            Assert.IsTrue(o!=null,"no task vm with the specified target page is found");
+            Assert.IsTrue(o.DownloadProgress.Current == 49,"the final download prog is not correct");
             
         }
         [TestMethod()]

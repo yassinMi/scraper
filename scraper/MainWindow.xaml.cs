@@ -1,4 +1,6 @@
-﻿using scraper.ViewModel;
+﻿using scraper.Model;
+using scraper.Plugin;
+using scraper.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,8 +26,11 @@ namespace scraper
     {
         public MainWindow()
         {
+            var ws = Workspace.GetWorkspace(@"E:\TOOLS\scraper\tests.yass\myTestWorkspace");
+            var p = new FakePlugin();
             InitializeComponent();
-            DataContext = new MainViewModel();
+            
+            DataContext = new MainViewModel(p,ws);
             ((MainViewModel)DataContext).mw = this;
         }
         Point _startPosition;

@@ -10,11 +10,15 @@ namespace scraper.ViewModel
 {
     public class ScrapingTaskVM : BaseViewModel
     {
-        public ScrapingTaskVM(ScrapingTaskModel m)
+        public ScrapingTaskVM(IPluginScrapingTask m)
         {
             Model = m;
             DownloadProgress = m.DownloadingProgress;
-            Title = m.Title;
+            m.OnResolved += (s, t) =>
+            {
+                Title = t;
+            };
+            
             notif(nameof(CurrentScrapTaskStage));
             m.OnProgress += (s, p) => {
                 this.DownloadProgress = p;
@@ -26,17 +30,13 @@ namespace scraper.ViewModel
             m.OnError += (s, err) => {
                 this.CurrentTaskDetail = err;
             };
-            m.OnStageChange += (s, st) =>
-            {
-                notif(nameof(CurrentScrapTaskStage));
-            };
+            m.OnStageChanged += (s, newStage) => { notif(nameof(CurrentScrapTaskStage)); };
+           
         }
         public ScrapingTaskVM()
         {
-            Title = "Design Time";
-            Model = new ScrapingTaskModel() { Stage = ScrapTaskStage.Success };
-            DownloadProgress = new DownloadingProg() { Total = 45, Current = 30 };
-            notif(nameof(CurrentScrapTaskStage));
+            
+            
 
         }
 
@@ -66,9 +66,9 @@ namespace scraper.ViewModel
             get { return _DownloadProgress; }
         }
 
-        private ScrapingTaskModel _Model;
+        private IPluginScrapingTask _Model;
 
-        public ScrapingTaskModel Model
+        public IPluginScrapingTask Model
         {
             set { _Model = value; notif(nameof(Model)); }
             get { return _Model; }

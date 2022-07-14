@@ -125,6 +125,7 @@
     <Compile Include="Model\Product.cs" />
     <Compile Include="Model\ScrapingTaskModel.cs" />
     <Compile Include="Model\Workspace.cs" />
+    <Compile Include="Plugin\FakePlugin.cs" />
     <Compile Include="Services\Utils.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\CSVResourceVM.cs" />
@@ -205,7 +206,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="NewFolder2\" />
-    <Folder Include="Plugin\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="media\img\svg-22-white-alt-blacktext.png" />

@@ -170,15 +170,18 @@ namespace scraper.ViewModel
         public ObservableCollection<ScrapingTaskVM> ScrapingTasksVMS { get; set; } = new ObservableCollection<ScrapingTaskVM>();
 
 
-        private async void handleStartScrapingCommand()
+        public async void handleStartScrapingCommand()
         {
-            var newScrapTask = new ScrapingTaskModel(TargetPageQueryText,MainPlugin);
-            ScrapingTasksVMS.Add(new ScrapingTaskVM(newScrapTask));
+            var newScrapTask = MainPlugin.GetTask(TargetPageQueryText);
+            var tvm = new ScrapingTaskVM(newScrapTask);
+            ScrapingTasksVMS.Add(tvm);
 
-            int res = await newScrapTask.RunScraper();
-            int res_c = await newScrapTask.RunConverter();
+            newScrapTask.Stage = ScrapTaskStage.DownloadingData;
+            await newScrapTask.RunScraper();
+            newScrapTask.Stage = ScrapTaskStage.ConvertingData;
+            await newScrapTask.RunConverter();
 
-            Debug.WriteLine("return code is: scraper:" + res.ToString()+", converter:"+ res_c.ToString());
+           // Debug.WriteLine("return code is: scraper:" + res.ToString()+", converter:"+ res_c.ToString());
         }
         private bool canExecuteStartScrapingCommand()
         {
