@@ -20,10 +20,17 @@ namespace scraper.ViewModel
     public class MainViewModel : BaseViewModel
     {
 
+        public MainViewModel(IPlugin plugin, Workspace workspace)
+        {
+            MainPlugin = plugin;
+            MainWorkspace = workspace;
+
+        }
         public MainViewModel()
         {
-
-            if(DesignerProperties.GetIsInDesignMode(App.Current.MainWindow))
+            MainWorkspace = Workspace.Current;
+            
+            if(App.Current?.MainWindow!=null && DesignerProperties.GetIsInDesignMode(App.Current.MainWindow))
             {
                 foreach(var i in (new List<ScrapingTaskVM>{
                     new ScrapingTaskVM(),
@@ -36,17 +43,8 @@ namespace scraper.ViewModel
                 }
                 //CurrentScrapTask = new ScrapTask(@"https://www.microcenter.com/search/search_results.aspx?N=4294966937&NTK=all&sortby=match&rpp=96&myStore=false&page=2") { Stage = ScrapTaskStage.DownloadingData, DownloadingProgress = new DownloadingProg() { Total = 512, Current = 438 } };
                 //CurrentTaskDetail = "lkjk hk jhzlkdj hlkzjehk jhzekj hzekjhk jhkejhk hekjhkejh khkj hkehkj hkehkj hkejh kjehkjeh kj ehke hkj hkejhk hkjhk jehk hekh kejh ekjhk ejhke jhk jhkejh kjhekhkejhk ehk hekj";
-
             }
-            /*foreach (var i in (new List<ScrapingTaskVM>{
-                    new ScrapingTaskVM(new ScrapingTaskModel() {Stage= ScrapTaskStage.Success }) { Title="Category: Monitors"  } ,
-                    new ScrapingTaskVM(),
-                    new ScrapingTaskVM(),
-
-                }))
-            {
-                ScrapingTasksVMS.Add(i);
-            }*/
+           
             Debug.WriteLine("GetScrapingTasksFromFiles");
 
             foreach (var i in  Workspace.Current.GetScrapingTasksFromFiles())
@@ -60,15 +58,14 @@ namespace scraper.ViewModel
            {
                return new CSVResourceVM(sr);
            }));
-            notif(nameof(CurrentWorkspaceDirectory));
-            TotalRecordsCountString = CSVResourcesVMS.Where(i=>i.IsActive). Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
 
         }
 
-
+        IPlugin MainPlugin;
+        Workspace MainWorkspace;
         IEnumerable<ProductViewModel> ProductViewModels_arr = new List<ProductViewModel>();
 
-        private void onDirtyCSVResourceVMSelection()
+        private async void onDirtyCSVResourceVMSelection()
         {
             //logic that need to be performed when some items changest's IsActive
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
@@ -78,6 +75,8 @@ namespace scraper.ViewModel
             });
             ProductViewModels = new ObservableCollection<ProductViewModel>(ProductViewModels_arr);
             notif(nameof(ProductViewModels));
+            await Task.Delay(0);
+
 
         }
         private void handl_CSVResourceVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -152,10 +151,7 @@ namespace scraper.ViewModel
             set { _SearchQuery = value; notif(nameof(SearchQuery));
                 notif(nameof(ProductViewModels));
             }
-
-
-            get { return _SearchQuery;
-            }
+            get { return _SearchQuery; }
         }
 
 
@@ -176,7 +172,7 @@ namespace scraper.ViewModel
 
         private async void handleStartScrapingCommand()
         {
-            var newScrapTask = new ScrapingTaskModel(TargetPageQueryText);
+            var newScrapTask = new ScrapingTaskModel(TargetPageQueryText,MainPlugin);
             ScrapingTasksVMS.Add(new ScrapingTaskVM(newScrapTask));
 
             int res = await newScrapTask.RunScraper();
@@ -200,6 +196,9 @@ namespace scraper.ViewModel
             return true;
         }
         private ICommand _StartScrapingCommand = null;
+        /// <summary>
+        /// starts scraing , takes no argument, only uses the query string
+        /// </summary>
         public ICommand StartScrapingCommand { get {
                 if(_StartScrapingCommand==null) _StartScrapingCommand = new MICommand(handleStartScrapingCommand, canExecuteStartScrapingCommand);
 

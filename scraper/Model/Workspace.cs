@@ -37,7 +37,7 @@ namespace scraper.Model
         public static Workspace Current { get {
                 if (_current == null)
                 {
-                    _current = Load();
+                    _current = GetWorkspace();
                 }
                 return _current;
             }
@@ -50,8 +50,11 @@ namespace scraper.Model
         public IPlugin Plugin { get; set; }
         /// <summary>
         /// to be called only once, internaly startup
+        /// 
+        /// taking a workspacePath argument is for unit test purposes
+        /// if workspacePath is ommited it isobtained from the current path in config
         /// </summary>
-        private static Workspace Load()
+        public static Workspace GetWorkspace(string workspacePath = null)
         {
             
             //creating the sub directories
@@ -60,13 +63,9 @@ namespace scraper.Model
             res.Directory = ConfigService.Instance.WorkspaceDirectory;
             if (!System.IO.Directory.Exists(res.Directory))
             {
-                
+                throw new Exception("workspace directory doesn't exist");
             }
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.CSVOutputRelativeLocation));
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.ProductsImagesRelativeLocation));
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.ProductsHTMLRelativeLocation));
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(res.Directory, ConfigService.Instance.TargetPagesRelativeLocation));
-
+            SetUpWorkspaceFolders(res.Directory);
             var all_file_in_csv = System.IO.Directory.GetFiles(System.IO.Path.Combine(res.Directory, ConfigService.Instance.CSVOutputRelativeLocation));
             foreach (var item in all_file_in_csv)
             {
@@ -79,13 +78,23 @@ namespace scraper.Model
             }
             return res;
         }
-
-        private static void SetUpFolders(string dir)
+        /// <summary>
+        /// currently this only usfull in testing
+        /// calling this assigns the Current property a value with the workspace path specified, 
+        /// </summary>
+        /// <param name="workspacePath"></param>
+        /// <returns></returns>
+        public static void MakeCurrent(string workspacePath )
         {
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.CSVOutputRelativeLocation));
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.ProductsImagesRelativeLocation));
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.ProductsHTMLRelativeLocation));
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(dir, ConfigService.Instance.TargetPagesRelativeLocation));
+            _current = GetWorkspace(workspacePath);
+        }
+
+        private static void SetUpWorkspaceFolders(string workspacePath)
+        {
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.CSVOutputRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.ProductsImagesRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.ProductsHTMLRelativeLocation));
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.TargetPagesRelativeLocation));
 
         }
         /// <summary>
@@ -100,7 +109,7 @@ namespace scraper.Model
             {
 
             }
-            SetUpFolders(Current.Directory);
+            SetUpWorkspaceFolders(Current.Directory);
             var all_file_in_csv = System.IO.Directory.GetFiles(System.IO.Path.Combine(Current.Directory, ConfigService.Instance.CSVOutputRelativeLocation));
             foreach (var item in all_file_in_csv)
             {

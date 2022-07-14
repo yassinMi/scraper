@@ -18,9 +18,9 @@
         <StaticResource ResourceKey="MaterialDesignBody"/>
     </TextElement.Foreground>
     <Grid>
-        <materialDesign:Card 
+        <materialDesign:Card  
         	
-			Padding="8,8,8,4" Margin="4" Background="#FF252525"  >
+			Padding="8,8,8,4" Margin="4" Background="#FF252525" BorderBrush="White" BorderThickness="1"  >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

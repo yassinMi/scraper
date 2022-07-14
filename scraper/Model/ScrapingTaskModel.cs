@@ -32,8 +32,9 @@ namespace scraper.Model
 
     public class ScrapingTaskModel 
     {
-        public ScrapingTaskModel(string targetPage)
+        public ScrapingTaskModel(string targetPage, IPlugin plugin)
         {
+            this.TaskPlugin = plugin;
             this.TargetPage = targetPage;
             Stage = ScrapTaskStage.Ready;
 
@@ -68,6 +69,7 @@ namespace scraper.Model
        
 
         private Process Process { get; set; }
+        public IPlugin TaskPlugin { get; private set; }
 
 
 

@@ -43,7 +43,7 @@
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualStateGroup.Transitions>
-                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.3" Storyboard="{x:Null}" To="Normal">
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.1" To="Normal">
                                             <VisualTransition.GeneratedEasingFunction>
                                                 <CircleEase EasingMode="EaseOut"/>
                                             </VisualTransition.GeneratedEasingFunction>
@@ -59,7 +59,7 @@
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="SelectionStates">
                                     <VisualStateGroup.Transitions>
-                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.6" GeneratedEasingFunction="{x:Null}" Storyboard="{x:Null}" To="{x:Null}"/>
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.2" GeneratedEasingFunction="{x:Null}" To="{x:Null}"/>
                                     </VisualStateGroup.Transitions>
                                     <VisualState x:Name="Selected">
                                         <Storyboard>
@@ -809,7 +809,7 @@
                             </Button>
                             <TextBlock  VerticalAlignment="Center" Text="{Binding CurrentWorkspaceDirectory, Mode=OneWay, StringFormat=location: \{0\}}" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource MaterialDesignBodyLight}" Margin="6,0,0,0" />
                         </Grid>
-                        <ListBox materialDesign:ListBoxAssist.IsToggle="True" materialDesign:TransitionAssist.DisableTransitions="True" materialDesign:RippleAssist.IsDisabled="True" Grid.Row="1" ItemsSource="{Binding CSVResourcesVMS}" AlternationCount="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top" Margin="0,24,0,0" SelectionMode="Multiple" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}">
+                        <ListBox materialDesign:ListBoxAssist.IsToggle="True" materialDesign:TransitionAssist.DisableTransitions="True"  materialDesign:RippleAssist.IsDisabled="True" Grid.Row="1" ItemsSource="{Binding CSVResourcesVMS}" AlternationCount="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top" Margin="0,24,0,0" SelectionMode="Multiple" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid x:Name="grd1" Height="24">
@@ -828,7 +828,7 @@
                                     </Grid>
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="False">
-                                            <Setter TargetName="grd1" Property="Opacity" Value="0.5" />
+                                            <Setter  TargetName="grd1" Property="Opacity" Value="0.5" />
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
 
