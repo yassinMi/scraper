@@ -56,11 +56,11 @@ namespace scraper.Model
         /// </summary>
         public static Workspace GetWorkspace(string workspacePath = null)
         {
+            if (workspacePath == null) workspacePath = ConfigService.Instance.WorkspaceDirectory;
             
             //creating the sub directories
-            Workspace res = new Workspace();
+            Workspace res = new Workspace() { Directory = workspacePath};
             res.CSVResources = new List<CSVResource>();
-            res.Directory = ConfigService.Instance.WorkspaceDirectory;
             if (!System.IO.Directory.Exists(res.Directory))
             {
                 throw new Exception("workspace directory doesn't exist");
@@ -100,24 +100,24 @@ namespace scraper.Model
         /// <summary>
         /// alter the Current object so that csv list is up to date
         /// </summary>
-        internal static void refresh()
+        internal void refresh()
         {
             
-            Current.CSVResources = new List<CSVResource>();
-            Current.Directory = ConfigService.Instance.WorkspaceDirectory;
-            if (!System.IO.Directory.Exists(Current.Directory))
+            CSVResources = new List<CSVResource>();
+            
+            if (!System.IO.Directory.Exists(Directory))
             {
 
             }
-            SetUpWorkspaceFolders(Current.Directory);
-            var all_file_in_csv = System.IO.Directory.GetFiles(System.IO.Path.Combine(Current.Directory, ConfigService.Instance.CSVOutputRelativeLocation));
+            SetUpWorkspaceFolders(Directory);
+            var all_file_in_csv = System.IO.Directory.GetFiles(System.IO.Path.Combine(Directory, ConfigService.Instance.CSVOutputRelativeLocation));
             foreach (var item in all_file_in_csv)
             {
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")
                 {
                     var o = new CSVResource() { Path = new Uri(item) };
                     o.Check();
-                    Current.CSVResources.Add(o);
+                    CSVResources.Add(o);
                 }
             }
         }

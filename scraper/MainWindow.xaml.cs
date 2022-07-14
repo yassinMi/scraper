@@ -26,10 +26,19 @@ namespace scraper
     {
         public MainWindow()
         {
-            var ws = Workspace.GetWorkspace(@"E:\TOOLS\scraper\tests.yass\myTestWorkspace");
+            // App.Current.
+            string ws_path;
+            if( (App.Current as App).CommandLineArgsDict.TryGetValue("-workspace", out ws_path)== false)
+            {
+                ws_path = @"E:\TOOLS\scraper\tests.yass\myTestWorkspace"; //dev only
+            }
+            var ws = Workspace.GetWorkspace(ws_path);
             var p = new FakePlugin();
             InitializeComponent();
-            
+            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+
+
             DataContext = new MainViewModel(p,ws);
             ((MainViewModel)DataContext).mw = this;
         }

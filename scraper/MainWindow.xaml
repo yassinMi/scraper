@@ -23,6 +23,10 @@
         
         
         >
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" 
+            UseAeroCaptionButtons="False" ResizeBorderThickness="6" />
+    </WindowChrome.WindowChrome>
     <Window.Resources>
         <Converters:VisibleIfEnumValueMatchesStringParam x:Key="VisibleIfEnumValueMatchesStringParam"/>
         <Converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
@@ -807,7 +811,7 @@
                             <Button Style="{StaticResource MaterialDesignIconForegroundButton}"  Grid.Column="2" Width="24" Height="24" Command="{Binding RefreshWorkspaceCommand}" >
                                 <custom:PackIconMaterial Kind="Sync" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Button>
-                            <TextBlock  VerticalAlignment="Center" Text="{Binding CurrentWorkspaceDirectory, Mode=OneWay, StringFormat=location: \{0\}}" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource MaterialDesignBodyLight}" Margin="6,0,0,0" />
+                            <TextBlock  VerticalAlignment="Center" Text="{Binding CurrentWorkspaceDirectory, Mode=OneWay, StringFormat=location: \{0\}}" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource MaterialDesignBodyLight}" Margin="6,0,0,0" ToolTip="{Binding CurrentWorkspaceDirectory, Mode=OneWay, StringFormat=location: \{0\}}" />
                         </Grid>
                         <ListBox materialDesign:ListBoxAssist.IsToggle="True" materialDesign:TransitionAssist.DisableTransitions="True"  materialDesign:RippleAssist.IsDisabled="True" Grid.Row="1" ItemsSource="{Binding CSVResourcesVMS}" AlternationCount="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top" Margin="0,24,0,0" SelectionMode="Multiple" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}">
                             <ListBox.ItemTemplate>

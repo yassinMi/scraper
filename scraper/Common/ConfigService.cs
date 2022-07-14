@@ -65,6 +65,9 @@ namespace Mi.Common
              set { cLWPresetsDeclarations = value; notif(nameof(CLWPresetsDeclarations)); }
          } 
          */
+        /// <summary>
+        /// the default (or lastest opened) workspace aka the one that should be opened when the user does't start the app with a specfic workspace 
+        /// </summary>
         public string WorkspaceDirectory
         {
             get { return _WorkspaceDirectory; }

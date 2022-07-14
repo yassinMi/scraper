@@ -44,7 +44,7 @@ namespace scraper.Plugin
         {
             Stage = ScrapTaskStage.ConvertingData;
             this.OnStageChanged?.Invoke(this, this.Stage);
-            await Task.Delay(1300);
+            await Task.Delay(130);
             Stage = ScrapTaskStage.Success;
             this.OnStageChanged?.Invoke(this, this.Stage);
 
@@ -54,7 +54,7 @@ namespace scraper.Plugin
         {
            
 
-            await Task.Delay(300);
+            await Task.Delay(30);
             
             ResolvedTitle = "Fake Books Page (1/3)";
             OnResolved?.Invoke(this, ResolvedTitle);
@@ -62,7 +62,7 @@ namespace scraper.Plugin
             this.OnStageChanged?.Invoke(this, this.Stage);
             for (int i = 0; i < 50; i++)
             {
-                await Task.Delay(300);
+                await Task.Delay(30);
                 OnProgress?.Invoke(this, new DownloadingProg() { Total = 50, Current = i });
                 OnTaskDetail?.Invoke(this, $"fake download: file{i + 1}.zip");
             }

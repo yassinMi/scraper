@@ -47,14 +47,14 @@ namespace scraper.ViewModel
            
             Debug.WriteLine("GetScrapingTasksFromFiles");
 
-            foreach (var i in  Workspace.Current.GetScrapingTasksFromFiles())
+            foreach (var i in  MainWorkspace.GetScrapingTasksFromFiles())
             {
                 Debug.WriteLine(i);
 
                 ScrapingTasksVMS.Add(new ScrapingTaskVM(i));
             }
 
-            CSVResourcesVMS = new ObservableCollection<CSVResourceVM>(Workspace.Current.CSVResources.Select((sr) =>
+            CSVResourcesVMS = new ObservableCollection<CSVResourceVM>(MainWorkspace.CSVResources.Select((sr) =>
            {
                return new CSVResourceVM(sr);
            }));
@@ -134,7 +134,7 @@ namespace scraper.ViewModel
 
         public string CurrentWorkspaceDirectory
         {
-            get { return Workspace.Current.Directory; }
+            get { return MainWorkspace.Directory; }
         }
 
         private string _TotalRecordsCountString = "0";
@@ -236,10 +236,10 @@ namespace scraper.ViewModel
 
         private void handleRefreshWorkspaceCommand()
         {
-            Workspace.refresh();
+            MainWorkspace.refresh();
             notif(nameof(CurrentWorkspaceDirectory));
             CSVResourcesVMS.Clear();
-            foreach (var sr in Workspace.Current.CSVResources)
+            foreach (var sr in MainWorkspace.CSVResources)
             {
                 CSVResourcesVMS.Add(new CSVResourceVM(sr));
             }

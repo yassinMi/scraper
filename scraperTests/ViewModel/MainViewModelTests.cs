@@ -5,6 +5,7 @@ using scraper.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,27 @@ namespace scraper.ViewModel.Tests
             }
             Debug.WriteLine($"number of items: {mvm.ProductViewModels.Count}");
             Assert.IsTrue(mvm.ProductViewModels.Count > 10);
+        }
+        [TestMethod()]
+        public void CSVResourcesVMS_gets_populated()
+        {
+            const int number_of_csv_files_in_ws = 22;
+
+            MainViewModel mvm = new MainViewModel();
+            mvm.RefreshWorkspaceCommand.Execute(null);
+            Assert.IsTrue(mvm.CSVResourcesVMS.Count == number_of_csv_files_in_ws);
+            Assert.IsTrue(mvm.CurrentWorkspaceDirectory.ToLower() ==  @"E:\TOOLS\scraper\scraper\scripts".ToLower(),"wrong workspace dir : "+ mvm.CurrentWorkspaceDirectory);
+
+            //test case 2
+            var ws = Workspace.GetWorkspace(@"E:\TOOLS\scraper\tests.yass\myTestWorkspace");
+            var p = new FakePlugin();
+            MainViewModel mvm2 = new MainViewModel(p,ws);
+            mvm.RefreshWorkspaceCommand.Execute(null);
+            Assert.IsTrue(mvm2.CSVResourcesVMS.Count == 0);
+            Assert.IsTrue(mvm2.CurrentWorkspaceDirectory.ToLower() == @"E:\TOOLS\scraper\tests.yass\myTestWorkspace".ToLower(), "wrong workspace dir2" + mvm2.CurrentWorkspaceDirectory);
+
+
+
         }
     }
 }
