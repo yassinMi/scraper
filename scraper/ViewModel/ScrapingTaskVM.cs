@@ -48,6 +48,14 @@ namespace scraper.ViewModel
             get { return _Title; }
         }
 
+        private string _Info;
+        public string Info
+        {
+           
+            get { return string.Join(" · "  ,new string[] {"733 objects" , "7.8 MB" } ); }
+        }
+
+
 
         private string _CurrentTaskDetail;
         public string CurrentTaskDetail

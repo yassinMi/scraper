@@ -37,7 +37,7 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="stageTB" Text="{Binding CurrentScrapTaskStage, Converter={StaticResource ScrapingTaskStageToUIString}, Mode=OneWay}" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="2.6MB" TextTrimming="CharacterEllipsis" MaxWidth="71" Grid.Row="1" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="{Binding Info}" TextTrimming="CharacterEllipsis" MaxWidth="71" Grid.Row="1" VerticalAlignment="Center"/>
                 </Grid>
                 <materialDesign:Card
 					UniformCornerRadius="80"
