@@ -54,7 +54,12 @@ namespace Mi.Common
         //internal static string SCRIPTS_DIR = MAIN_PATH + "\\scripts";
         //internal static object SFX_DIRECTORY = MAIN_PATH + "\\SFX";
         internal static readonly string ERRORS_LOG_FILE = APP_DATA + @"\Errors.log";
-  
+        /// <summary>
+        /// under MyDocuments/MiScraper/Plugins
+        /// </summary>
+        public static string PLUGINS_GLOBAL_FOLDER = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)+ @"\MiScraper\Plugins");
+
+
         internal static void OnAppStartup()
         {
             if (Directory.Exists(APP_DATA) == false)

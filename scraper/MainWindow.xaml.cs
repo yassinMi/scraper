@@ -1,5 +1,7 @@
-﻿using scraper.Model;
+﻿using scraper.Interfaces;
+using scraper.Model;
 using scraper.Plugin;
+using scraper.Services;
 using scraper.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -33,7 +35,8 @@ namespace scraper
                 ws_path = @"E:\TOOLS\scraper\tests.yass\myTestWorkspace"; //dev only
             }
             var ws = Workspace.GetWorkspace(ws_path);
-            var p = new FakePlugin();
+            IPlugin p = new FakePlugin();
+            p = PluginsManager.GetGlobalPlugins().First();
             InitializeComponent();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;

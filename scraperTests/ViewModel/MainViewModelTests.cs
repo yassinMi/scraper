@@ -48,22 +48,43 @@ namespace scraper.ViewModel.Tests
         public void CSVResourcesVMS_gets_populated()
         {
             const int number_of_csv_files_in_ws = 22;
+            Debug.WriteLine(typeof(string).Assembly.Location);
+            Debug.WriteLine(typeof(Debug).Assembly.Location);
+            Debug.WriteLine(typeof(System.Reflection.Assembly).Assembly.Location);
+
+            Debug.WriteLine(typeof(App).Assembly.Location);
+            Debug.WriteLine(typeof(FakePlugin).Assembly.Location);
 
             MainViewModel mvm = new MainViewModel();
-            mvm.RefreshWorkspaceCommand.Execute(null);
-            Assert.IsTrue(mvm.CSVResourcesVMS.Count == number_of_csv_files_in_ws);
+            //mvm.RefreshWorkspaceCommand.Execute(null);
+            Debug.WriteLine("count:" + mvm.CSVResourcesVMS.Count.ToString());
+            Assert.IsTrue(mvm.CSVResourcesVMS.Count == 22);
             Assert.IsTrue(mvm.CurrentWorkspaceDirectory.ToLower() ==  @"E:\TOOLS\scraper\scraper\scripts".ToLower(),"wrong workspace dir : "+ mvm.CurrentWorkspaceDirectory);
 
             //test case 2
             var ws = Workspace.GetWorkspace(@"E:\TOOLS\scraper\tests.yass\myTestWorkspace");
             var p = new FakePlugin();
             MainViewModel mvm2 = new MainViewModel(p,ws);
-            mvm.RefreshWorkspaceCommand.Execute(null);
+            //mvm.RefreshWorkspaceCommand.Execute(null);
             Assert.IsTrue(mvm2.CSVResourcesVMS.Count == 0);
             Assert.IsTrue(mvm2.CurrentWorkspaceDirectory.ToLower() == @"E:\TOOLS\scraper\tests.yass\myTestWorkspace".ToLower(), "wrong workspace dir2" + mvm2.CurrentWorkspaceDirectory);
 
 
+            //test case 3
+            var ws3 = Workspace.GetWorkspace(@"E:\TOOLS\scraper\scraper\scripts");
+            MainViewModel mvm3 = new MainViewModel(p, ws3);
+            //mvm3.RefreshWorkspaceCommand.Execute(null);
+            Assert.IsTrue(mvm3.CSVResourcesVMS.Count == 22, "mvm3 wrong CSVResourcesVMS count");
 
+
+        }
+        [TestMethod()]
+        public void GlobalUserPluginsGetsLoadedFromMydocuments()
+        {
+            MainViewModel mvm = new MainViewModel();
+            Assert.IsTrue(mvm.GlobalUserPlugins.Count == 1,"wrong plugins count");
+            var firstPluginName = mvm.GlobalUserPlugins.First().Name;
+            Assert.IsTrue(firstPluginName == "FakePluginExternal",$"unexcpected plugin name {firstPluginName}");
         }
     }
 }

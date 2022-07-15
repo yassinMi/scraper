@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraper", "scraper\scraper.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraperTests", "scraperTests\scraperTests.csproj", "{89AEA872-2074-4024-BFB8-850935572313}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraper.Intefaces", "scraper.Intefaces\scraper.Intefaces.csproj", "{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakePluginExternal", "FakePluginExternal\FakePluginExternal.csproj", "{1F17E141-D361-4C50-8D6F-17DD940CA4D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{89AEA872-2074-4024-BFB8-850935572313}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89AEA872-2074-4024-BFB8-850935572313}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89AEA872-2074-4024-BFB8-850935572313}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F17E141-D361-4C50-8D6F-17DD940CA4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F17E141-D361-4C50-8D6F-17DD940CA4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F17E141-D361-4C50-8D6F-17DD940CA4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F17E141-D361-4C50-8D6F-17DD940CA4D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

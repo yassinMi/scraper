@@ -1,4 +1,4 @@
-﻿using scraper.Model.Common;
+﻿using scraper.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,10 +13,9 @@ using scraper.Services;
 namespace scraper.Model
 {
 
-    public enum ScrapTaskStage { Ready, DownloadingData, Paused, ConvertingData, Success, Failed }
-
+   
   
-
+    [Obsolete("use TaskInfo instead", true)]
     public class ScrapingTaskJsonModel
     {
         public ScrapTaskStage Stage ;

@@ -1,20 +1,19 @@
-﻿using scraper.Model;
-using scraper.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using scraper.Interfaces;
 
-namespace scraper.Plugin
+namespace FakePluginExternal
 {
-    public class FakePlugin : IPlugin
+    public class FakePluginExternal : IPlugin
     {
         public string Name
         {
             get
             {
-                return "FakePlugin";
+                return "FakePluginExternal";
             }
         }
 
@@ -22,38 +21,29 @@ namespace scraper.Plugin
         {
             get
             {
-                return new Version(1, 0, 0, 0);
+                return new Version();
             }
         }
 
         public IPluginScrapingTask GetTask(TaskInfo taskInfo)
         {
-            throw new NotImplementedException();
+            return new FakePluginExternalScrapingTask();
         }
 
         public IPluginScrapingTask GetTask(string targetPage)
         {
-            return new FakePluginScrapingTask() { TargetPage = targetPage };
+            return new FakePluginExternalScrapingTask() { TargetPage = targetPage };
         }
     }
-    public class FakePluginScrapingTask : IPluginScrapingTask
+
+    public class FakePluginExternalScrapingTask : IPluginScrapingTask
     {
-        /// <summary>
-        /// only to be instantiated through the IPlugin instance (using IPlugin.getScrapingTask)
-        /// </summary>
-        public FakePluginScrapingTask()
-        {
-
-        }
-
         public DownloadingProg DownloadingProgress { get; set; }
-
-
-        public string ResolvedTitle { get; set; } = null;
+        public string ResolvedTitle { get; set; }
 
         public ScrapTaskStage Stage { get; set; }
 
-        public string TargetPage { get; set; } = null;
+        public string TargetPage { get; set; }
 
         public event EventHandler<string> OnError;
         public event EventHandler<DownloadingProg> OnProgress;
@@ -61,34 +51,29 @@ namespace scraper.Plugin
         public event EventHandler<ScrapTaskStage> OnStageChanged;
         public event EventHandler<string> OnTaskDetail;
 
-        async public Task RunConverter()
+        public async Task RunConverter()
         {
             Stage = ScrapTaskStage.ConvertingData;
             this.OnStageChanged?.Invoke(this, this.Stage);
             await Task.Delay(130);
             Stage = ScrapTaskStage.Success;
             this.OnStageChanged?.Invoke(this, this.Stage);
-
         }
 
-        async public Task RunScraper()
+        public async Task RunScraper()
         {
-           
-
             await Task.Delay(30);
-            
-            ResolvedTitle = "Fake Books Page (1/3)";
+
+            ResolvedTitle = $"External DLL Test ({this.TargetPage.Substring(0,8)})";
             OnResolved?.Invoke(this, ResolvedTitle);
             Stage = ScrapTaskStage.DownloadingData;
             this.OnStageChanged?.Invoke(this, this.Stage);
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 564; i++)
             {
                 await Task.Delay(30);
-                OnProgress?.Invoke(this, new DownloadingProg() { Total = 50, Current = i });
+                OnProgress?.Invoke(this, new DownloadingProg() { Total = 564, Current = i });
                 OnTaskDetail?.Invoke(this, $"fake download: file{i + 1}.zip");
             }
-
-           
 
         }
     }

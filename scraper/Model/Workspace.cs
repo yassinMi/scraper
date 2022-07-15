@@ -1,7 +1,9 @@
 ﻿using Mi.Common;
+using scraper.Interfaces;
 using scraper.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -146,7 +148,19 @@ namespace scraper.Model
             {
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "json")
                 {
-                    //FakePluginScrapingTask m = ScrapingTaskModel.LoadFromFile(item);
+                    Debug.WriteLine("LoadFromFile");
+                    //System.Text.Json k;
+                    try
+                    {
+                        var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<TaskInfo>(System.IO.File.ReadAllText(item));
+                        Debug.WriteLine(obj.DownloadingProgress);
+                        //return Reflection ;
+                    }
+                    catch (Exception)
+                    {
+
+                       // return new ScrapingTaskModel() { Title = "failed" };
+                    }
                     //yield return m;
                     //todo repair this using nterface
                     yield break;

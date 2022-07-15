@@ -863,7 +863,7 @@
   materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
   FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" />
                                     <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task"/>
-
+                                    <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding CurrentPluginName, FallbackValue=using plugin: \'null\', StringFormat=using plugin: \'\{0\}\'}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" ></TextBlock>
 
                                 </Grid>
 

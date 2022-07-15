@@ -14,6 +14,7 @@ using System.Diagnostics;
 using scraper.Services;
 using System.ComponentModel;
 using System.Collections.Specialized;
+using scraper.Interfaces;
 
 namespace scraper.ViewModel
 {
@@ -24,6 +25,8 @@ namespace scraper.ViewModel
         {
             MainPlugin = plugin;
             MainWorkspace = workspace;
+            Init();
+
 
         }
         public MainViewModel()
@@ -44,10 +47,21 @@ namespace scraper.ViewModel
                 //CurrentScrapTask = new ScrapTask(@"https://www.microcenter.com/search/search_results.aspx?N=4294966937&NTK=all&sortby=match&rpp=96&myStore=false&page=2") { Stage = ScrapTaskStage.DownloadingData, DownloadingProgress = new DownloadingProg() { Total = 512, Current = 438 } };
                 //CurrentTaskDetail = "lkjk hk jhzlkdj hlkzjehk jhzekj hzekjhk jhkejhk hekjhkejh khkj hkehkj hkehkj hkejh kjehkjeh kj ehke hkj hkejhk hkjhk jehk hekh kejh ekjhk ejhke jhk jhkejh kjhekhkejhk ehk hekj";
             }
-           
-            Debug.WriteLine("GetScrapingTasksFromFiles");
 
-            foreach (var i in  MainWorkspace.GetScrapingTasksFromFiles())
+            Init();
+           
+
+        }
+
+        private void Init()
+        {
+            Debug.WriteLine("GetScrapingTasksFromFiles");
+            foreach (var p in PluginsManager.GetGlobalPlugins())
+            {
+                GlobalUserPlugins.Add(p);
+            }
+
+            foreach (var i in MainWorkspace.GetScrapingTasksFromFiles())
             {
                 Debug.WriteLine(i);
 
@@ -55,15 +69,29 @@ namespace scraper.ViewModel
             }
 
             CSVResourcesVMS = new ObservableCollection<CSVResourceVM>(MainWorkspace.CSVResources.Select((sr) =>
-           {
-               return new CSVResourceVM(sr);
-           }));
-
+            {
+                return new CSVResourceVM(sr);
+            }));
+            notif(nameof(CurrentPluginName));
         }
+
+
 
         IPlugin MainPlugin;
         Workspace MainWorkspace;
         IEnumerable<ProductViewModel> ProductViewModels_arr = new List<ProductViewModel>();
+
+
+        private string _CurrentPluginName;//to be extended to more detailed PluginInfo struct
+        public string CurrentPluginName
+        {
+            
+            get { return MainPlugin.Name; }
+        }
+
+
+
+        public ObservableCollection<IPlugin> GlobalUserPlugins { get; set; } = new ObservableCollection<IPlugin>();
 
         private async void onDirtyCSVResourceVMSelection()
         {
