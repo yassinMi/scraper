@@ -9,6 +9,8 @@ scraper/scripts
 readme.md
 scraper/laptop1-0648451_390864.jpg
 scraper/laptop2-636984_269753_01_front_thumbnail.jpg
+#to be included later:
+packages/
 
 #wpf gitignore
 UpgradeLog.htm
