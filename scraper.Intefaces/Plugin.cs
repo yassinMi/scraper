@@ -32,8 +32,8 @@ namespace scraper.Interfaces
         IPluginScrapingTask GetTask(TaskInfo taskInfo);
         string Name { get; }
         Version Version { get; }
-
-
+        string ElementName { get; }
+        string ElementNamePlural { get; }
     }
 
 

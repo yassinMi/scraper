@@ -90,6 +90,16 @@ namespace scraper.ViewModel
         }
 
 
+        public string ElementName
+        {
+            get { return MainPlugin.ElementName; }
+        }
+
+        public string ElementNamePlural
+        {
+            get { return MainPlugin.ElementNamePlural; }
+        }
+
 
         public ObservableCollection<IPlugin> GlobalUserPlugins { get; set; } = new ObservableCollection<IPlugin>();
 

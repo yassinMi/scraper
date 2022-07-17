@@ -10,6 +10,22 @@ namespace scraper.Plugin
 {
     public class FakePlugin : IPlugin
     {
+        public string ElementName
+        {
+            get
+            {
+                return "Fake product";
+            }
+        }
+
+        public string ElementNamePlural
+        {
+            get
+            {
+                return "Fake Products";
+            }
+        }
+
         public string Name
         {
             get

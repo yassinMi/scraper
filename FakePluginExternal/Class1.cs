@@ -9,6 +9,22 @@ namespace FakePluginExternal
 {
     public class FakePluginExternal : IPlugin
     {
+        public string ElementName
+        {
+            get
+            {
+                return "Fake Product";
+            }
+        }
+
+        public string ElementNamePlural
+        {
+            get
+            {
+                return "Fake Products";
+            }
+        }
+
         public string Name
         {
             get

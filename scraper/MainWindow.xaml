@@ -276,7 +276,7 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid x:Name="head" Margin="4,14,0,14" VerticalAlignment="Center">
-                            <TextBlock x:Name="head_string" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="View products" FontFamily="Poppins Medium" VerticalAlignment="Center" FontSize="16" Foreground="White" TextOptions.TextFormattingMode="Ideal"/>
+                            <TextBlock x:Name="head_string" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding ElementNamePlural, FallbackValue=View Elements, Mode=OneWay, StringFormat=View \{0\}}" FontFamily="Poppins Medium" VerticalAlignment="Center" FontSize="16" Foreground="White" TextOptions.TextFormattingMode="Ideal"/>
                         </Grid>
                         <Grid x:Name="searchSection" Grid.Row="1" Margin="4,0,0,0">
                             <TextBox x:Name="search_tb"
@@ -299,11 +299,11 @@
                                     <CheckBox
                                 			Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
                                 			IsChecked="True"
-                                			Content="microcenter.com" Margin="2,4" />
+                                			Content="targetwebsite.com" Margin="2,4" />
                                     <CheckBox
                                 			Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
                                 			IsChecked="True"
-                                			Content="hdphotovidio.com" Margin="2,4" />
+                                			Content="secondwebsite.com" Margin="2,4" />
                                 </WrapPanel>
                             </Expander>
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
@@ -411,7 +411,7 @@
                                                 <RowDefinition Height="20"/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="microcenter.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="targetwebsite.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
                                             <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
                                                 <Grid Height="27" Margin="0">
                                                     <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
@@ -436,7 +436,7 @@
                                                 <RowDefinition Height="20"/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="bhphotovideo.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="secondwebsite.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
                                             <TextBlock Style="{StaticResource MaterialDesignHeadline2TextBlock}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="21.333" FontFamily="Dosis Medium" TextOptions.TextFormattingMode="Ideal" Margin="0" Grid.Row="1" Text="233"/>
                                         </Grid>
                                     </Border>
@@ -447,7 +447,7 @@
                                                 <RowDefinition Height="20"/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="bhphotovideo.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="secondwebsite.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
                                             <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
                                                 <Grid Height="27" Margin="0">
                                                     <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
@@ -527,7 +527,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="no_items_notice" HorizontalAlignment="Center" Margin="2,20,0,6" TextWrapping="Wrap" VerticalAlignment="Center" Text="(there are no products to show)" Visibility="{Binding ProductViewModels.Count, Converter={StaticResource BooleanToVisibilityInverted}, Mode=OneWay}" Grid.RowSpan="2"/>
+                        <TextBlock x:Name="no_items_notice" HorizontalAlignment="Center" Margin="2,20,0,6" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding ElementNamePlural, FallbackValue=(there are no elements to show), Mode=OneWay, StringFormat=(there are no \{0\} to show)}" Visibility="{Binding ProductViewModels.Count, Converter={StaticResource BooleanToVisibilityInverted}, Mode=OneWay}" Grid.RowSpan="2"/>
                         <Grid x:Name="ResultsControlSection" Height="28" Background="#00000000" MouseLeftButtonDown="ResultsControlSection_MouseLeftButtonDown">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
@@ -591,7 +591,7 @@
                                         <TextBlock x:Name="textBlock_Copy2" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
                                         <TextBlock x:Name="upc_val2" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
                                         <TextBlock x:Name="sku_val2" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val2" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+                                        <TextBlock x:Name="origin_val2" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
 
                                     </Grid>
                                 </materialDesign:Card>
@@ -614,7 +614,7 @@
                                         <TextBlock x:Name="textBlock_Copy3" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
                                         <TextBlock x:Name="upc_val3" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
                                         <TextBlock x:Name="sku_val3" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val3" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+                                        <TextBlock x:Name="origin_val3" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
 
                                     </Grid>
                                 </materialDesign:Card>
@@ -637,7 +637,7 @@
                                         <TextBlock x:Name="textBlock_Copy4" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
                                         <TextBlock x:Name="upc_val4" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
                                         <TextBlock x:Name="sku_val4" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val4" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+                                        <TextBlock x:Name="origin_val4" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
 
                                     </Grid>
                                 </materialDesign:Card>
@@ -660,7 +660,7 @@
                                         <TextBlock x:Name="textBlock_Copy5" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
                                         <TextBlock x:Name="upc_val5" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
                                         <TextBlock x:Name="sku_val5" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val5" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+                                        <TextBlock x:Name="origin_val5" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
 
                                     </Grid>
                                 </materialDesign:Card>
@@ -683,7 +683,7 @@
                                         <TextBlock x:Name="textBlock_Copy6" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
                                         <TextBlock x:Name="upc_val6" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
                                         <TextBlock x:Name="sku_val6" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val6" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+                                        <TextBlock x:Name="origin_val6" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
 
                                     </Grid>
                                 </materialDesign:Card>
@@ -706,7 +706,7 @@
                                         <TextBlock x:Name="textBlock_Copy7" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
                                         <TextBlock x:Name="upc_val7" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
                                         <TextBlock x:Name="sku_val7" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val7" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="microcenter.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
+                                        <TextBlock x:Name="origin_val7" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
 
                                     </Grid>
                                 </materialDesign:Card>
@@ -751,6 +751,8 @@
                         <RowDefinition/>
                         <RowDefinition Height="161"/>
                     </Grid.RowDefinitions>
+                    <Grid x:Name="dragging_area_middle_Copy" Margin="234,0,80,0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" Grid.ColumnSpan="4" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown"/>
+
                     <Grid x:Name="controlPanel1" Margin="0,0,4,0" Grid.RowSpan="4" Background="#FF232323">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="48"/>
@@ -767,7 +769,7 @@
             					Width="24" />
                         </Button>
                         <Grid x:Name="head1" Margin="4,14,0,14" VerticalAlignment="Center">
-                            <TextBlock x:Name="head_string1" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="Scrap products" FontFamily="Poppins Medium" VerticalAlignment="Center" FontSize="16" Foreground="White" TextOptions.TextFormattingMode="Ideal"/>
+                            <TextBlock x:Name="head_string1" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding ElementNamePlural, FallbackValue=Scrap Elements, Mode=OneWay, StringFormat=Scrap \{0\}}" FontFamily="Poppins Medium" VerticalAlignment="Center" FontSize="16" Foreground="White" TextOptions.TextFormattingMode="Ideal"/>
                         </Grid>
                         <StackPanel Margin="4,0,0,0" Orientation="Vertical" Grid.Row="1" Visibility="Collapsed">
                             <Grid x:Name="searchSection1" Height="48">
@@ -863,7 +865,7 @@
   materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
   FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" />
                                     <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task"/>
-                                    <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding CurrentPluginName, FallbackValue=using plugin: \'null\', StringFormat=using plugin: \'\{0\}\'}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" ></TextBlock>
+                                    <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding CurrentPluginName, FallbackValue=using plugin: \'null\', StringFormat=using plugin: \'\{0\}\'}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" />
 
                                 </Grid>
 
@@ -890,7 +892,7 @@
                                             <RowDefinition Height="20"/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock FontFamily="Roboto Medium" Text="microcenter.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                        <TextBlock FontFamily="Roboto Medium" Text="targetwebsite.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
                                         <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
                                             <Grid Height="27" Margin="0">
                                                 <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
@@ -939,7 +941,7 @@
                                             <RowDefinition Height="20"/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock FontFamily="Roboto Medium" Text="bhphotovideo.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                        <TextBlock FontFamily="Roboto Medium" Text="secondwebsite.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
                                         <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
                                             <Grid Height="27" Margin="0">
                                                 <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
@@ -958,6 +960,7 @@
                         </Grid>
                     </Border>
                     <TextBlock x:Name="textBlock10" Grid.ColumnSpan="3" Grid.Column="1" Margin="10,10,10,2" Grid.Row="2" TextWrapping="Wrap" Text="{Binding CurrentTaskDetail}" VerticalAlignment="Top"/>
+                    <Grid x:Name="dragging_area_right_Copy" Margin="0,0,4,0" Background="#00E41F1F" Height="48" VerticalAlignment="Top" MouseLeftButtonDown="dragging_area_right_MouseLeftButtonDown"/>
 
                 </Grid>
             </TabItem>
