@@ -137,6 +137,9 @@
     <Compile Include="View\ScrapingActionCardView.xaml.cs">
       <DependentUpon>ScrapingActionCardView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\UnhandledErrorWindow.xaml.cs">
+      <DependentUpon>UnhandledErrorWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -158,6 +161,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ScrapingActionCardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UnhandledErrorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

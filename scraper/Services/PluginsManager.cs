@@ -31,11 +31,15 @@ namespace scraper.Services
 
             foreach(var f in Directory.GetFiles(GlobalFoldder))
             {
-                var asm = Assembly.LoadFrom(f);
-                var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t));
-                if (first_IPluginType == null) continue;
-                object pluginInstance = Activator.CreateInstance(first_IPluginType);
-                yield return (IPlugin) pluginInstance;
+                if (Path.GetExtension(f).ToLower().Replace(".", "") == "dll")
+                {
+                    var asm = Assembly.LoadFrom(f);
+                    var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t));
+                    if (first_IPluginType == null) continue;
+                    object pluginInstance = Activator.CreateInstance(first_IPluginType);
+                    yield return (IPlugin)pluginInstance;
+                }
+                    
             }
         }
 

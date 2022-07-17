@@ -58,5 +58,10 @@ namespace scraper.Interfaces
         string TargetPage { get; set; }
         DownloadingProg DownloadingProgress { get; set; }
         ScrapTaskStage Stage { get; set; }
+        /// <summary>
+        /// pause the task
+        /// only supported or downloading data stage
+        /// </summary>
+        void Pause();
     }
 }

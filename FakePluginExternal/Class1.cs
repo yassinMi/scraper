@@ -51,6 +51,10 @@ namespace FakePluginExternal
         public event EventHandler<ScrapTaskStage> OnStageChanged;
         public event EventHandler<string> OnTaskDetail;
 
+        public void Pause()
+        {
+
+        }
         public async Task RunConverter()
         {
             Stage = ScrapTaskStage.ConvertingData;

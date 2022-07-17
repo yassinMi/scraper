@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using scraper.Model;
 using scraper.Interfaces;
+using System.Windows.Input;
 
 namespace scraper.ViewModel
 {
@@ -52,7 +53,7 @@ namespace scraper.ViewModel
         public string Info
         {
            
-            get { return string.Join(" · "  ,new string[] {"733 objects" , "7.8 MB" } ); }
+            get { return string.Join(" · "  ,new string[] { "321 Elements", "733 Objects" , "7.8 MB" } ); }
         }
 
 
@@ -90,6 +91,16 @@ namespace scraper.ViewModel
             }
         }
 
+        public ICommand PauseCommand { get { return new Mi.Common.MICommand(this.hndlPauseCommand, this.canExecutePauseCommand); } }
 
+        private void hndlPauseCommand()
+        {
+            Model.Pause();
+        }
+
+        private bool canExecutePauseCommand()
+        {
+            return Model.Stage == ScrapTaskStage.DownloadingData;
+        }
     }
 }

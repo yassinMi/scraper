@@ -1,0 +1,38 @@
+﻿<Window x:Class="scraper.View.UnhandledErrorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:scraper.View"
+        TextElement.Foreground="{StaticResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Display" 
+        TextOptions.TextRenderingMode="Auto"
+        Background="{StaticResource MaterialDesignPaper}"
+        FontFamily="Roboto"
+        mc:Ignorable="d"
+        Title="Error" Height="195" Width="358" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="63*"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition/>
+            <RowDefinition Height="32"/>
+        </Grid.RowDefinitions>
+        <custom:PackIconFontAwesome Kind="ExclamationTriangleSolid" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48" Foreground="#FFFF7313"></custom:PackIconFontAwesome>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" TextWrapping="Wrap" Text="scraper has encountered an error and needs to restart" VerticalAlignment="Center"/>
+        <StackPanel Margin="0,4,10,4" Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2">
+            <Button x:Name="button1" Style="{x:Null}" Content="Close" HorizontalAlignment="Center" Margin="0,0,4,0" Padding="6,2" VerticalAlignment="Center"/>
+
+            <Button x:Name="button" Style="{x:Null}" Content="Restart" HorizontalAlignment="Center" Margin="4,0" Padding="6,2" VerticalAlignment="Center"/>
+        </StackPanel>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="ERROR!" VerticalAlignment="Center" FontSize="16" Margin="15,0,0,0"/>
+
+    </Grid>
+</Window>

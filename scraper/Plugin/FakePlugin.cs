@@ -61,6 +61,11 @@ namespace scraper.Plugin
         public event EventHandler<ScrapTaskStage> OnStageChanged;
         public event EventHandler<string> OnTaskDetail;
 
+        public void Pause()
+        {
+            throw new NotImplementedException();
+        }
+
         async public Task RunConverter()
         {
             Stage = ScrapTaskStage.ConvertingData;

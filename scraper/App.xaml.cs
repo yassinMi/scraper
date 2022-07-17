@@ -19,6 +19,7 @@ namespace scraper
         public Dictionary<string, string> CommandLineArgsDict { get; set; } = new Dictionary<string, string>();
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            AppDomain.CurrentDomain.UnhandledException += HandleException;
             AppDomain.CurrentDomain.AssemblyResolve += FindPluginAsm;
             int argc = e.Args.Count();
             if ((argc % 2) != 0)
@@ -29,6 +30,13 @@ namespace scraper
             {
                 CommandLineArgsDict[e.Args[i]] = e.Args[i + 1];
             }
+        }
+
+        private void HandleException(object sender, UnhandledExceptionEventArgs e)
+        {
+            scraper.View.UnhandledErrorWindow w = new View.UnhandledErrorWindow();
+            w.ShowDialog();
+            
         }
 
         private Assembly FindPluginAsm(object sender, ResolveEventArgs args)

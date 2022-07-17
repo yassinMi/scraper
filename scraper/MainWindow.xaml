@@ -203,7 +203,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" ClipToBounds="{TemplateBinding ClipToBounds}" Margin="{TemplateBinding Margin}">
-                             <Grid>
+                            <Grid>
                                 <materialDesign:Ripple x:Name="Ripple" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Focusable="False" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
                                     <materialDesign:Ripple.Feedback>
                                         <TemplateBinding Property="Foreground">
@@ -252,7 +252,7 @@
                             <RowDefinition Height="32"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <custom:PackIconMaterial Grid.Row="0" Kind="Store" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Roboto" Foreground="White"/>
+                        <custom:PackIconMaterial Grid.Row="0" Kind="FileCad" Width="16" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="Roboto" Foreground="White" Margin="0,8"/>
                         <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="12" Visibility="Collapsed" FontFamily="Roboto" ><Run Text="Products"/></TextBlock>
                     </Grid>
                 </TabItem.Header>
@@ -487,7 +487,7 @@
                                     <RowDefinition/>
                                     <RowDefinition Height="48"/>
                                 </Grid.RowDefinitions>
-                                
+
                                 <Border Margin="6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6" d:LayoutOverrides="Height, TopMargin, BottomMargin" Grid.ColumnSpan="2">
 
                                     <Grid>
@@ -733,7 +733,7 @@
                                 <RowDefinition Height="32"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <custom:PackIconMaterial Grid.Row="0" Kind="Database" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                            <custom:PackIconMaterial Grid.Row="0" Kind="Factory" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                             <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="12" FontFamily="Roboto" Visibility="Collapsed" ><Run Text="Database"/></TextBlock>
                         </Grid>
                     </materialDesign:Badged>
