@@ -7,8 +7,8 @@
     <ProjectGuid>{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>scraper.Intefaces</RootNamespace>
-    <AssemblyName>scraper.Intefaces</AssemblyName>
+    <RootNamespace>scraper.Core</RootNamespace>
+    <AssemblyName>scraper.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

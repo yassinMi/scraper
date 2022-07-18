@@ -40,8 +40,21 @@ namespace scraper.Core
     public interface IElementDescription
     {
         IEnumerable<IField> Fields { get; }
+        string Name { get; }
+        /// <summary>
+        /// two plugins with the same Element ID can co exist on the same workspace 
+        /// the output data from the different plugis would be consistent and can be then loaded in the viewer without problems
+        /// a good ID 
+        /// </summary>
+        string ID { get; }
 
 
+    }
+    public class ElementDescription : IElementDescription
+    {
+        public IEnumerable<IField> Fields { get; set; }
+        public string Name { get; set; }
+        public string ID { get; set; }
     }
 
     public interface IField
@@ -53,8 +66,24 @@ namespace scraper.Core
         string UserDescription { get; }
         Type NativeType { get; }
         FieldRole Role { get; }
+        /// <summary>
+        /// useage example: required fields having a null-like value will cause the row to be droped in cleaning processes
+        /// </summary>
+        bool IsRequired { get; }
     }
 
+
+    public struct Field : IField
+    {
+        public string Name { get; set; }
+        
+        public Type NativeType { get; set; }
+
+        public FieldRole Role { get; set; }
+
+        public string UserDescription { get; set; }
+        public bool IsRequired { get; set; } 
+    }
 
     public interface IPluginScrapingTask
     {
