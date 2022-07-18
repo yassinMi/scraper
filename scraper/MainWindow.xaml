@@ -854,7 +854,7 @@
                     <Grid x:Name="scraping_panel" Grid.Column="1" Margin="10,0" Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Grid.RowSpan="2">
                         <materialDesign:Card Padding="4" materialDesign:ShadowAssist.ShadowDepth="Depth0"
                     		Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-                    		UniformCornerRadius="10" FontFamily="Roboto" Background="#001C1C1C" Margin="6,2,25,2" d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}">
+                    		UniformCornerRadius="10" FontFamily="Roboto" Background="#001C1C1C" Margin="6,2,9,2" d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="80"/>
@@ -865,15 +865,26 @@
                                         <RowDefinition Height="24"/>
                                         <RowDefinition Height="48"/>
                                     </Grid.RowDefinitions>
+                                    <Button x:Name="helpButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0" Width="16" Height="16" Padding="0">
+                                        <custom:PackIconMaterial Height="12" Width="12" Kind="Help"/>
+                                    </Button>
 
                                     <TextBox materialDesign:ColorZoneAssist.Mode="Standard"
                                         materialDesign:TextFieldAssist.LeadingIcon="Globe"
                                         materialDesign:TextFieldAssist.HasLeadingIcon="True"
   materialDesign:HintAssist.Hint="Products page URL"
   materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-  FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" />
-                                    <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task"/>
-                                    <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding CurrentPluginName, FallbackValue=using plugin: \'null\', StringFormat=using plugin: \'\{0\}\'}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" />
+  FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,16,0" />
+                                    <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0,0,16,0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task"/>
+                                    <StackPanel  Orientation="Horizontal"   Grid.Row="1">
+                                        <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" Margin="0,0,6,0" >
+                                            <Run>Using plugin: </Run><Run Foreground="{StaticResource SecondaryHueMidBrush}" Text="{Binding CurrentPluginName, FallbackValue=null, Mode=OneWay, StringFormat=\{0\}}"></Run>
+                                        </TextBlock>
+                                        <Button Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0">
+                                            <custom:PackIconMaterial Height="12" Width="12" Kind="Cog"/>
+                                        </Button>
+                                        
+                                    </StackPanel>
 
                                 </Grid>
 
