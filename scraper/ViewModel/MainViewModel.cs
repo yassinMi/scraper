@@ -15,6 +15,7 @@ using scraper.Services;
 using System.ComponentModel;
 using System.Collections.Specialized;
 using scraper.Interfaces;
+using System.IO;
 
 namespace scraper.ViewModel
 {
@@ -175,6 +176,11 @@ namespace scraper.ViewModel
             get { return MainWorkspace.Directory; }
         }
 
+        public string CurrentWorkspaceName
+        {
+            get { return  Path.GetFileName(MainWorkspace?.Directory?? "none"); }
+        }
+
         private string _TotalRecordsCountString = "0";
         public string TotalRecordsCountString 
         {
@@ -201,11 +207,18 @@ namespace scraper.ViewModel
         }
 
        
-
+        public enum ElementsViewTypes { Grid=0, List }
       
 
 
         public ObservableCollection<ScrapingTaskVM> ScrapingTasksVMS { get; set; } = new ObservableCollection<ScrapingTaskVM>();
+
+        private ElementsViewTypes _ElementsViewType;
+        public ElementsViewTypes ElementsViewType
+        {
+            set { _ElementsViewType = value; notif(nameof(ElementsViewType)); }
+            get { return _ElementsViewType; }
+        }
 
 
         public async void handleStartScrapingCommand()
@@ -287,5 +300,11 @@ namespace scraper.ViewModel
 
 
 
+        public ICommand SwitchElementsViewType { get { return new MICommand(hndlSwitchElementsViewType); } }
+
+        private void hndlSwitchElementsViewType()
+        {
+            this.ElementsViewType = (ElementsViewTypes)  (( ((int)ElementsViewType) + 1 )% Enum.GetNames(typeof(ElementsViewTypes)).Count());
+        }
     }
 }

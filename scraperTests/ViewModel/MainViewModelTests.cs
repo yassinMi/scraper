@@ -3,15 +3,34 @@ using scraper.Model;
 using scraper.Plugin;
 using scraper.ViewModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace scraper.ViewModel.Tests
 {
+
+
+    public class Fruit
+    {
+
+    }
+
+    public class Apple : Fruit
+    {
+
+    }
+
+    public class Orange : Fruit
+    {
+
+    }
     [TestClass()]
     public class MainViewModelTests
     {
@@ -44,6 +63,18 @@ namespace scraper.ViewModel.Tests
             Debug.WriteLine($"number of items: {mvm.ProductViewModels.Count}");
             Assert.IsTrue(mvm.ProductViewModels.Count > 10);
         }
+
+        [TestMethod()]
+        public void asm()
+        {
+            
+
+            
+        }
+        
+            
+        
+
         [TestMethod()]
         public void CSVResourcesVMS_gets_populated()
         {
