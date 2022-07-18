@@ -10,6 +10,14 @@ namespace scraper.Plugin
 {
     public class FakePlugin : IPlugin
     {
+        public IElementDescription ElementDescription
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public string ElementName
         {
             get

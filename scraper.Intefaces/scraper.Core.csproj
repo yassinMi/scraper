@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="DownloadingProg.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

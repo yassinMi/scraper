@@ -48,7 +48,7 @@ namespace scraper.Core
     {
         string Name { get; }
         /// <summary>
-        /// for the user information (used as tooltips content if nonnull)
+        /// for the user information (used as tooltips)
         /// </summary>
         string UserDescription { get; }
         Type NativeType { get; }
@@ -71,7 +71,7 @@ namespace scraper.Core
         Task RunScraper();
         Task RunConverter();
         /// <summary>
-        /// the Title of the target page as in specificationn this is resolved before starting download
+        /// the Title of the target page as in specification this is resolved before starting download
         /// </summary>
         string ResolvedTitle { get; set; }
         string TargetPage { get; set; }
