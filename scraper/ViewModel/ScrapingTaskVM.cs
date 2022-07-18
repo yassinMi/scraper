@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using scraper.Model;
-using scraper.Interfaces;
+using scraper.Core;
 using System.Windows.Input;
 
 namespace scraper.ViewModel

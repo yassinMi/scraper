@@ -14,7 +14,7 @@ using System.Diagnostics;
 using scraper.Services;
 using System.ComponentModel;
 using System.Collections.Specialized;
-using scraper.Interfaces;
+using scraper.Core;
 using System.IO;
 
 namespace scraper.ViewModel

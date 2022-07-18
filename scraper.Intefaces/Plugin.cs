@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace scraper.Interfaces
+namespace scraper.Core
 {
 
     public enum ScrapTaskStage { Ready, DownloadingData, Paused, ConvertingData, Success, Failed }
-
+ 
 
     public class TaskInfo
     {
@@ -34,6 +34,25 @@ namespace scraper.Interfaces
         Version Version { get; }
         string ElementName { get; }
         string ElementNamePlural { get; }
+        IElementDescription ElementDescription { get; }
+    }
+
+    public interface IElementDescription
+    {
+        IEnumerable<IField> Fields { get; }
+
+
+    }
+
+    public interface IField
+    {
+        string Name { get; }
+        /// <summary>
+        /// for the user information (used as tooltips content if nonnull)
+        /// </summary>
+        string UserDescription { get; }
+        Type NativeType { get; }
+        FieldRole Role { get; }
     }
 
 

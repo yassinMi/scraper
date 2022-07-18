@@ -1,5 +1,5 @@
 ﻿using scraper.Model;
-using scraper.Interfaces;
+using scraper.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

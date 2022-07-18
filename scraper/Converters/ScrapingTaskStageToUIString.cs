@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using scraper.Model;
-using scraper.Interfaces;
+using scraper.Core;
 
 namespace Converters
 {

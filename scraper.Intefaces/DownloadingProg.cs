@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace scraper.Interfaces
+namespace scraper.Core
 {
     public struct DownloadingProg
     {

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraper", "scraper\scraper.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraperTests", "scraperTests\scraperTests.csproj", "{89AEA872-2074-4024-BFB8-850935572313}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraper.Intefaces", "scraper.Intefaces\scraper.Intefaces.csproj", "{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraper.Core", "scraper.Intefaces\scraper.Core.csproj", "{F9513D8F-3B5B-45A5-96F4-9CFECD4D219F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakePluginExternal", "FakePluginExternal\FakePluginExternal.csproj", "{1F17E141-D361-4C50-8D6F-17DD940CA4D1}"
 EndProject

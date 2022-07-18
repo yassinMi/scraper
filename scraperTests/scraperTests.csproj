@@ -56,9 +56,9 @@
     <Compile Include="ViewModel\TestUrls.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\scraper.Intefaces\scraper.Intefaces.csproj">
+    <ProjectReference Include="..\scraper.Intefaces\scraper.Core.csproj">
       <Project>{f9513d8f-3b5b-45a5-96f4-9cfecd4d219f}</Project>
-      <Name>scraper.Intefaces</Name>
+      <Name>scraper.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\scraper\scraper.csproj">
       <Project>{580F02D5-7B14-44B8-9878-12CEF418EF7F}</Project>

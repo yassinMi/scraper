@@ -1,5 +1,5 @@
 ﻿using Mi.Common;
-using scraper.Interfaces;
+using scraper.Core;
 using scraper.Services;
 using System;
 using System.Collections.Generic;

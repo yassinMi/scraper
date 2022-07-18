@@ -1,4 +1,4 @@
-﻿using scraper.Interfaces;
+﻿using scraper.Core;
 using scraper.Model;
 using scraper.Plugin;
 using scraper.Services;
@@ -138,6 +138,10 @@ namespace scraper
         private void dragging_area_right_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
         }
     }
 }
