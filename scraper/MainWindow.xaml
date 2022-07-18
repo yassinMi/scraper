@@ -987,6 +987,9 @@
 
                 </TabItem.Header>
             </TabItem>
+            <Grid>
+                
+            </Grid>
         </TabControl>
         <Grid x:Name="windowControl" Grid.ColumnSpan="2">
             <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Margin="0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Right">

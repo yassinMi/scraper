@@ -33,10 +33,10 @@ namespace scraper.ViewModel
         public MainViewModel()
         {
             MainWorkspace = Workspace.Current;
-            
-            if(App.Current?.MainWindow!=null && DesignerProperties.GetIsInDesignMode(App.Current.MainWindow))
+
+            if (App.Current?.MainWindow != null && DesignerProperties.GetIsInDesignMode(App.Current.MainWindow))
             {
-                foreach(var i in (new List<ScrapingTaskVM>{
+                foreach (var i in (new List<ScrapingTaskVM>{
                     new ScrapingTaskVM(),
                     new ScrapingTaskVM(),
                     new ScrapingTaskVM(),
@@ -50,7 +50,7 @@ namespace scraper.ViewModel
             }
 
             Init();
-           
+
 
         }
 
@@ -86,7 +86,7 @@ namespace scraper.ViewModel
         private string _CurrentPluginName;//to be extended to more detailed PluginInfo struct
         public string CurrentPluginName
         {
-            
+
             get { return MainPlugin.Name; }
         }
 
@@ -108,7 +108,7 @@ namespace scraper.ViewModel
         {
             //logic that need to be performed when some items changest's IsActive
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
-            
+
             ProductViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ProductViewModel>>(new List<ProductViewModel>(), (i, csvVM) => {
                 return i.Concat(Utils.parseCSVfile(csvVM.FullPath).Select(p => new ProductViewModel(p)));
             });
@@ -126,7 +126,7 @@ namespace scraper.ViewModel
             }
         }
 
-        private void handl_CSVResourceVMS_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e )
+        private void handl_CSVResourceVMS_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             foreach (var item in _CSVResourcesVMS)
             {
@@ -139,17 +139,17 @@ namespace scraper.ViewModel
 
         public ObservableCollection<ProductViewModel> ProductViewModels { get {
                 return new ObservableCollection<ProductViewModel>(
-                    ProductViewModels_arr.Where(p=>p.Title.StartsWith(SearchQuery)));
+                    ProductViewModels_arr.Where(p => p.Title.StartsWith(SearchQuery)));
             }
             set {
                 notif(nameof(ProductViewModels));
-            } } 
+            } }
 
         private ObservableCollection<CSVResourceVM> _CSVResourcesVMS = new ObservableCollection<CSVResourceVM>();
 
         public ObservableCollection<CSVResourceVM> CSVResourcesVMS
         {
-            get { return _CSVResourcesVMS;  }
+            get { return _CSVResourcesVMS; }
             set { _CSVResourcesVMS = value;
                 _CSVResourcesVMS.CollectionChanged += handl_CSVResourceVMS_CollectionChanged;
                 foreach (var item in _CSVResourcesVMS)
@@ -178,11 +178,11 @@ namespace scraper.ViewModel
 
         public string CurrentWorkspaceName
         {
-            get { return  Path.GetFileName(MainWorkspace?.Directory?? "none"); }
+            get { return Path.GetFileName(MainWorkspace?.Directory ?? "none"); }
         }
 
         private string _TotalRecordsCountString = "0";
-        public string TotalRecordsCountString 
+        public string TotalRecordsCountString
         {
             set { _TotalRecordsCountString = value; notif(nameof(TotalRecordsCountString)); }
             get { return _TotalRecordsCountString; }
@@ -206,12 +206,14 @@ namespace scraper.ViewModel
             get { return _TargetPageQueryText; }
         }
 
-       
-        public enum ElementsViewTypes { Grid=0, List }
-      
+
+        public enum ElementsViewTypes { Grid = 0, List }
+
 
 
         public ObservableCollection<ScrapingTaskVM> ScrapingTasksVMS { get; set; } = new ObservableCollection<ScrapingTaskVM>();
+
+
 
         private ElementsViewTypes _ElementsViewType;
         public ElementsViewTypes ElementsViewType

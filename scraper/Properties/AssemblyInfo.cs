@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("scraper")]
-[assembly: AssemblyDescription("A generic GUI web scraping tool that uses plugins")]
+[assembly: AssemblyDescription("An extensible, plugin-driven GUI web scraping tool")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("scraper")]
