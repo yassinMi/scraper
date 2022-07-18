@@ -9,6 +9,23 @@ namespace FakePluginExternal
 {
     public class FakePluginExternal : IPlugin
     {
+        public IElementDescription ElementDescription
+        {
+            get
+            {
+                return new ElementDescription()
+                {
+                    Name = "Fake Product",
+                    Fields = new Field[]
+                {
+                    new Field() {Name= "Price", NativeType= typeof(double), IsRequired=true },
+                    new Field() {Name= "Price", NativeType= typeof(double), IsRequired=true },
+                }.Cast<IField>(),
+                    ID = "Fake Product 1"
+                };
+            }
+        }
+
         public string ElementName
         {
             get
