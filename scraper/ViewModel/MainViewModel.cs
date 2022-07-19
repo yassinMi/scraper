@@ -18,6 +18,7 @@ using scraper.Core;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
+using scraper.View;
 
 namespace scraper.ViewModel
 {
@@ -348,6 +349,25 @@ namespace scraper.ViewModel
         private void hndlSwitchElementsViewType()
         {
             this.ElementsViewType = (ElementsViewTypes)  (( ((int)ElementsViewType) + 1 )% Enum.GetNames(typeof(ElementsViewTypes)).Count());
+        }
+
+
+        public ICommand OpenWorkspaceCommand { get
+            {
+                return new MICommand(hndlOpenWorkspaceCommand);
+            } }
+
+        private void hndlOpenWorkspaceCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICommand OpenPluginOptionsCommand { get { return new MICommand(hndlOpenPluginOptionsCommand); } }
+
+        private void hndlOpenPluginOptionsCommand()
+        {
+            PluginOptionsWindow pow = new PluginOptionsWindow();
+            pow.ShowDialog();
         }
     }
 }

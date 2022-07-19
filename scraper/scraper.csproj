@@ -146,6 +146,10 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\ScrapingTaskVM.cs" />
+    <Compile Include="ViewModel\UnhandledErrorWindowVM.cs" />
+    <Compile Include="View\PluginOptionsWindow.xaml.cs">
+      <DependentUpon>PluginOptionsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ProductCardView.xaml.cs">
       <DependentUpon>ProductCardView.xaml</DependentUpon>
     </Compile>
@@ -168,6 +172,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ProductView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\PluginOptionsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

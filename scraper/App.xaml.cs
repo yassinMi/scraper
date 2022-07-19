@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace scraper
 {
@@ -19,7 +21,7 @@ namespace scraper
         public Dictionary<string, string> CommandLineArgsDict { get; set; } = new Dictionary<string, string>();
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            AppDomain.CurrentDomain.UnhandledException += HandleException;
+            Current.DispatcherUnhandledException += HandleException;
             AppDomain.CurrentDomain.AssemblyResolve += FindPluginAsm;
             int argc = e.Args.Count();
             if ((argc % 2) != 0)
@@ -32,12 +34,21 @@ namespace scraper
             }
         }
 
-        private void HandleException(object sender, UnhandledExceptionEventArgs e)
+        private void HandleException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             scraper.View.UnhandledErrorWindow w = new View.UnhandledErrorWindow();
+
+            var hvm = new scraper.ViewModel.UnhandledErrorWindowVM();
+            hvm.ExceptionObj = e.Exception;
+            w.DataContext = hvm;
             w.ShowDialog();
+            e.Handled = true;
+            Debug.WriteLine(hvm.DialogChosedAction);
+            App.Current.Shutdown(1);
             
         }
+
+       
 
         private Assembly FindPluginAsm(object sender, ResolveEventArgs args)
         {

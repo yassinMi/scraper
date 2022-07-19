@@ -23,6 +23,9 @@
         
         
         >
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding OpenWorkspaceCommand}" Key="O"/>
+    </Window.InputBindings>
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" 
             UseAeroCaptionButtons="False" ResizeBorderThickness="6" />
@@ -799,7 +802,7 @@
                                         <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" Margin="0,0,6,0" >
                                             <Run>Using plugin: </Run><Run Foreground="{StaticResource SecondaryHueMidBrush}" Text="{Binding CurrentPluginName, FallbackValue=null, Mode=OneWay, StringFormat=\{0\}}"></Run>
                                         </TextBlock>
-                                        <Button Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0">
+                                        <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding OpenPluginOptionsCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0">
                                             <custom:PackIconMaterial Height="12" Width="12" Kind="Cog"/>
                                         </Button>
 

@@ -1,4 +1,4 @@
-﻿<Window x:Class="scraper.View.UnhandledErrorWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,33 +6,66 @@
          xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:scraper.View"
-        TextElement.Foreground="{StaticResource MaterialDesignBody}"
+        xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.View.UnhandledErrorWindow"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Display" 
         TextOptions.TextRenderingMode="Auto"
-        Background="{StaticResource MaterialDesignPaper}"
         FontFamily="Roboto"
         mc:Ignorable="d"
-        Title="Error" Height="195" Width="358" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="Error" Width="358" WindowStartupLocation="CenterScreen" 
+    ResizeMode="CanMinimize" 
+    d:DataContext="{d:DesignInstance {x:Type ViewModel:UnhandledErrorWindowVM}, IsDesignTimeCreatable=True}" 
+    VerticalAlignment="Center" d:DesignHeight="443" SizeToContent="Height">
+    <Window.Resources>
+        <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+        <materialDesign:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <TextElement.Foreground>
+        <StaticResource ResourceKey="MaterialDesignBody"/>
+    </TextElement.Foreground>
+    <Window.Background>
+        <StaticResource ResourceKey="MaterialDesignPaper"/>
+    </Window.Background>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="63*"/>
             <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition/>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <custom:PackIconFontAwesome Kind="ExclamationTriangleSolid" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48" Foreground="#FFFF7313"></custom:PackIconFontAwesome>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" TextWrapping="Wrap" Text="scraper has encountered an error and needs to restart" VerticalAlignment="Center"/>
-        <StackPanel Margin="0,4,10,4" Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2">
-            <Button x:Name="button1" Style="{x:Null}" Content="Close" HorizontalAlignment="Center" Margin="0,0,4,0" Padding="6,2" VerticalAlignment="Center"/>
+        <custom:PackIconFontAwesome Kind="ExclamationTriangleSolid" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48" Foreground="#FFFF7313"/>
+        <StackPanel Margin="8,2,4,8" Grid.Row="1">
+            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="0,10" TextWrapping="Wrap" Text="Please send the details to the devoloper" VerticalAlignment="Center"/>
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="textBlock_Copy2"   HorizontalAlignment="Left" Content="Hide details" Foreground="#FF33C2EC" FontSize="12" VerticalAlignment="Center" Background="#00000000" BorderBrush="#00707070" BorderThickness="0" Visibility="{Binding IsDetailsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding CollapseDetailsCommand, Mode=OneWay}" Margin="0" Padding="4"/>
 
-            <Button x:Name="button" Style="{x:Null}" Content="Restart" HorizontalAlignment="Center" Margin="4,0" Padding="6,2" VerticalAlignment="Center"/>
+                <Button x:Name="textBlock_Copy1"   HorizontalAlignment="Left" Content="Show details" Foreground="#FF33C2EC" FontSize="12" VerticalAlignment="Center" Background="#00000000" BorderBrush="#00707070" BorderThickness="0" Visibility="{Binding IsDetailsExpanded, Converter={StaticResource BooleanToVisibilityInverted}}" Command="{Binding ExpandDetailsCommand, Mode=OneWay}" Padding="4"/>
+                <Button  Content="Copy to clipboad" Foreground="#FF33C2EC" FontSize="12" VerticalAlignment="Center" Background="#00000000" BorderThickness="0" BorderBrush="#00707070" Margin="6,0,0,0" Grid.Column="1" Command="{Binding CopyDetailsCommand, Mode=OneWay}" Padding="4"/>
+
+            </Grid>
         </StackPanel>
-        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="ERROR!" VerticalAlignment="Center" FontSize="16" Margin="15,0,0,0"/>
+        <StackPanel Margin="0,0,10,0" Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Right" Grid.ColumnSpan="2" Width="163" VerticalAlignment="Top">
+            <Button x:Name="button1" Style="{x:Null}" Command="{Binding CloseCommand}" Content="Close scraper" HorizontalAlignment="Center" Margin="0,0,4,0" Padding="6,2" VerticalAlignment="Center"/>
+
+            <Button x:Name="button" Style="{x:Null}" Command="{Binding RestartCommand}" Content="Restart" HorizontalAlignment="Center" Margin="4,0" Padding="6,2" VerticalAlignment="Center"/>
+        </StackPanel>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="An error occured :(" VerticalAlignment="Bottom" FontSize="18.667" Margin="8,0,0,4"/>
+        <RichTextBox materialDesign:TextFieldAssist.UnderlineBrush="Transparent" x:Name="richTextBox" Margin="4" Grid.Row="2" Grid.ColumnSpan="2" Height="120" Visibility="{Binding IsDetailsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}" BorderThickness="0">
+            <FlowDocument>
+                <Paragraph>
+                    <Run  Text="{Binding ExceptionDetailsText}"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
 
     </Grid>
 </Window>
