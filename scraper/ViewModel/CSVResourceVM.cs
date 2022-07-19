@@ -16,7 +16,7 @@ namespace scraper.ViewModel
             FilenameOnly = System.IO.Path.GetFileName(cr.Path.OriginalString);
             IsBadFormat = cr.isbadFormat;
             IsRemoved = cr.isRemoved;
-            FullPath = cr.Path.AbsolutePath;
+            FullPath = cr.Path.OriginalString;
         }
         public CSVResourceVM()
         {

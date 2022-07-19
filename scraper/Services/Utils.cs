@@ -6,11 +6,60 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace scraper.Services
 {
     public static class Utils
     {
+
+
+
+        public static string CreateMD5(string input)
+        {
+            // Use input string to calculate MD5 hash
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+
+                StringBuilder sb = new System.Text.StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+                return sb.ToString();
+            }
+        }
+
+
+        public static string StripHTML(string htmlStr)
+        {
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(htmlStr);
+            var root = doc.DocumentNode;
+            string s = "";
+            foreach (var node in root.DescendantsAndSelf())
+            {
+                if (!node.HasChildNodes)
+                {
+                    string text = node.InnerText;
+                    if (!string.IsNullOrEmpty(text))
+                        s += text.Trim() + " ";
+                }
+            }
+            return s.Trim();
+        }
+
+
+        private static readonly Regex InvalidFileRegex = new Regex(
+    string.Format("[{0}]", Regex.Escape(@"<>:""/\|?*")));
+
+        public static string SanitizeFileName(string fileName)
+        {
+            return InvalidFileRegex.Replace(fileName, string.Empty);
+        }
 
         public static Process constructProcess(string filename, string args, string workingDir)
         {
@@ -38,6 +87,7 @@ namespace scraper.Services
         /// <returns></returns>
         public static bool checkCSV(string path,  out int rowsCount, out int validRowsCount)
         {
+            Debug.WriteLine("parsing csv: " + path);
             using (TextFieldParser csvParser = new TextFieldParser(path))
             {
                 rowsCount = 0;
@@ -52,19 +102,21 @@ namespace scraper.Services
                     rowsCount++;
                     try
                     {
+                        //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
                         string[] fields = csvParser.ReadFields();
-                        isCurrentRowValid &= (fields.Count() == 7);
-                        string id = fields[0];
-                        string title = fields[1];
-                        string upc = fields[2];
-                        string sku = fields[3];
-                        string price = fields[4];
-                        string img = fields[5];
-                        string link = fields[6];
-                        double price_d = 0;
-                        isCurrentRowValid &= id.Length > 0 && title.Length > 0 && upc.Length > 0 && sku.Length > 0 && img.Length > 0 && link.Length > 0;
+                        isCurrentRowValid &= (fields.Count() == 10);
+                        string name = fields[0];
+                        string address = fields[1];
+                        string phonenumber = fields[2];
+                        string email = fields[3];
+                        string employees = fields[4];
+                        string website = fields[5];
+                        string imageUrl = fields[6];
+                        string link = fields[7];
+                        string desc = fields[8];
+                        isCurrentRowValid &= name.Length > 0 && address.Length > 0 && name.Length > 0 && link.Length > 0 && link.Length > 0 && link.Length > 0;
 
-                        isCurrentRowValid &= double.TryParse(price, out price_d);
+                       
                         if (isCurrentRowValid)
                         {
                             validRowsCount++;
@@ -88,8 +140,9 @@ namespace scraper.Services
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static IEnumerable<Product> parseCSVfile(string path)
+        public static IEnumerable<Business> parseCSVfile(string path)
         {
+            Debug.WriteLine("parsing csv: " + path);
             using (TextFieldParser csvParser = new TextFieldParser(path))
             {
                 csvParser.CommentTokens = new string[] { "#" };
@@ -101,18 +154,36 @@ namespace scraper.Services
                 while (!csvParser.EndOfData)
                 {
                     //parsing current row
-                    //as : id,title,upc,sku,price,img,link
+                    /*name;
+        public string description;
+        public string website;
+        public string phonenumber, email;
+        public string link;
+        public string employees;
+        public string imageUrl;*/
+                    //as : name,address,phonenumber,email,employees,website,imageUrl,id
                     string[] fields = csvParser.ReadFields();
-                    string id = fields[0];
-                    string title = fields[1];
-                    string upc = fields[2];
-                    string sku = fields[3];
-                    string price = fields[4];
-                    string img = fields[5];
-                    string link = fields[6];
-                    double price_d = 0;
-                    double.TryParse(price, out price_d);
-                    yield return new Product() { ID = (ProductID) id, title = title, upc = upc, sku = sku, price = price_d, imageUrl = img, link = link };
+                    string name = fields[0];
+                    string address = fields[1];
+                    string phonenumber = fields[2];
+                    string email = fields[3];
+                    string employees = fields[4];
+                    string website = fields[5];
+                    string imageUrl = fields[6];
+                    string link = fields[7];
+                    string desc = fields[8];
+                    string id = fields[9];
+                    yield return new Business() {
+                        name = name,
+                        address = address,
+                        phonenumber = phonenumber,
+                        email = email,
+                        employees = employees,
+                        website = website,
+                        imageUrl = imageUrl,
+                        link = link,
+                        
+                    };
                 }
             }
         }

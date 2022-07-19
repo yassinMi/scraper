@@ -14,17 +14,19 @@ using System.Windows;
 
 namespace scraper.ViewModel
 {
-    public class ProductViewModel : BaseViewModel
+    public class BusinessViewModel : BaseViewModel
     {
-        public ProductViewModel(Product p)
+        public BusinessViewModel(Business p)
         {
-            Price = p.price;
-            Title = p.title;
-            UPC = p.upc;
-            SKU = p.sku;
+            //Name, address,Phonenumber,MobilePhonenumberEmail, Employees,deligation, etc.
+            Name = p.name;
+            Description = p.description;
+            PhoneNumber = p.phonenumber;
+            Email = p.email;
             Link = p.link;
             ImgUrl = p.imageUrl;
             ID =  p.ID;
+            this.Employees = p.employees;
             try
             {
                 Website = new Uri(p.link).Host;
@@ -36,11 +38,11 @@ namespace scraper.ViewModel
             }
             
         }
-        private double _Price;
-        public double Price
+        private string _Name;
+        public string Name
         {
-            set { _Price = value; notif(nameof(Price)); }
-            get { return _Price; }
+            set { _Name = value; notif(nameof(Name)); }
+            get { return _Name; }
         }
 
         private IElementID _ID;
@@ -50,19 +52,26 @@ namespace scraper.ViewModel
             get { return _ID; }
         }
 
-        private string _UPC;
-        public string UPC
+        private string _PhoneNumber;
+        public string PhoneNumber
         {
-            set { _UPC = value; notif(nameof(UPC)); }
-            get { return _UPC; }
+            set { _PhoneNumber = value; notif(nameof(PhoneNumber)); }
+            get { return _PhoneNumber; }
         }
 
 
-        private string _SKU;
-        public string SKU
+        private string _Email;
+        public string Email
         {
-            set { _SKU = value; notif(nameof(SKU)); }
-            get { return _SKU; }
+            set { _Email = value; notif(nameof(Email)); }
+            get { return _Email; }
+        }
+
+        private string _Employees;
+        public string Employees
+        {
+            set { _Employees = value; notif(nameof(Employees)); }
+            get { return _Employees; }
         }
 
 
@@ -81,11 +90,11 @@ namespace scraper.ViewModel
             get { return _Link; }
         }
 
-        private string _Title;
-        public string Title
+        private string _Description;
+        public string Description
         {
-            set { _Title = value; notif(nameof(Title)); }
-            get { return _Title; }
+            set { _Description = value; notif(nameof(Description)); }
+            get { return _Description; }
         }
 
         private string _ImgUrl;
@@ -98,16 +107,19 @@ namespace scraper.ViewModel
         public ImageSource ImgSrc
         {
             
-            get { return new BitmapImage(new Uri(@"E:\TOOLS\scraper\scraper\scripts\" + ImgUrl)); }
+            get {
+                if(File.Exists(Path.Combine(Workspace.Current.Directory, ImgUrl))){
+                    return new BitmapImage(new Uri(Path.Combine(Workspace.Current.Directory, ImgUrl)));
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
 
-        private Rating _Rating;
-        public Rating Rating
-        {
-            set { _Rating = value; notif(nameof(Rating)); }
-            get { return _Rating; }
-        }
+      
 
         private void hndlCopyToClipCommand(string propToCopy)
         {
@@ -115,9 +127,9 @@ namespace scraper.ViewModel
             {
                 case "link": Clipboard.SetText(this.Link); break;
 
-                case "upc": Clipboard.SetText(this.UPC); break;
+                case "phone": Clipboard.SetText(this.PhoneNumber); break;
 
-                case "sku": Clipboard.SetText(this.SKU); break;
+                case "email": Clipboard.SetText(this.Email); break;
                 default:
                     break;
             }

@@ -28,15 +28,18 @@ namespace scraper
     {
         public MainWindow()
         {
+            string blWSpath = @"E:\TOOLS\scraper\tests.yass\blWorkspace";
+            string generalWStestPath = @"E:\TOOLS\scraper\tests.yass\myTestWorkspace";
             // App.Current.
             string ws_path;
             if( (App.Current as App).CommandLineArgsDict.TryGetValue("-workspace", out ws_path)== false)
             {
-                ws_path = @"E:\TOOLS\scraper\tests.yass\myTestWorkspace"; //dev only
+                ws_path = blWSpath; //dev only
             }
+            Workspace.MakeCurrent(ws_path);
             var ws = Workspace.GetWorkspace(ws_path);
-            IPlugin p = new FakePlugin();
-            p = PluginsManager.GetGlobalPlugins().First();
+            IPlugin p = new BLScraper() {WorkspaceDirectory = ws.Directory };
+           // p = PluginsManager.GetGlobalPlugins().First();
             InitializeComponent();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;

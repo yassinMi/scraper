@@ -8,7 +8,7 @@ namespace scraper.Services
 {
     public sealed class FakeWebHelper : WebHelper
     {
-
+        
     }
 
 }

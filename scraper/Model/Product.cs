@@ -25,22 +25,23 @@ namespace scraper.Model
     }
 
 
-    public class Product : IElement
+    public class Business : IElement
     {
+        //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
 
+
+        public string name { get; set; }
+        public string address { get; set; }
+        public string phonenumber { get; set; }
+        public string email { get; set; }
+        public string employees { get; set; }
+        public string website { get; set; }
+        public string imageUrl { get; set; }
+        public string link { get; set; }
+        public string description { get; set; }
         public IElementID ID { get; set; }
 
-        public double price;
-        public string title;
-        public string website;
-        public string upc, sku;
-        public string link;
-        public Rating rating;
-        public bool isAvailableOnAmazon;
-        public double amazonPrice;
-        public string amazonLink;
-        public string imageUrl;
 
-        
+
     }
 }

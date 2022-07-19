@@ -28,7 +28,7 @@ namespace scraper.View
 
         private void sku_val2_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var pvm = ((ProductViewModel)DataContext);
+            var pvm = ((BusinessViewModel)DataContext);
             if (pvm != null)
             {
                 pvm.CopyToClipCommand.Execute("sku");

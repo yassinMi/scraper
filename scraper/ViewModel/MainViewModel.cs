@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using scraper.Core;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Windows.Data;
 
 namespace scraper.ViewModel
 {
@@ -74,13 +76,16 @@ namespace scraper.ViewModel
                 return new CSVResourceVM(sr);
             }));
             notif(nameof(CurrentPluginName));
+
+            ScrapingTasksVMS = new ObservableCollection<ScrapingTaskVM>();
+
         }
 
 
 
         IPlugin MainPlugin;
         Workspace MainWorkspace;
-        IEnumerable<ProductViewModel> ProductViewModels_arr = new List<ProductViewModel>();
+        IEnumerable<BusinessViewModel> BusinessViewModels_arr = new List<BusinessViewModel>();
 
 
         private string _CurrentPluginName;//to be extended to more detailed PluginInfo struct
@@ -109,11 +114,11 @@ namespace scraper.ViewModel
             //logic that need to be performed when some items changest's IsActive
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
 
-            ProductViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ProductViewModel>>(new List<ProductViewModel>(), (i, csvVM) => {
-                return i.Concat(Utils.parseCSVfile(csvVM.FullPath).Select(p => new ProductViewModel(p)));
+            BusinessViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<BusinessViewModel>>(new List<BusinessViewModel>(), (i, csvVM) => {
+                return i.Concat(Utils.parseCSVfile(csvVM.FullPath).Select(p => new BusinessViewModel(p)));
             });
-            ProductViewModels = new ObservableCollection<ProductViewModel>(ProductViewModels_arr);
-            notif(nameof(ProductViewModels));
+            BusinessesViewModels = new ObservableCollection<BusinessViewModel>(BusinessViewModels_arr);
+            notif(nameof(BusinessesViewModels));
             await Task.Delay(0);
 
 
@@ -137,12 +142,12 @@ namespace scraper.ViewModel
 
 
 
-        public ObservableCollection<ProductViewModel> ProductViewModels { get {
-                return new ObservableCollection<ProductViewModel>(
-                    ProductViewModels_arr.Where(p => p.Title.StartsWith(SearchQuery)));
+        public ObservableCollection<BusinessViewModel> BusinessesViewModels { get {
+                return new ObservableCollection<BusinessViewModel>(
+                    BusinessViewModels_arr.Where(p => p.Name.ToLower().Contains(SearchQuery.ToLower().Trim())));
             }
             set {
-                notif(nameof(ProductViewModels));
+                notif(nameof(BusinessesViewModels));
             } }
 
         private ObservableCollection<CSVResourceVM> _CSVResourcesVMS = new ObservableCollection<CSVResourceVM>();
@@ -193,7 +198,7 @@ namespace scraper.ViewModel
         public string SearchQuery
         {
             set { _SearchQuery = value; notif(nameof(SearchQuery));
-                notif(nameof(ProductViewModels));
+                notif(nameof(BusinessesViewModels));
             }
             get { return _SearchQuery; }
         }
@@ -210,8 +215,16 @@ namespace scraper.ViewModel
         public enum ElementsViewTypes { Grid = 0, List }
 
 
+        private ObservableCollection<ScrapingTaskVM> _ScrapingTasksVMS;
+        public ObservableCollection<ScrapingTaskVM> ScrapingTasksVMS { get {
+                return _ScrapingTasksVMS;
+            } set {
+                _ScrapingTasksVMS = value;
+                BindingOperations.EnableCollectionSynchronization(_ScrapingTasksVMS, ScrapingTasksVMS_lock);
 
-        public ObservableCollection<ScrapingTaskVM> ScrapingTasksVMS { get; set; } = new ObservableCollection<ScrapingTaskVM>();
+
+            }
+        } 
 
 
 
@@ -223,18 +236,44 @@ namespace scraper.ViewModel
         }
 
 
-        public async void handleStartScrapingCommand()
+        private async void handleStartScrapingCommand()
         {
+            Debug.WriteLine("handleStartScrapingCommand");
+
             var newScrapTask = MainPlugin.GetTask(TargetPageQueryText);
+            Debug.WriteLine("new ScrapingTaskVM");
+
             var tvm = new ScrapingTaskVM(newScrapTask);
+            Debug.WriteLine("nadd");
+
+            
             ScrapingTasksVMS.Add(tvm);
+            Debug.WriteLine("stage");
+
 
             newScrapTask.Stage = ScrapTaskStage.DownloadingData;
+            Debug.WriteLine("RunScraper");
+
             await newScrapTask.RunScraper();
             newScrapTask.Stage = ScrapTaskStage.ConvertingData;
             await newScrapTask.RunConverter();
 
-           // Debug.WriteLine("return code is: scraper:" + res.ToString()+", converter:"+ res_c.ToString());
+            // Debug.WriteLine("return code is: scraper:" + res.ToString()+", converter:"+ res_c.ToString());
+        }
+
+        //for testing
+        public TaskAwaiter scrapingTaskAwaiter { get; set; }
+
+        public  void callScrapingTask()
+        {
+            Debug.WriteLine("callScrapingTask");
+            Task tsl = new Task(handleStartScrapingCommand);
+            Debug.WriteLine("getting awaiter");
+            scrapingTaskAwaiter = tsl.GetAwaiter();
+            Debug.WriteLine("starting tsll");
+
+            tsl.Start();
+
         }
         private bool canExecuteStartScrapingCommand()
         {
@@ -248,15 +287,17 @@ namespace scraper.ViewModel
                 return false;
             }
             string website = uri.Host.ToLower();
-            if (!((website=="microcenter.com")|| (website == "www.microcenter.com"))) return false;
+            if (!((website== "www.businesslist.ph") )) return false;
             return true;
         }
         private ICommand _StartScrapingCommand = null;
+        private object ScrapingTasksVMS_lock = new object();
+
         /// <summary>
         /// starts scraing , takes no argument, only uses the query string
         /// </summary>
         public ICommand StartScrapingCommand { get {
-                if(_StartScrapingCommand==null) _StartScrapingCommand = new MICommand(handleStartScrapingCommand, canExecuteStartScrapingCommand);
+                if(_StartScrapingCommand==null) _StartScrapingCommand = new MICommand(callScrapingTask, canExecuteStartScrapingCommand);
 
                 return _StartScrapingCommand;
             } }
@@ -270,10 +311,10 @@ namespace scraper.ViewModel
                     return;
                 var lst = Utils.parseCSVfile(maybeFile).Select((p) =>
                 {
-                    return new ProductViewModel(p);
+                    return new BusinessViewModel(p);
                 }).ToList();
-                ProductViewModels_arr = new ObservableCollection<ProductViewModel> (lst);
-                notif(nameof( ProductViewModels));
+                BusinessViewModels_arr = new ObservableCollection<BusinessViewModel> (lst);
+                notif(nameof( BusinessesViewModels));
                 
 
             });

@@ -18,6 +18,7 @@ namespace scraper.Services
     public class WebHelper:  HttpClient, IWebHelper
     {
 
+        public static WebHelper instance { get; set; } = new WebHelper();
         public string GetPageTextSync(string pageUrl)
         {
             return this.GetStringAsync(pageUrl).GetAwaiter().GetResult();

@@ -301,7 +301,7 @@
                         <Grid x:Name="filtersSection" Grid.Row="2" Margin="4,0,0,0" VerticalAlignment="Top"/>
 
                         <StackPanel Grid.Row="2">
-                            <Expander HorizontalAlignment="Stretch" Header="Websites" Background="#00571919">
+                            <Expander HorizontalAlignment="Stretch" Header="Categories" Background="#00571919">
                                 <WrapPanel VerticalAlignment="Top" d:LayoutOverrides="Width" Margin="4,0">
                                     <CheckBox
                                 			Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
@@ -315,7 +315,7 @@
                             </Expander>
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
 
-                            <Expander HorizontalAlignment="Stretch" Header="Price" Background="#00571919">
+                            <Expander HorizontalAlignment="Stretch" Header="Locations" Background="#00571919">
                                 <StackPanel Orientation="Vertical"  Margin="24,8,24,16">
                                     <Grid x:Name="price_filter" Height="40" VerticalAlignment="Top" d:LayoutOverrides="TopPosition, BottomPosition" HorizontalAlignment="Left" Margin="2,0">
                                         <Grid.ColumnDefinitions>
@@ -352,7 +352,7 @@
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
                             <Expander
       HorizontalAlignment="Stretch"
-      Header="Rating" Background="#00763838">
+      Header="Year" Background="#00763838">
                                 <StackPanel
         Orientation="Vertical"
         Margin="24,8,24,16">
@@ -399,12 +399,12 @@
                     </Grid>
                     <Grid x:Name="sidePanel" Grid.Column="2" Margin="4" Grid.RowSpan="2" Grid.Row="1">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="180"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth0" Padding="4"
                     		Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-                    		UniformCornerRadius="10" FontFamily="Roboto" Background="#FF252525" Margin="0,2,0,4" Grid.Row="1" MaxHeight="350">
+                    		UniformCornerRadius="10" FontFamily="Roboto" Background="#FF252525" Margin="0,2,0,4" MaxHeight="350">
                             <Grid Margin="0,0,0,2">
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -418,51 +418,15 @@
                                                 <RowDefinition Height="20"/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="targetwebsite.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="www.businesslist.ph" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
                                             <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
                                                 <Grid Height="27" Margin="0">
-                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
-                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" FontWeight="Bold"><Run Text="624"/></TextBlock>
+                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="businesses"/>
+                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" FontWeight="Bold" Text="-"/>
                                                 </Grid>
                                                 <Grid Height="27" Margin="0">
-                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
-                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="3" FontWeight="Bold"/>
-                                                </Grid>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-                                    <Border Height="60" Margin="10,4" CornerRadius="10" Padding="6" Visibility="Collapsed" d:IsHidden="True">
-                                        <Border.Background>
-                                            <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
-                                                <GradientStop Color="#26000000" Offset="0"/>
-                                                <GradientStop Color="#4C000000" Offset="1"/>
-                                            </LinearGradientBrush>
-                                        </Border.Background>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="20"/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="secondwebsite.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
-                                            <TextBlock Style="{StaticResource MaterialDesignHeadline2TextBlock}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="21.333" FontFamily="Dosis Medium" TextOptions.TextFormattingMode="Ideal" Margin="0" Grid.Row="1" Text="233"/>
-                                        </Grid>
-                                    </Border>
-                                    <Border Margin="6,6,6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6">
-
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="20"/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="secondwebsite.com" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
-                                            <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
-                                                <Grid Height="27" Margin="0">
-                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
-                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0" FontWeight="Bold"/>
-                                                </Grid>
-                                                <Grid Height="27" Margin="0">
-                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
-                                                    <TextBlock   VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0" FontWeight="Bold"/>
+                                                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="locations"/>
+                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="-" FontWeight="Bold"/>
                                                 </Grid>
                                             </StackPanel>
                                         </Grid>
@@ -476,51 +440,6 @@
                                         <Image Source="media/img/svg-22-white-regular.png" Width="22" Height="22" VerticalAlignment="Center" Margin="4,0,0,0" ></Image>
                                     </StackPanel>
                                 </Button>
-
-
-                            </Grid>
-
-
-                        </materialDesign:Card>
-                        <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth0" Padding="4"
-                        	Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-                        	UniformCornerRadius="10" FontFamily="Roboto" Background="#FF252525" Margin="0,2,0,0">
-                            <Grid Margin="0,0,0,2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition Height="48"/>
-                                </Grid.RowDefinitions>
-
-                                <Border Margin="6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6" d:LayoutOverrides="Height, TopMargin, BottomMargin" Grid.ColumnSpan="2">
-
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="20"/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="compare with amazon" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
-                                        <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
-                                            <Grid Height="27" Margin="0">
-                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="matched by upc"/>
-                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" FontWeight="Bold" Text="0"/>
-                                            </Grid>
-                                            <Grid Height="27" Margin="0">
-                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="not found"/>
-                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0" FontWeight="Bold"/>
-                                            </Grid>
-                                            <Grid Height="27" Margin="0">
-                                                <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="unresolved"/>
-                                                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="624" FontWeight="Bold"/>
-                                            </Grid>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                                <Button x:Name="button3_Copy" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Background="{StaticResource SecondaryHueDarkBrush}"  Content="STOP" Height="Auto" Margin="4,0,10,0" Grid.Row="1" VerticalAlignment="Center" Padding="10,8" Foreground="WhiteSmoke" Grid.Column="1" d:LayoutOverrides="Width"/>
-                                <Button x:Name="button3_Copy1" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Background="{StaticResource SecondaryHueDarkBrush}"  Content="START" Height="Auto" Margin="10,8,4,8" Grid.Row="1" VerticalAlignment="Center" Padding="10,8" Foreground="WhiteSmoke" d:LayoutOverrides="Width"/>
 
 
                             </Grid>
@@ -569,7 +488,7 @@
                             </Button>
                         </Grid>
                         <Grid x:Name="contentSection" Grid.Row="1" Margin="0,6,0,0">
-                            <DataGrid ItemsSource="{Binding ProductViewModels}" Visibility="{Binding ElementsViewType, ConverterParameter=Grid, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}"></DataGrid>
+                            <DataGrid ItemsSource="{Binding BusinessesViewModels}" Visibility="{Binding ElementsViewType, ConverterParameter=Grid, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}"></DataGrid>
                             <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" ItemsSource="{Binding ProductViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -883,7 +802,7 @@
                                         <Button Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0">
                                             <custom:PackIconMaterial Height="12" Width="12" Kind="Cog"/>
                                         </Button>
-                                        
+
                                     </StackPanel>
 
                                 </Grid>
@@ -999,7 +918,7 @@
                 </TabItem.Header>
             </TabItem>
             <Grid>
-                
+
             </Grid>
         </TabControl>
         <Grid x:Name="windowControl" Grid.ColumnSpan="2">

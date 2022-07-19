@@ -48,8 +48,8 @@ namespace Mi.Common
         //private ObservableCollection<CLWPresetDeclaration> cLWPresetsDeclarations  = new ObservableCollection<CLWPresetDeclaration>();
         private string _WorkspaceDirectory = null;
         private string _TargetPagesRelativeLocation = "target-pages";
-        private string _ProductsImagesRelativeLocation = "products-raw/img";
-        private string _ProductsHTMLRelativeLocation = "products-raw/html";
+        private string _ProductsImagesRelativeLocation = "companies-raw/img";
+        private string _ProductsHTMLRelativeLocation = "companies-raw/html";
         private string _CSVOutputRelativeLocation = "csv";
         //private string rememberedDownloadOutputDirectory  = MI.DEFAULT_GLOBAL_OUTPUT_DIR;
         //private OverrideBehaviour defaultOverrideBehaviour  = OverrideBehaviour.Override;

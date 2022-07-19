@@ -15,7 +15,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300">
     <Grid>
-        <materialDesign:Card Height="64" Margin="0,4" materialDesign:ShadowAssist.ShadowDepth="Depth0"  VerticalAlignment="Top" FontFamily="Roboto" Background="#00303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width" d:DataContext="{d:DesignInstance {x:Type ViewModel:ProductViewModel}}">
+        <materialDesign:Card Height="64" Margin="0,4" materialDesign:ShadowAssist.ShadowDepth="Depth0"  VerticalAlignment="Top" FontFamily="Roboto" Background="#00303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width" d:DataContext="{d:DesignInstance {x:Type ViewModel:BusinessViewModel}}">
             <Grid Margin="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="18*"/>

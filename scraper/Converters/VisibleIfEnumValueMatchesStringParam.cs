@@ -24,8 +24,7 @@ namespace Converters
             {
                 return Visibility.Visible;
             }
-            Console.WriteLine("ok: " + Enum.GetName(value.GetType(), (Enum)value));
-            Console.WriteLine("ok2: " + (string)parameter);
+           
             return (Enum.GetName(value.GetType(), (Enum)value) ==((string)parameter)? Visibility.Visible : Visibility.Collapsed);
         }
 
