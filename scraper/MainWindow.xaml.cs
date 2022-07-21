@@ -195,6 +195,7 @@ namespace scraper
             if (dc != null)
             {
                 dc.SelectionCount = elementsDatagrid.SelectedItems.Count;
+                dc.DataGridSelectedItemsRef = elementsDatagrid.SelectedItems.Cast<BusinessViewModel>();
             }
             
         }

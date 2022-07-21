@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using CsvHelper;
 using System.Collections;
 using System.IO;
+using System.Globalization;
 
 namespace scraper.Services
 {
@@ -214,7 +215,7 @@ namespace scraper.Services
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static IEnumerable<Business> parseCSVfile(string path)
+        public static IEnumerable<Business> parseCSVfile_old(string path)
         {
             Debug.WriteLine("parsing csv: " + path);
             using (TextFieldParser csvParser = new TextFieldParser(path))
@@ -263,6 +264,43 @@ namespace scraper.Services
                     };
                 }
             }
+        }
+
+
+        public static IEnumerable<Business> parseCSVfile(string path)
+        {
+            Debug.WriteLine("parsing csv: " + path);
+            bool fileExixsts = File.Exists(path);
+            Trace.Assert(fileExixsts, $"file '{path}' doesnt exist");
+            if (fileExixsts == false)
+            {
+                return null;
+            }
+            List<Business> list = new List<Business>();
+            using (var reader = new StreamReader(path))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                list =  csv.GetRecords<Business>().ToList();
+            }
+
+            return list;
+            
+                //company, contactPerson,address,phonenumber,email,employees,website,year,imageUrl,link,description
+                /*return cr.EnumerateRecords(record).Select(r => new Business() {
+                    company = r.company,
+                    contactPerson = r.contactPerson,
+                    address = r.address,
+                    phonenumber = r.phonenumber,
+                    email = r.email,
+                    employees = r.employees,
+                    year = r.year,
+                    imageUrl = r.imageUrl,
+                    link = r.link,
+                    description = r.description
+                }
+                );*/
+
+            
         }
 
     }

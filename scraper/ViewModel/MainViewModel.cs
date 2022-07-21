@@ -20,6 +20,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using scraper.View;
 using scraper.Plugin;
+using System.Windows;
+using System.Collections;
 
 namespace scraper.ViewModel
 {
@@ -144,17 +146,34 @@ namespace scraper.ViewModel
         }
 
 
-
+        public void cleanCheckCSVResorces()
+        {
+            
+            List<CSVResourceVM> tobeRemoved = new List<CSVResourceVM>( CSVResourcesVMS.Where(v =>
+            {
+                v.recheck();
+                return v.IsRemoved;
+            }));
+            foreach (var item in tobeRemoved)
+            {
+                CSVResourcesVMS.Remove(item);
+            }
+        }
 
         public ObservableCollection<IPlugin> GlobalUserPlugins { get; set; } = new ObservableCollection<IPlugin>();
 
         private async void onDirtyCSVResourceVMSelection()
         {
+
+            cleanCheckCSVResorces();
+            
             //logic that need to be performed when some items changest's IsActive
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
 
             BusinessViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<BusinessViewModel>>(new List<BusinessViewModel>(), (i, csvVM) => {
-                return i.Concat(Utils.parseCSVfile(csvVM.FullPath).Select(p => new BusinessViewModel(p)));
+                var enumerated = Utils.parseCSVfile(csvVM.FullPath);
+                if (enumerated == null) return i;
+                return i.Concat(enumerated.Select(p => new BusinessViewModel(p)));
             });
             BusinessesViewModels = new ObservableCollection<BusinessViewModel>(BusinessViewModels_arr);
             notif(nameof(BusinessesViewModels));
@@ -494,6 +513,59 @@ namespace scraper.ViewModel
             : variant == "9" ? @"https://www.businesslist.ph/location/santa-rosa-city"
             : "";
             StartScrapingCommand.Execute(null);
+        }
+
+        public ICommand SaveResultsCommand { get { return new MICommand(hndlSaveResultsCommand, canExecuteSaveResultsCommand); } }
+
+        private bool canExecuteSaveResultsCommand()
+        {
+            return BusinessesViewModels.Count > 0;
+        }
+
+        private void hndlSaveResultsCommand()
+        {
+            
+            IOUtils.PromptSavingPathAsync(".csv", (s, canceled) =>
+            {
+                if (!canceled)
+                {
+                    Utils.CSVOverwriteRecords(s, BusinessesViewModels.Select(vm => vm.Model));
+                    MessageBox.Show($"Saved to s{s}","Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                
+            },"Save results","CSV File|*.csv|All Files|*");
+        }
+
+        public ICommand SaveSelectionCommand { get { return new MICommand(hndlSaveSelectionCommand, canExecuteSaveSelectionCommand); } }
+
+        public IEnumerable<BusinessViewModel> DataGridSelectedItemsRef { get; internal set; }
+
+        private bool canExecuteSaveSelectionCommand()
+        {
+            return SelectionCount > 0;
+        }
+
+        private void hndlSaveSelectionCommand()
+        {
+            IOUtils.PromptSavingPathAsync(".csv", (s, canceled) =>
+            {
+                if (!canceled)
+                {
+
+                    if((DataGridSelectedItemsRef?.Any() ??false)!=false)
+                    {
+                        Utils.CSVOverwriteRecords(s, (DataGridSelectedItemsRef as IEnumerable<BusinessViewModel>)?.Select(vm => vm.Model));
+                        MessageBox.Show($"Saved to s{s}", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("ca");
+                }
+
+            }, "Save selection", "CSV File|*.csv|All Files|*");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using scraper.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,8 +77,9 @@ namespace scraper.ViewModel
             get { return _FullPath; }
         }
 
-
-
-
+        internal void recheck()
+        {
+            IsRemoved = File.Exists(FullPath) == false;
+        }
     }
 }

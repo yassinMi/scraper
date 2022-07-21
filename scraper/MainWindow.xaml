@@ -294,7 +294,7 @@
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
 			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
-			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityInverted}}">
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" Visibility="{Binding IsWorkspaceSetupModern, Converter={StaticResource BooleanToVisibilityInverted}}" >
             <TabItem x:Name="overview"  
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
@@ -454,6 +454,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
                                     <RowDefinition Height="48"/>
+                                    <RowDefinition Height="48"/>
                                 </Grid.RowDefinitions>
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                                     <Border Margin="6,4" Background="{StaticResource MaterialDesignPaper}" CornerRadius="8" Padding="6">
@@ -479,12 +480,18 @@
 
 
                                 </StackPanel>
-                                <Button x:Name="button3" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  Height="Auto" Margin="10,0" Grid.Row="1" VerticalAlignment="Center" Padding="10,5">
+                                <Button x:Name="saveResultsButt" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  Height="Auto" Margin="10,0" Grid.Row="1" VerticalAlignment="Center" Padding="10,8" ToolTip="Save the elements of the grid into a new file" Command="{Binding SaveResultsCommand, Mode=OneWay}">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock VerticalAlignment="Center" Text="SAVE AS CSV" />
-                                        <Image Source="media/img/svg-22-white-regular.png" Width="22" Height="22" VerticalAlignment="Center" Margin="4,0,0,0" ></Image>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding BusinessesViewModels.Count, FallbackValue=SAVE RESULTS, Mode=OneWay, StringFormat=SAVE RESULTS (\{0\})}" />
+                                        <Image Source="media/img/svg-22-white-regular.png" Width="22" Height="22" VerticalAlignment="Center" Margin="4,0,0,0" Visibility="Collapsed" ></Image>
                                     </StackPanel>
                                 </Button>
+                                <Button x:Name="saveSelection" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  Height="Auto" Margin="10,0" Grid.Row="2" VerticalAlignment="Center" Padding="10,8" ToolTip="Save the selected elements of the grid into a new file" Command="{Binding SaveSelectionCommand, Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding SelectionCount, FallbackValue=SAVE SELECTION, StringFormat=SAVE SELECTION (\{0\})}" />
+                                    </StackPanel>
+                                </Button>
+
 
 
                             </Grid>

@@ -18,6 +18,7 @@ namespace scraper.ViewModel
     {
         public BusinessViewModel(Business p)
         {
+            Model = p;
             //Name, address,Phonenumber,MobilePhonenumberEmail, Employees,deligation, etc.
             Name = p.company;
             Description = p.description;
@@ -33,6 +34,9 @@ namespace scraper.ViewModel
             
             
         }
+
+        public Business Model { get; set; }
+
         private string _Name;
         public string Name
         {
