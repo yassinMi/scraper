@@ -2,6 +2,8 @@
 //started versioning 25-jun-2022 scraper project
 //doesn't tuse ookii package anymore
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using scraper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,28 +19,55 @@ namespace Mi.Common
 
 
 
-       
-        public static void PromptPickingDirectory(string title = "Chose drectory")
+
+
+        /// <summary>
+        /// NOTE: the boolean param is true if the selection was canceled, 
+        /// NOTE: runs async
+        /// </summary>
+        /// <param name="title">window title</param>
+        /// <param name="CallbackAction">what to do with the path and canceled boolean</param>
+        /// <param name=""></param>
+        public static void PromptPickingDirectory( Action<string, bool> CallbackAction , string title = "Chose directory")
         {
-           /* var saveDialog = new 
-            {
-                DefaultExt = ext,
-                Title = title,
-                Filter = filter,
-                CheckPathExists = true,
-                OverwritePrompt = true,
-                RestoreDirectory = true
-            };
+            Debug.WriteLine("PromptPickingDirectory");
+            
+                try
+                {
+                    App.Current.MainWindow.Dispatcher.Invoke(() =>
+                    {
+                        CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+                        dialog.IsFolderPicker = true;
 
-            bool? notcanceled = saveDialog.ShowDialog();
+                        dialog.Title = title;
+                        if (dialog.ShowDialog(App.Current.MainWindow) == CommonFileDialogResult.Ok)
+                        {
+                            Debug.WriteLine("ok");
+                            CallbackAction(dialog.FileName, false);
+                            return;
 
-            if (notcanceled.HasValue == false || notcanceled.Value == false) return "";
-            if (string.IsNullOrWhiteSpace(saveDialog.FileName) == false)
-            {
-                return saveDialog.FileName;
-            }
-            else return "";*/
+                        }
+                        else
+                        {
+                            Debug.WriteLine("else");
+                            CallbackAction("", true);
+                            return;
+                        }
+                    });
+                    
+                }
+                catch (Exception e)
+                {
+
+                    Debug.WriteLine(e.ToString());
+                }
+                
+           
+            
+        
+            
         }
+    
 
 
 

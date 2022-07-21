@@ -294,7 +294,7 @@
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
 			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
-			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" Visibility="{Binding IsWorkspaceSetupModern, Converter={StaticResource BooleanToVisibilityInverted}}" >
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityInverted}}" >
             <TabItem x:Name="overview"  
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
@@ -877,7 +877,11 @@
             								materialDesign:TextFieldAssist.HasLeadingIcon="True"
             								materialDesign:HintAssist.Hint="Products page URL"
             								materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-            								FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,16,0" KeyDown="TextBox_KeyDown" />
+            								FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,16,0" KeyDown="TextBox_KeyDown" >
+                                                <TextBox.InputBindings>
+                                                    <KeyBinding Command="{Binding StartScrapingCommand}" Key="Return"/>
+                                                </TextBox.InputBindings>
+                                            </TextBox>
                                             <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0,0,16,0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task"/>
                                             <StackPanel  Orientation="Horizontal"   Grid.Row="1">
                                                 <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" Margin="0,0,6,0" ><Run Text="Using plugin:"/><Run Foreground="{StaticResource SecondaryHueMidBrush}" Text="{Binding CurrentPluginName, FallbackValue=null, Mode=OneWay, StringFormat=\{0\}}"/></TextBlock>
@@ -1022,7 +1026,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" d:IsHidden="True" >
+        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="381*"/>
                 <RowDefinition Height="94*"/>
@@ -1036,7 +1040,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Select the working directory" VerticalAlignment="Center"/>
                     <TextBox Grid.Column="1" Margin="8,0" MinWidth="250" VerticalAlignment="Center" Text="{Binding WorkingDirectoryInputValue}"/>
-                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}"
+                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickWorkspaceFolderCommand}"
         				ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
                         <custom:PackIconMaterial Kind="FolderOpen"/>
                     </Button>

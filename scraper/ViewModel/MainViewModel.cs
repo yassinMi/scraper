@@ -567,5 +567,15 @@ namespace scraper.ViewModel
 
             }, "Save selection", "CSV File|*.csv|All Files|*");
         }
+
+        public ICommand PickWorkspaceFolderCommand { get { return new MICommand(hndlPickWorkspaceFolderCommand); } }
+
+        private void hndlPickWorkspaceFolderCommand()
+        {
+            IOUtils.PromptPickingDirectory((s, canceled) =>
+            {
+                this.WorkingDirectoryInputValue = s;
+            }, "Chose working directory");
+        }
     }
 }
