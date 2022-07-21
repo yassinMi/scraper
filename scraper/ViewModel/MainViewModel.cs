@@ -485,5 +485,15 @@ namespace scraper.ViewModel
         {
             IsHelpPopupOpen = true;
         }
+
+        public ICommand DevFillAndStartCommand { get { return new MICommand<string>(hndlDevFillAndStartCommand); } }
+
+        private void hndlDevFillAndStartCommand(string variant)
+        {
+            TargetPageQueryText = variant == "4" ? @"https://www.businesslist.ph/category/industrial-premises" 
+            : variant == "9" ? @"https://www.businesslist.ph/location/santa-rosa-city"
+            : "";
+            StartScrapingCommand.Execute(null);
+        }
     }
 }

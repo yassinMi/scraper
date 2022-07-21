@@ -19,16 +19,17 @@ namespace scraper.ViewModel
         public BusinessViewModel(Business p)
         {
             //Name, address,Phonenumber,MobilePhonenumberEmail, Employees,deligation, etc.
-            Name = p.name;
+            Name = p.company;
             Description = p.description;
             PhoneNumber = p.phonenumber;
             Email = p.email;
             Link = p.link;
             ImgUrl = p.imageUrl;
-            ID =  p.ID;
             Employees = p.employees;
             Address = p.address;
             Website = p.website;
+            ContactPerson = p.contactPerson;
+            Year = p.year;
             
             
         }
@@ -106,6 +107,25 @@ namespace scraper.ViewModel
             set { _ImgUrl = value; notif(nameof(ImgUrl)); notif(nameof(ImgSrc)); }
             get { return _ImgUrl; }
         }
+
+
+        private string _ContactPerson;
+        public string ContactPerson
+        {
+            set { _ContactPerson = value; notif(nameof(ContactPerson)); }
+            get { return _ContactPerson; }
+        }
+
+
+        private string _Year;
+        public string Year
+        {
+            set { _Year = value; notif(nameof(Year)); }
+            get { return _Year; }
+        }
+
+
+
 
         public ImageSource ImgSrc
         {

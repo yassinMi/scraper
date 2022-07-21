@@ -175,17 +175,19 @@ namespace scraper.Services
                     {
                         //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
                         string[] fields = csvParser.ReadFields();
-                        isCurrentRowValid &= (fields.Count() == 10);
+                        isCurrentRowValid &= (fields.Count() == 11);
                         if (isCurrentRowValid == false) continue;
                         string name = fields[0];
-                        string address = fields[1];
-                        string phonenumber = fields[2];
-                        string email = fields[3];
-                        string employees = fields[4];
-                        string website = fields[5];
-                        string imageUrl = fields[6];
-                        string link = fields[7];
-                        string desc = fields[8];
+                        string contactPerson = fields[1];
+                        string address = fields[2];
+                        string phonenumber = fields[3];
+                        string email = fields[4];
+                        string employees = fields[5];
+                        string website = fields[6];
+                        string year = fields[7];
+                        string imageUrl = fields[8];
+                        string link = fields[9];
+                        string desc = fields[10];
                         isCurrentRowValid &= name.Length > 0 && address.Length > 0 && name.Length > 0 && link.Length > 0 && link.Length > 0 && link.Length > 0;
 
                        
@@ -236,18 +238,21 @@ namespace scraper.Services
                     //as : name,address,phonenumber,email,employees,website,imageUrl,id
                     string[] fields = csvParser.ReadFields();
                     string name = fields[0];
-                    string address = fields[1];
-                    string phonenumber = fields[2];
-                    string email = fields[3];
-                    string employees = fields[4];
-                    string website = fields[5];
-                    string imageUrl = fields[6];
-                    string link = fields[7];
-                    string desc = fields[8];
-                    string id = fields[9];
+                    string contactPerson = fields[1];
+                    string address = fields[2];
+                    string phonenumber = fields[3];
+                    string email = fields[4];
+                    string employees = fields[5];
+                    string website = fields[6];
+                    string year = fields[7];
+                    string imageUrl = fields[8];
+                    string link = fields[9];
+                    string desc = fields[10];
                     yield return new Business() {
-                        name = name,
+                        company = name,
                         address = address,
+                        contactPerson = contactPerson,
+                        year = year,
                         phonenumber = phonenumber,
                         email = email,
                         employees = employees,

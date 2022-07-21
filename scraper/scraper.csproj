@@ -132,7 +132,7 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="CsvExport.cs" />
     <Compile Include="Model\Element.cs" />
-    <Compile Include="Model\Product.cs" />
+    <Compile Include="Model\Business.cs" />
     <Compile Include="Model\ScrapingTaskModel.cs" />
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Plugin\BLScraper.cs" />

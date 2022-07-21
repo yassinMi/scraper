@@ -25,6 +25,9 @@
         >
     <Window.InputBindings>
         <KeyBinding Command="{Binding OpenWorkspaceCommand}" Key="O"/>
+        <KeyBinding CommandParameter="9" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad9"/>
+
+        <KeyBinding CommandParameter="4" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad4"/>
     </Window.InputBindings>
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" 
@@ -291,7 +294,7 @@
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
 			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
-			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityInverted}}" d:IsHidden="True">
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityInverted}}">
             <TabItem x:Name="overview"  
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
@@ -537,13 +540,15 @@
                                     </ContextMenu>
                                 </DataGrid.ContextMenu>
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn  Header="Name" Binding="{Binding Name}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Address" Binding="{Binding Address}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Phone number" Binding="{Binding PhoneNumber}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Employees" Binding="{Binding Employees}"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Website" Binding="{Binding Website}"></DataGridTextColumn>
-                                    <DataGridHyperlinkColumn   Header="Link" Binding="{Binding Link}" CellStyle="{DynamicResource DataGridCellStyle1}" ElementStyle="{DynamicResource TextBlockStyle1}">
+                                    <DataGridTextColumn  Header="Company" Binding="{Binding Name}" Width="82"></DataGridTextColumn>
+                                    <DataGridTextColumn  Header="Contact person" Binding="{Binding ContactPerson}" Width="80"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="100"/>
+                                    <DataGridTextColumn Header="Phone number" Binding="{Binding PhoneNumber}" Width="100"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="100"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Employees" Binding="{Binding Employees}" Width="70"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Website" Binding="{Binding Website}" Width="80"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="60"></DataGridTextColumn>
+                                    <DataGridHyperlinkColumn   Header="Link" Binding="{Binding Link}" CellStyle="{DynamicResource DataGridCellStyle1}" ElementStyle="{DynamicResource TextBlockStyle1}" Width="100">
 
                                     </DataGridHyperlinkColumn>
                                     <DataGridTextColumn Header="Description" Binding="{Binding Description}"></DataGridTextColumn>
@@ -1010,7 +1015,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" >
+        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" d:IsHidden="True" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="381*"/>
                 <RowDefinition Height="94*"/>

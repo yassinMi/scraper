@@ -71,32 +71,48 @@ namespace scraper.ViewModel.Tests
         [TestMethod()]
         public void testInfosEnumerator()
         {
-            Workspace.MakeCurrent(@"E:\TOOLS\scraper\tests.yass\blWorkspace");
-            var raw = BLScrapingTask.downloadOrRead(@"https://www.businesslist.ph/company/301559/automation-and-security-inc",
-            Workspace.Current.GetHtmlObjectsFolder());
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(raw);
-            foreach (var item in BLScrapingTask.getInfos(doc.DocumentNode))
-            {
-                Debug.WriteLine(item.Item1);
-                if (item.Item1 == "Employees" && item.Item4==true)
-                {
-                    Debug.WriteLine(item.Item2);
-                }
+            /* Workspace.MakeCurrent(@"E:\TOOLS\scraper\tests.yass\blWorkspace");
+             var raw = BLScrapingTask.downloadOrRead(@"https://www.businesslist.ph/company/301559/automation-and-security-inc",
+             Workspace.Current.GetHtmlObjectsFolder());
+             HtmlDocument doc = new HtmlDocument();
+             doc.LoadHtml(raw);
+             foreach (var item in BLScrapingTask.getInfos(doc.DocumentNode))
+             {
+                 Debug.WriteLine(item.Item1);
+                 if (item.Item1 == "Employees" && item.Item4==true)
+                 {
+                     Debug.WriteLine(item.Item2);
+                 }
 
-            }
+             }
 
-            return;
+             return;*/
 
             List<string> keys = new List<string>();
             foreach (var node in union())
             {
+                string hascONTACT = "", hasMang = "";
                 foreach (var item in BLScrapingTask.getInfos(node.Value))
                 {
-                    if (item.Item1 == "Employees")
+                    /*if (keys.Contains(item.Item1) == false)
                     {
-                        Debug.WriteLine(item.Item3.InnerHtml);
+                        keys.Add(item.Item1);
+                        Debug.WriteLine(item.Item1);
                     }
+                    continue;*/
+                    if(item.Item1.ToLower()=="Contact person".ToLower())
+                    {
+                        hascONTACT = item.Item2;
+                    }
+                    if (item.Item1.ToLower() == "Company manager".ToLower())
+                    {
+                        hasMang = item.Item2;
+                    }
+
+                }
+                if (!(string.IsNullOrWhiteSpace(hasMang) || string.IsNullOrWhiteSpace(hascONTACT)))
+                {
+                    Debug.WriteLine($"{hascONTACT}(Contact person), {hasMang}(Company manager)");
                 }
                 
             }
@@ -268,7 +284,7 @@ namespace scraper.ViewModel.Tests
             Assert.IsTrue(compactElements.All(e =>
             {
                 return
-                string.IsNullOrWhiteSpace(e.name) == false
+                string.IsNullOrWhiteSpace(e.company) == false
                 && string.IsNullOrWhiteSpace(e.link) == false
                 ;
             }), "not all compacts on page1 have name and link");
@@ -291,7 +307,7 @@ namespace scraper.ViewModel.Tests
             Assert.IsTrue(compactElements.All(e =>
             {
                 return
-                string.IsNullOrWhiteSpace(e.name) == false
+                string.IsNullOrWhiteSpace(e.company) == false
                 && string.IsNullOrWhiteSpace(e.link) == false
                 ;
             }), "not all compacts on page1 have name and link");
@@ -311,7 +327,7 @@ namespace scraper.ViewModel.Tests
             Assert.IsTrue(compactElements.All(e =>
             {
                 return
-                string.IsNullOrWhiteSpace(e.name) == false
+                string.IsNullOrWhiteSpace(e.company) == false
                 && string.IsNullOrWhiteSpace(e.link) == false
                 ;
             }), $"not all compacts on {testName} have name and link");
@@ -325,15 +341,15 @@ namespace scraper.ViewModel.Tests
         [TestMethod()]
         public void BLScraperTests()
         {
-            var ws = Workspace.GetWorkspace(@"E:\TOOLS\scraper\tests.yass\blWorkspace");
-            var p = new BLScraper();
+            var ws = Workspace.GetWorkspace(ConfigService.Instance.WorkspaceDirectory);
+            var p = new BLScraper() { WorkspaceDirectory=ConfigService.Instance.WorkspaceDirectory};
             var mvm = new MainViewModel(p, ws);
             string targetPageUrl = @"https://www.businesslist.ph/location/manila/3";
-            mvm.TargetPageQueryText = targetPageUrl;
-            mvm.StartScrapingCommand.Execute(null);
+            mvm.DevFillAndStartCommand.Execute("4");
+            
             mvm.scrapingTaskAwaiter.GetResult();
             //Task.Delay(50 * 300 + 1300 + 2000).GetAwaiter().GetResult();
-            
+           
            // Assert.IsTrue(o != null, "no content");
            // Assert.IsTrue(o.DownloadProgress.Current == 49, "the final download prog is not correct");
 

@@ -266,31 +266,46 @@ namespace scraper.Plugin
             elementDoc.LoadHtml(rawElementPage);
             Debug.WriteLine("resolving missing fields from html");
 
+            //field parsing buffers
             List<string> phones = new List<string>(8);
+            string[] persons = new string[2] { null, null };
             foreach (var infoItem in getInfos(elementDoc.DocumentNode))
             {
                 /* the info items keys:
 Company name
 Address
 Phone Number
-Mobile phone
 Website
-Contact Person
-E-mail
+Location map
 Description
 Working hours
-Products & Services
 Listed in categories
 Keywords
-Fax
-Location map
+Mobile phone
+Contact Person
+Establishment year
 Employees
+E-mail
+Products & Services
+Fax
+Company manager
+Registration code
+School name
+Hotel name
+VAT registration
+Restaurant name
+College name
+University name
+Hospital name
+Video
+
+
 Video
 */
 
                 //phone
-                
-                if(infoItem.Item1== "Phone Number" || infoItem.Item1 == "Mobile phone")
+
+                if (infoItem.Item1== "Phone Number" || infoItem.Item1 == "Mobile phone")
                 {
                     foreach (var item in infoItem.Item3.SelectNodes(".//text()"))
                     {
@@ -310,10 +325,27 @@ Video
                 {
                     compactElement.employees = infoItem.Item2?.Trim();
                 }
+                else if (infoItem.Item1 == "Establishment year" && infoItem.Item4)
+                {
+
+                    compactElement.year = infoItem.Item2?.Trim();
+                }
+                else if (infoItem.Item1 == "Contact Person" )
+                {
+                    persons[0] = $"{infoItem.Item2?.Trim()}(Contact Person)";
+                }
+                else if (infoItem.Item1 == "Company manager")
+                {
+                    persons[1] = $"{infoItem.Item2?.Trim()}(Company Manager)";
+                }
 
                 //employees
 
             }
+            
+            
+            compactElement.contactPerson = string.Join(", ", persons.Where(s=>!string.IsNullOrWhiteSpace(s)));
+
 
             compactElement.phonenumber = string.Join(" / ", phones);
             //compactElement.email = "N/A"; //not available
@@ -468,7 +500,7 @@ Video
 
                 yield return new Business() {
                    
-                    name = name,
+                    company = name,
                     //desc = getDesc(node),
                     address = addr,
                     link = @"https://www.businesslist.ph"+ relativeLink,
@@ -539,7 +571,7 @@ Video
                             TaskStatsInfo.incElem(1);
                         i++;
                         OnProgress?.Invoke(this, new DownloadingProg() { Total = compactElements.Count, Current = i });
-                        OnTaskDetail?.Invoke(this, $"Collecting business info: {item.name}");
+                        OnTaskDetail?.Invoke(this, $"Collecting business info: {item.company}");
                     }
                     Debug.WriteLine("saving csv");
                     string uniqueOutputFileName = Utils.SanitizeFileName(this.ResolvedTitle) + ".csv";
