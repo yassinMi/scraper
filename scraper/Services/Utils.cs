@@ -7,12 +7,43 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using CsvHelper;
+using System.Collections;
+using System.IO;
 
 namespace scraper.Services
 {
     public static class Utils
     {
 
+
+        public static void CSVAppendRecords(string filename, IEnumerable records)
+        {
+            var cof = new CsvHelper.Configuration.CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
+            {
+                HasHeaderRecord = false
+            };
+
+            using (var writer = new StreamWriter(filename, true))
+            using (var csv = new CsvWriter(writer, cof))
+            {
+                csv.WriteRecords(records);
+            }
+        }
+        public static void CSVOverwriteRecords(string filename,IEnumerable records )
+        {
+            using (var writer = new StreamWriter(filename))
+            using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(records);
+            }
+        }
+
+        public static void CSVWriteRecords(string filename, IEnumerable records, bool appendOrOverwrite)
+        {
+            if (appendOrOverwrite) CSVAppendRecords(filename, records);
+            else CSVOverwriteRecords(filename, records);
+        }
 
 
         public static string CreateMD5(string input)
@@ -105,6 +136,7 @@ namespace scraper.Services
                         //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
                         string[] fields = csvParser.ReadFields();
                         isCurrentRowValid &= (fields.Count() == 10);
+                        if (isCurrentRowValid == false) continue;
                         string name = fields[0];
                         string address = fields[1];
                         string phonenumber = fields[2];

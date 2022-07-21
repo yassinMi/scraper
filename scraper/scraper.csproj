@@ -143,10 +143,14 @@
     <Compile Include="Services\WebHelper.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\CSVResourceVM.cs" />
+    <Compile Include="ViewModel\HelpVM.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\ScrapingTaskVM.cs" />
     <Compile Include="ViewModel\UnhandledErrorWindowVM.cs" />
+    <Compile Include="View\HelpView.xaml.cs">
+      <DependentUpon>HelpView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\PluginOptionsWindow.xaml.cs">
       <DependentUpon>PluginOptionsWindow.xaml</DependentUpon>
     </Compile>
@@ -172,6 +176,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ProductView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\HelpView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

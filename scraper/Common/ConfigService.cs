@@ -27,7 +27,7 @@ namespace Mi.Common
             get
             { if (_instance != null) return _instance;
               else { _instance = ConfigService.Load();
-                    Trace.WriteLine("ConfigService Load ended");
+                    Trace.WriteLine("ConfigService instance created");
 
                     return _instance; }
             }
@@ -184,7 +184,8 @@ namespace Mi.Common
         private static ConfigService FactoryConfig()
         {
             var facto = new ConfigService();
-            facto.WorkspaceDirectory = @"E:\TOOLS\scraper\scraper\scripts";
+            //facto.WorkspaceDirectory = @"E:\TOOLS\scraper\scraper\scripts"; DEV ONLY TO SAVE SETUP TIME
+            facto.WorkspaceDirectory = null;
             return facto;
         }
 

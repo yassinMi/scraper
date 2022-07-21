@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -21,7 +22,20 @@ namespace scraper.Services
         public static WebHelper instance { get; set; } = new WebHelper();
         public string GetPageTextSync(string pageUrl)
         {
-            return this.GetStringAsync(pageUrl).GetAwaiter().GetResult();
+            var t = this.GetStringAsync(pageUrl);
+
+            t.ContinueWith(te => {
+                AggregateException exception = t.Exception;
+                Debug.WriteLine("ContinueWith faulted");
+                throw exception.InnerException;
+            }, TaskContinuationOptions.OnlyOnFaulted) ;
+
+            return t.ContinueWith<string>( tt=> {
+                Debug.WriteLine("ContinueWith true");
+                return tt.Result;
+            }, TaskContinuationOptions.OnlyOnRanToCompletion).GetAwaiter().GetResult();
+
+            
         }
 
         public Task<string> GetPageText(string pageUrl)

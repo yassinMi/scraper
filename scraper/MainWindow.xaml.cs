@@ -1,4 +1,5 @@
-﻿using scraper.Core;
+﻿using Mi.Common;
+using scraper.Core;
 using scraper.Model;
 using scraper.Plugin;
 using scraper.Services;
@@ -28,26 +29,58 @@ namespace scraper
     {
         public MainWindow()
         {
+            Debug.WriteLine("starting main window");
+            InitializeComponent();
+
+            string ws_dir = getStartupWs();
+            Debug.WriteLine("getting startup ws dir retured: " + ws_dir);
+            if (ws_dir == null)
+            {
+                DataContext = new MainViewModel();
+            }
+            else
+            {
+                Workspace.MakeCurrent(ws_dir);
+                var ws = Workspace.Current;
+                IPlugin p = new BLScraper() { WorkspaceDirectory = ws.Directory };
+                DataContext = new MainViewModel(p,ws);
+            }
+
+            
+            
+            
+     
+
+            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+            ((MainViewModel)DataContext).mw = this;
+        }
+
+        /// <summary>
+        /// the logic used to select what workspace the app will start with, 
+        /// first cheks cmd, then config, the null which indicates that theui should show the ws setup mode
+        /// </summary>
+        /// <returns></returns>
+        string getStartupWs()
+        {
+            
             string blWSpath = @"E:\TOOLS\scraper\tests.yass\blWorkspace";
             string generalWStestPath = @"E:\TOOLS\scraper\tests.yass\myTestWorkspace";
             // App.Current.
-            string ws_path;
-            if( (App.Current as App).CommandLineArgsDict.TryGetValue("-workspace", out ws_path)== false)
+
+            //commandline, config, null
+            string cmdws_path;
+            if ((App.Current as App).CommandLineArgsDict.TryGetValue("-workspace", out cmdws_path) == true)
             {
-                ws_path = blWSpath; //dev only
+                return cmdws_path;
             }
-            Workspace.MakeCurrent(ws_path);
-            var ws = Workspace.GetWorkspace(ws_path);
-            IPlugin p = new BLScraper() {WorkspaceDirectory = ws.Directory };
-           // p = PluginsManager.GetGlobalPlugins().First();
-            InitializeComponent();
-            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
-            this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
-
-
-            DataContext = new MainViewModel(p,ws);
-            ((MainViewModel)DataContext).mw = this;
+            if (ConfigService.Instance.WorkspaceDirectory != null)
+            {
+                return ConfigService.Instance.WorkspaceDirectory;
+            }
+            return null;
         }
+
         Point _startPosition;
         bool _isResizing = false;
         private void resizeGrip_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -145,6 +178,30 @@ namespace scraper
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
+
+        }
+
+        private void DataGrid_CopyingRowClipboardContent(object sender, DataGridRowClipboardEventArgs e)
+        
+        {
+            var currentCell = e.ClipboardRowContent[elementsDatagrid.CurrentCell.Column.DisplayIndex];
+            e.ClipboardRowContent.Clear();
+            e.ClipboardRowContent.Add(currentCell);
+        }
+
+        private void elementsDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var dc = this.DataContext as MainViewModel;
+            if (dc != null)
+            {
+                dc.SelectionCount = elementsDatagrid.SelectedItems.Count;
+            }
+            
+        }
+
+        private void WorkspaceSetupPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
     }
 }

@@ -42,6 +42,14 @@ namespace scraper.Plugin
             }
         }
 
+        public PluginUsageInfo UsageInfo
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public Version Version
         {
             get
@@ -80,6 +88,7 @@ namespace scraper.Plugin
         public string TargetPage { get; set; } = null;
 
         public event EventHandler<string> OnError;
+        public event EventHandler<string> OnPage;
         public event EventHandler<DownloadingProg> OnProgress;
         public event EventHandler<string> OnResolved;
         public event EventHandler<ScrapTaskStage> OnStageChanged;

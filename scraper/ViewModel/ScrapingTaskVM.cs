@@ -30,9 +30,13 @@ namespace scraper.ViewModel
             };
             m.OnError += (s, err) => {
                 this.CurrentTaskDetail = err;
+                this.FailingReason = err;
             };
             m.OnStageChanged += (s, newStage) => { notif(nameof(CurrentScrapTaskStage)); };
-           
+            m.OnPage+=(s,p)=> {
+                CurrentPage = p;
+                notif(nameof(CurrentPage)); };
+
         }
         public ScrapingTaskVM()
         {
@@ -56,6 +60,14 @@ namespace scraper.ViewModel
             get { return string.Join(" · "  ,new string[] { "321 Elements", "733 Objects" , "7.8 MB" } ); }
         }
 
+
+
+        private string _FailingReason;
+        public string FailingReason
+        {
+            set { _FailingReason = value; notif(nameof(FailingReason)); }
+            get { return _FailingReason; }
+        }
 
 
         private string _CurrentTaskDetail;
@@ -93,6 +105,8 @@ namespace scraper.ViewModel
 
         public ICommand PauseCommand { get { return new Mi.Common.MICommand(this.hndlPauseCommand, this.canExecutePauseCommand); } }
 
+        public string CurrentPage { get; set; }
+
         private void hndlPauseCommand()
         {
             Model.Pause();
@@ -101,6 +115,19 @@ namespace scraper.ViewModel
         private bool canExecutePauseCommand()
         {
             return Model.Stage == ScrapTaskStage.DownloadingData;
+        }
+
+        public ICommand RetryCommand { get { return new Mi.Common.MICommand(hndlRetryCommand); } }
+
+        private  void hndlRetryCommand()
+        {
+
+            var t = new Task(async () =>
+            {
+                await Model.RunScraper();
+            }
+            );
+            t.Start();
         }
     }
 }

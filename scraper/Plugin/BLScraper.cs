@@ -9,7 +9,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace scraper.Plugin
@@ -43,6 +46,35 @@ namespace scraper.Plugin
             get
             {
                 return new Version(1, 0, 0, 0);
+            }
+        }
+
+        public PluginUsageInfo UsageInfo
+        {
+            get
+            {
+                return new PluginUsageInfo()
+                {
+                    UsageInfoViewHeader = "Supported URL's:",
+                    UseCases = new TargetPageUrlUseCaseHelp[]
+                    {
+                        new TargetPageUrlUseCaseHelp() {Description="Locations pages",
+                        ExampleUrls = new string[]
+                        {
+                            "https://www.businesslist.ph/location/manila/",
+                            "https://www.businesslist.ph/location/manila/2"
+                        }
+                        },
+                        new TargetPageUrlUseCaseHelp() {Description="Categories pages",
+                        ExampleUrls = new string[]
+                        {
+                            "https://www.businesslist.ph/cat/manila/",
+                            "https://www.businesslist.ph/cat/manila/2"
+                        }
+                        },
+
+                    }
+                };
             }
         }
 
@@ -81,6 +113,7 @@ namespace scraper.Plugin
         public event EventHandler<string> OnError;
         public event EventHandler<DownloadingProg> OnProgress;
         public event EventHandler<string> OnResolved;
+        public event EventHandler<string> OnPage;
         public event EventHandler<ScrapTaskStage> OnStageChanged;
         public event EventHandler<string> OnTaskDetail;
 
@@ -89,6 +122,7 @@ namespace scraper.Plugin
             throw new NotImplementedException();
         }
 
+        //not used
         async public Task RunConverter()
         {
             Stage = ScrapTaskStage.ConvertingData;
@@ -99,43 +133,72 @@ namespace scraper.Plugin
 
         }
 
-
-        IEnumerable<Tuple<string,string>> getInfos(HtmlNode elementPage)
+        /// <summary>
+        /// tuple: key , formatted value (may not be good), original value node (use it for custom formatting), bool isSpan
+        /// </summary>
+       public static IEnumerable<Tuple<string,string,HtmlNode,bool>> getInfos(HtmlNode elementPage)
         {
-            foreach (var item in elementPage.SelectNodes("//div[@class='info']"))
+            foreach (var infoElem in elementPage.SelectNodes("//div[@class='info']"))
             {
-                int cc = item.ChildNodes.Count;
-                string key = item.FirstChild?.InnerText;
+                var labelElem = infoElem.SelectSingleNode("./*[@class='label']");
+                if (labelElem == null) continue;
+                int cc = infoElem.ChildNodes.Count;
+                string key = labelElem.InnerText;
                 string Formattedvalue = "";
-                if (cc == 2)
-                {
-                    Formattedvalue = item.ChildNodes[1].InnerHtml;
+                HtmlNode originalValueNode = null; ;
+                bool IsSpan = false;
+                if (labelElem.OriginalName == "span"){
+                    
+                    var firstTextNode = infoElem.SelectSingleNode("./text()");
+                    if (firstTextNode == null) continue;
+                    Formattedvalue = firstTextNode.InnerText;
+                    originalValueNode = firstTextNode;
+                    IsSpan = true;
                 }
-                else if (cc == 1)
+                else if(labelElem.OriginalName == "div")
                 {
-                    Debug.WriteLine("cc=1: " + item.FirstChild.InnerHtml);
+                    
+                    if (cc >=2)
+                    {
+                        originalValueNode = infoElem.ChildNodes[1];
+                        Formattedvalue = Utils.StripHTML(originalValueNode.InnerHtml);
+                    }
+                    else if (cc == 1)
+                    {
+                        Debug.WriteLine("cc=1: " + infoElem.FirstChild.InnerHtml);
+                        continue;
+                    }
+                    
                 }
-                yield return new Tuple<string, string>(key, item.FirstChild?.InnerText);
+                yield return new Tuple<string, string, HtmlNode, bool>(key, Formattedvalue, originalValueNode,IsSpan);
+
             }
         }
-        string getPhoneNumber(HtmlNode elementPage)
+       public static string getPhoneNumber(HtmlNode elementPage)
         {
             return elementPage.SelectSingleNode("//div[@class='text phone']")?.InnerText;
         }
-        string getEmail(HtmlNode elementPage)
+        public static string getEmail(HtmlNode elementPage)
+        {
+            //System.Net.WebUtility.HtmlDecode
+            string email = elementPage.InnerHtml;
+            Regex regex = new Regex(@"([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)");
+            Match match = regex.Match(email);
+            if (match.Success)
+                return match.Value;
+            else
+                return "N/A";
+        }
+        public static string getWebsite(HtmlNode elementPage)
         {
             return "unr";
         }
-        string getWebsite(HtmlNode elementPage)
-        {
-            return "unr";
-        }
-        string getEmployees(HtmlNode elementPage)
+       public static string getEmployees(HtmlNode elementPage)
         {
             return "unr";
         }
 
-        public HtmlNode getget()
+        static public HtmlNode getget()
         {
             return new HtmlNode(HtmlNodeType.Element, new HtmlDocument(),5);
         }
@@ -143,98 +206,140 @@ namespace scraper.Plugin
         /// <summary>
         /// only required by downloadOrReadFromObject, returns a filesystem-friendly hash
         /// </summary>
-        string getUniqueLinkHash(string businessLink)
+        static string getUniqueLinkHash(string businessLink)
         {
             return Utils. CreateMD5(businessLink);
         }
 
+
         /// <summary>
-        /// if the object exists: reads and returns html string, no web requests
-        /// else: download and save object named after the url hash, and then return html string
-        /// aka provides caching functionality
+        /// exceptions: HttpRequestException
+        /// link is hashed and used as filename (+.html) 
+        /// if the file exists under the specified folder: reads and returns it's content as string, no web request
+        /// else: fetch and save object under the specified folder, returning the same saved html string
         /// </summary>
         /// <param name="businessLink"></param>
-        public string downloadOrReadFromObject(string businessLink)
+        public static string downloadOrRead(string pageLink, string folder)
         {
-            Debug.WriteLine("calculating unique html name");
-            string uniqueFilename = Path.Combine(WorkspaceDirectory, ConfigService .Instance.ProductsHTMLRelativeLocation,getUniqueLinkHash(businessLink) + ".html")  ;
-            if (File.Exists(uniqueFilename))
-            {
-                //load
-                Debug.WriteLine("exists");
-
-                return File.ReadAllText(uniqueFilename);
-            }
+            Debug.WriteLine("downloadOrRead ");
+            string uniqueFilename = Path.Combine(folder,getUniqueLinkHash(pageLink) + ".html")  ;
+            if (File.Exists(uniqueFilename)){return File.ReadAllText(uniqueFilename);}
             else
             {
-                //download
-                Debug.WriteLine("new");
-                string rawElementPage = WebHelper.instance.GetPageTextSync(businessLink);
-                File.WriteAllText(uniqueFilename, rawElementPage);
-                return rawElementPage;
-
+                try
+                {
+                    string rawElementPage = WebHelper.instance.GetPageTextSync(pageLink);
+                    File.WriteAllText(uniqueFilename, rawElementPage);
+                    return rawElementPage;
+                }
+                catch (Exception)
+                {
+                    Debug.WriteLine("downloadOrRead trwoing");
+                    throw;
+                }
+               
             }
-
         }
 
-        public string downloadOrReadFromTargetPageObject(string businessLink)
-        {
-            Debug.WriteLine("calculating unique html name");
-            string uniqueFilename = Path.Combine(WorkspaceDirectory, ConfigService.Instance.TargetPagesRelativeLocation, getUniqueLinkHash(businessLink) + ".html");
-            if (File.Exists(uniqueFilename))
-            {
-                //load
-                Debug.WriteLine("exists");
-
-                return File.ReadAllText(uniqueFilename);
-            }
-            else
-            {
-                //download
-                Debug.WriteLine("new");
-                string rawElementPage = WebHelper.instance.GetPageTextSync(businessLink);
-                File.WriteAllText(uniqueFilename, rawElementPage);
-                return rawElementPage;
-
-            }
-
-        }
+        
 
         /// <summary>
+        /// excpections: HttpRequestException
         /// the missing fields are:  phone email website, employees
         /// existing fields are  name, desc, thumb, location, link
         /// </summary>
         /// <param name="compactElement"></param>
-        private void resolveFullElement(Business compactElement)
+        public static void resolveFullElement(Business compactElement)
         {
             Debug.WriteLine("downloading or reading html link: "+ compactElement.link);
             
-            string rawElementPage = downloadOrReadFromObject(compactElement.link);
+            string rawElementPage = downloadOrRead(compactElement.link, Workspace.Current.GetHtmlObjectsFolder());
             HtmlDocument elementDoc = new HtmlDocument();
             elementDoc.LoadHtml(rawElementPage);
             Debug.WriteLine("resolving missing fields from html");
-            compactElement.phonenumber = getPhoneNumber(elementDoc.DocumentNode);
+
+            List<string> phones = new List<string>(8);
+            foreach (var infoItem in getInfos(elementDoc.DocumentNode))
+            {
+                /* the info items keys:
+Company name
+Address
+Phone Number
+Mobile phone
+Website
+Contact Person
+E-mail
+Description
+Working hours
+Products & Services
+Listed in categories
+Keywords
+Fax
+Location map
+Employees
+Video
+*/
+
+                //phone
+                
+                if(infoItem.Item1== "Phone Number" || infoItem.Item1 == "Mobile phone")
+                {
+                    foreach (var item in infoItem.Item3.SelectNodes(".//text()"))
+                    {
+                        phones.Add(item.InnerText.Trim());
+                    }
+                }
+
+
+                //email
+
+                //website
+                else if (infoItem.Item1 == "Website")
+                {
+                    compactElement.website = infoItem.Item2;
+                }
+                else if (infoItem.Item1 == "Employees" && infoItem.Item4)
+                {
+                    compactElement.employees = infoItem.Item2?.Trim();
+                }
+
+                //employees
+
+            }
+
+            compactElement.phonenumber = string.Join(" / ", phones);
+            //compactElement.email = "N/A"; //not available
+            //old parsers
+            //compactElement.phonenumber = getPhoneNumber(elementDoc.DocumentNode);
             compactElement.email = getEmail(elementDoc.DocumentNode);
-            Debug.WriteLine("missing fields 2");
-            compactElement.website = getWebsite(elementDoc.DocumentNode);
-            compactElement.employees = getEmployees(elementDoc.DocumentNode);
+            //compactElement.employees = getEmployees(elementDoc.DocumentNode);
             Debug.WriteLine("done");
-
-
         }
 
         
+        public static string ClearPageNumFromUrl(string url)
+        {
+            return Regex.Replace(url, @"/\d+$|/\d+/$", "");
+        }
+
+        /// <summary>
+        /// ulr must be cleared with ClearPageNumFromUrl
+        /// </summary>
+        public static string AppendPageNumToUrl(string url,int pageNum)
+        {
+            return url.TrimEnd(new char[] { '/' }) + "/" + pageNum.ToString();
+        }
 
         public static string getAddress(HtmlNode node)
         {
             var div = node.SelectSingleNode(".//div[@class='address']");
             if (div == null) return null;
             if  (string.IsNullOrWhiteSpace(div.InnerHtml) ) return null;
-            return Utils. StripHTML(div.InnerHtml);
+            return System.Net.WebUtility.HtmlDecode(Utils. StripHTML(div.InnerHtml));
         }
         public static string getName(HtmlNode node)
         {
-            return node.SelectSingleNode("./h4//a")?.InnerHtml;
+            return System.Net.WebUtility.HtmlDecode( node.SelectSingleNode("./h4//a")?.InnerText);
         }
         public static string getLink(HtmlNode node)
         {
@@ -248,6 +353,85 @@ namespace scraper.Plugin
         {
             var img = node.SelectSingleNode(".//div[@class='details']//a//span[@class='logo']//img");
             return (img != null) ? img.GetAttributeValue("src", "") : null;
+        }
+
+        /// <summary>
+        /// for targte pages loaction and cats
+        /// assumes the last page is there (aka not a one page other non suitable inputs)
+        /// </summary>
+        public static int getLastPageNumber(HtmlNode pagenode)
+        {
+            var lasPafeNo = pagenode.SelectNodes("//a[@class='pages_no']").LastOrDefault();
+            if (lasPafeNo == null) throw new Exception("error while paring getLastPageNumber");
+            int res = int.Parse(lasPafeNo.InnerText);
+            if(res <2) throw new Exception("getLastPageNumber: number cannot be <2");
+            return res;
+        }
+
+        /// <summary>
+        /// tested
+        /// </summary>
+        public static bool isBusinessesListings(HtmlNode pagenode)
+        {
+            bool res = true;
+            res &= pagenode.SelectSingleNode("//div[@id='listings']") != null;
+            res &= pagenode.SelectSingleNode("//div[@id='listings']") != null;
+            return res;
+        }
+        /// <summary>
+        /// tested
+        /// </summary>
+        public static bool isNoneEmptyBusinessesListings(HtmlNode pagenode)
+        {
+            bool res = true;
+            res &= isBusinessesListings(pagenode);
+            res &= pagenode.SelectSingleNode("//div[@class='pages_container_top']") != null;
+            return res;
+        }
+
+        /// <summary>
+        /// tested
+        /// </summary>
+        public static bool isMultiplePagesBusinessesListings(HtmlNode pagenode)
+        {
+            bool res = true;
+            res &= isBusinessesListings(pagenode) && isNoneEmptyBusinessesListings(pagenode);
+            res &= pagenode.SelectSingleNode("//div[@class='pages_container']") != null;
+            return res;
+        }
+
+        /// <summary>
+        /// tuple: curr page, total pages, curr page node
+        /// </summary>
+        /// <param name="targetRootPage">ignores page numbers it always start from root </param>
+        /// <returns></returns>
+        public static IEnumerable<Tuple<int,int,HtmlNode>> EnumeratePages(string targetRootPage)
+        {
+            string pageRaw= downloadOrRead(targetRootPage, Workspace.Current.GetTPFolder());
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(pageRaw);
+            var paegs_container = doc.DocumentNode.SelectSingleNode("//div[@class='pages_container']");
+            
+            if((isBusinessesListings(doc.DocumentNode)==false) || (isNoneEmptyBusinessesListings(doc.DocumentNode) == false))
+            {
+                yield break;
+            }
+           
+            int min = 1;
+            int max = 1;
+            if (isMultiplePagesBusinessesListings(doc.DocumentNode))
+            {
+                max = getLastPageNumber(doc.DocumentNode);
+            }
+            foreach (var pg in Enumerable.Range(min, max))
+            {
+                string pageLink = AppendPageNumToUrl(ClearPageNumFromUrl(targetRootPage), pg);
+                string raw = downloadOrRead(pageLink, Workspace.Current.GetTPFolder());
+                HtmlDocument newDoc = new HtmlDocument();
+                newDoc.LoadHtml(raw);
+                yield return new Tuple<int,int, HtmlNode>(pg, max, newDoc.DocumentNode);
+            }
+
         }
 
         public static IEnumerable<Business> getCompactElementsInPage(HtmlNode targetpagenode)
@@ -287,59 +471,94 @@ namespace scraper.Plugin
                            }
         }
 
-        string getPageTitle(HtmlNode targetpagenode)
+        public static string getPageTitle(HtmlNode targetpagenode)
         {
             var h1 = targetpagenode.SelectSingleNode("//main//section//h1");
             return h1?.InnerHtml;
         }
 
-        string etPageNumber(HtmlNode targetpagenode)
+        public static string etPageNumber(HtmlNode targetpagenode)
         {
             return "3";
         }
-       
+
+        object lock_ = new object();
 
         async public Task RunScraper()
         {
-
-            Debug.WriteLine("RunScraper entered");
-            await Task.Delay(30);
-            //string rawPage = WebHelper.instance.GetPageTextSync(this.TargetPage);
-            string rawPage = downloadOrReadFromTargetPageObject(this.TargetPage);
-
-            //string rawPage = File.ReadAllText(@"F:\epicMyth-tmp-6-2022\freelancing\projects\businesses\List of Companies in Manila, Philippines - Companies in Manila - Page 3.html");
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(rawPage);
-            ResolvedTitle = getPageTitle(doc.DocumentNode) ;
-            OnResolved?.Invoke(this, ResolvedTitle);
-            var compactElements = getCompactElementsInPage(doc.DocumentNode).ToList();
-            int i = 0;
-            foreach (var item in compactElements)
+            lock (lock_)
             {
+                Debug.WriteLine("RunScraper entered");
+                Stage = ScrapTaskStage.DownloadingData;
+                this.OnStageChanged?.Invoke(this, this.Stage);
+                string raw;
+                try
+                {
+                    raw = downloadOrRead(TargetPage, Workspace.Current.GetTPFolder());
+                }
+                catch(HttpRequestException )
+                {
+                    Stage = ScrapTaskStage.Failed;
+                    this.OnStageChanged?.Invoke(this, this.Stage);
+                    OnError?.Invoke(this, "Network error");
+                    return;
+                }
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(raw);
+                if ((isBusinessesListings(doc.DocumentNode)) == false || (isNoneEmptyBusinessesListings(doc.DocumentNode) == false))
+                {
+                    return;
+                }
+                ResolvedTitle = getPageTitle(doc.DocumentNode); ///+ ;
+                OnResolved?.Invoke(this, ResolvedTitle);
+                try
+                {
+
                 
-                Console.WriteLine(" resolving element: name: " + item.name);
-                resolveFullElement(item);
-                i++;
-                OnProgress?.Invoke(this, new DownloadingProg() { Total = compactElements.Count, Current = i });
-                OnTaskDetail?.Invoke(this, $"downloading company info: {item.name}"); 
+                foreach (var page in EnumeratePages(TargetPage))
+                {
+                    OnPage?.Invoke(this, $"[page {page.Item1}/{page.Item2}]");
+                    var compactElements = getCompactElementsInPage(page.Item3).ToList();
+                    int i = 0;
+                    foreach (var item in compactElements)
+                    {
+                        
+                            resolveFullElement(item);
+                        
+                       
+                        
+                        i++;
+                        OnProgress?.Invoke(this, new DownloadingProg() { Total = compactElements.Count, Current = i });
+                        OnTaskDetail?.Invoke(this, $"Collecting business info: {item.name}");
+                    }
+                    Debug.WriteLine("saving csv");
+                    string uniqueOutputFileName = Utils.SanitizeFileName(this.ResolvedTitle) + ".csv";
+                    var outputPath = Path.Combine(WorkspaceDirectory, ConfigService.Instance.CSVOutputRelativeLocation, uniqueOutputFileName);
+                    Utils.CSVWriteRecords(outputPath, compactElements, page.Item1 > 1);
+                    Debug.WriteLine("saved current page conent:" + outputPath);
+                }
+
+                    Stage = ScrapTaskStage.Success;
+                    this.OnStageChanged?.Invoke(this, this.Stage);
+                    return;
+
+                }
+                catch 
+                {
+                    Debug.WriteLine("catched");
+                    Stage = ScrapTaskStage.Failed;
+                    this.OnStageChanged?.Invoke(this, this.Stage);
+                    OnError?.Invoke(this, "Network Error");
+                    return;
+                }
+
+                return;
+
+                Stage = ScrapTaskStage.DownloadingData;
+                this.OnStageChanged?.Invoke(this, this.Stage);
 
             }
-            Debug.WriteLine("saving csv");
-            //Debug.Write(rawPage);
-            string uniqueOutputFileName = Utils.SanitizeFileName(this.ResolvedTitle)+ ".csv";
-            var outputPath = Path.Combine(WorkspaceDirectory, ConfigService.Instance.CSVOutputRelativeLocation, uniqueOutputFileName);
-            using (var writer = new StreamWriter(outputPath))
-            using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture))
-            {
-                csv.WriteRecords(compactElements);
-            }
 
-            Debug.WriteLine("saved:" + outputPath);
-            return;
-            
-            Stage = ScrapTaskStage.DownloadingData;
-            this.OnStageChanged?.Invoke(this, this.Stage);
-            
 
 
 

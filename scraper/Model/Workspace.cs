@@ -92,12 +92,15 @@ namespace scraper.Model
         /// <returns></returns>
         public static void MakeCurrent(string workspacePath )
         {
+            Debug.WriteLine("updating Workspace.current: " + workspacePath);
             _current = GetWorkspace(workspacePath);
         }
 
         private static void SetUpWorkspaceFolders(string workspacePath)
         {
             System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.CSVOutputRelativeLocation));
+
+            System.IO.Directory.CreateDirectory(Path.Combine(workspacePath, @".scraper\tasks"));
             System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.ProductsImagesRelativeLocation));
             System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.ProductsHTMLRelativeLocation));
             System.IO.Directory.CreateDirectory(System.IO.Path.Combine(workspacePath, ConfigService.Instance.TargetPagesRelativeLocation));
@@ -128,9 +131,9 @@ namespace scraper.Model
             }
         }
 
-        private string GetTasksDirectory()
+        public string GetTasksDirectory()
         {
-            return (System.IO.Path.Combine(ConfigService.Instance.WorkspaceDirectory, ".scraper/tasks"));
+            return (System.IO.Path.Combine(Directory, ".scraper/tasks"));
 
         }
 
@@ -170,6 +173,19 @@ namespace scraper.Model
                     yield break;
                 }
             }
-        } 
+        }
+
+        public string GetHtmlObjectsFolder()
+        {
+            return Path.Combine(this.Directory, ConfigService.Instance.ProductsHTMLRelativeLocation);
+        }
+        public string GetCSVOutputFolder()
+        {
+            return Path.Combine(this.Directory, ConfigService.Instance.CSVOutputRelativeLocation);
+        }
+        public string GetTPFolder()
+        {
+            return Path.Combine(this.Directory, ConfigService.Instance.TargetPagesRelativeLocation);
+        }
     }
 }

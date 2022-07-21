@@ -19,6 +19,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using scraper.View;
+using scraper.Plugin;
 
 namespace scraper.ViewModel
 {
@@ -30,45 +31,32 @@ namespace scraper.ViewModel
             MainPlugin = plugin;
             MainWorkspace = workspace;
             Init();
-
-
         }
         public MainViewModel()
         {
-            MainWorkspace = Workspace.Current;
-
-            if (App.Current?.MainWindow != null && DesignerProperties.GetIsInDesignMode(App.Current.MainWindow))
-            {
-                foreach (var i in (new List<ScrapingTaskVM>{
-                    new ScrapingTaskVM(),
-                    new ScrapingTaskVM(),
-                    new ScrapingTaskVM(),
-
-                }))
-                {
-                    ScrapingTasksVMS.Add(i);
-                }
-                //CurrentScrapTask = new ScrapTask(@"https://www.microcenter.com/search/search_results.aspx?N=4294966937&NTK=all&sortby=match&rpp=96&myStore=false&page=2") { Stage = ScrapTaskStage.DownloadingData, DownloadingProgress = new DownloadingProg() { Total = 512, Current = 438 } };
-                //CurrentTaskDetail = "lkjk hk jhzlkdj hlkzjehk jhzekj hzekjhk jhkejhk hekjhkejh khkj hkehkj hkehkj hkejh kjehkjeh kj ehke hkj hkejhk hkjhk jehk hekh kejh ekjhk ejhke jhk jhkejh kjhekhkejhk ehk hekj";
-            }
-
-            Init();
-
-
+            IsWorkspaceSetupMode = true;
+            WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
+            MainWorkspace = null; 
         }
 
+
+        /// <summary>
+        /// loads workspace nd plugn specific UI elements, cannot be called befor assigning main ws
+        /// can be called late after setting up the workspace in runtime
+        /// </summary>
         private void Init()
         {
+            Trace.Assert(MainWorkspace != null, "Cannot init mainViewModel with MainWorkspace=null");
+            Trace.Assert(MainPlugin != null, "Cannot init mainViewModel with MainPlugin=null");
+
             Debug.WriteLine("GetScrapingTasksFromFiles");
             foreach (var p in PluginsManager.GetGlobalPlugins())
             {
                 GlobalUserPlugins.Add(p);
             }
-
             foreach (var i in MainWorkspace.GetScrapingTasksFromFiles())
             {
                 Debug.WriteLine(i);
-
                 ScrapingTasksVMS.Add(new ScrapingTaskVM(i));
             }
 
@@ -79,33 +67,83 @@ namespace scraper.ViewModel
             notif(nameof(CurrentPluginName));
 
             ScrapingTasksVMS = new ObservableCollection<ScrapingTaskVM>();
+            notif(nameof(ElementNamePlural));
 
         }
 
 
+       
+        IPlugin _MainPlugin;
+        IPlugin MainPlugin {
+            get { return _MainPlugin; }
+            set {
+                _MainPlugin = value;
+                notif(nameof(MainPlugin));
+                notif(nameof(ElementName));
+                notif(nameof(ElementNamePlural));
+                notif(nameof(CurrentPluginName));
+                notif(nameof(PluginHelpVM));
 
-        IPlugin MainPlugin;
-        Workspace MainWorkspace;
+            }
+        }
+
+        Workspace _MainWorkspace;
+        Workspace MainWorkspace
+        {
+            get { return _MainWorkspace; }
+            set {
+                _MainWorkspace = value;
+                notif(nameof(MainWorkspace));
+                notif(nameof(CurrentWorkspaceDirectory));
+                notif(nameof(CurrentWorkspaceName));
+
+            }
+        }
         IEnumerable<BusinessViewModel> BusinessViewModels_arr = new List<BusinessViewModel>();
 
 
-        private string _CurrentPluginName;//to be extended to more detailed PluginInfo struct
+        //to be extended to more detailed PluginInfo struct
         public string CurrentPluginName
         {
 
-            get { return MainPlugin.Name; }
+            get { return MainPlugin?.Name; }
         }
 
 
+        public bool _IsWorkspaceSetupMode ;
+        public bool IsWorkspaceSetupMode
+        {
+            set { _IsWorkspaceSetupMode = value; notif(nameof(IsWorkspaceSetupMode)); }
+            get { return _IsWorkspaceSetupMode; }
+        }
+
+
+        public string  _WorkingDirectoryInputValue;
+        public string WorkingDirectoryInputValue
+        {
+            set { _WorkingDirectoryInputValue = value; notif(nameof(WorkingDirectoryInputValue)); }
+            get { return _WorkingDirectoryInputValue; }
+        }
+
+
+
+
+        public HelpVM PluginHelpVM { get
+            {
+                return new HelpVM(MainPlugin?.UsageInfo);
+            } }
+
         public string ElementName
         {
-            get { return MainPlugin.ElementName; }
+            get { return MainPlugin?.ElementName; }
         }
 
         public string ElementNamePlural
         {
-            get { return MainPlugin.ElementNamePlural; }
+            get { return MainPlugin?.ElementNamePlural; }
         }
+
+
 
 
         public ObservableCollection<IPlugin> GlobalUserPlugins { get; set; } = new ObservableCollection<IPlugin>();
@@ -142,11 +180,43 @@ namespace scraper.ViewModel
         }
 
 
+        private ObservableCollection<BusinessViewModel>  _GridResults = new ObservableCollection<BusinessViewModel>();
+
+        public ObservableCollection<BusinessViewModel>  GridResults
+        {
+            set { _GridResults = value; notif(nameof(GridResults)); }
+    get { return _GridResults ; }
+         
+        }
+
+
+
+        private int _SelectionCount;
+        public int SelectionCount
+        {
+            set { _SelectionCount = value; notif(nameof(SelectionCount)); }
+            get { return _SelectionCount; }
+        }
+
+
+
+        /// <summary>
+        /// temp workaround
+        /// </summary>
+        public void UpdateDataGridStats()
+        {
+            
+        }
+
+
 
         public ObservableCollection<BusinessViewModel> BusinessesViewModels { get {
+                if(string.IsNullOrWhiteSpace(SearchQuery)) return new ObservableCollection<BusinessViewModel>(
+                    BusinessViewModels_arr);
+            
                 return new ObservableCollection<BusinessViewModel>(
                     BusinessViewModels_arr.Where(p => p.Name.ToLower().Contains(SearchQuery.ToLower().Trim())));
-            }
+                }
             set {
                 notif(nameof(BusinessesViewModels));
             } }
@@ -163,6 +233,7 @@ namespace scraper.ViewModel
                     item.PropertyChanged += (handl_CSVResourceVM_PropertyChanged);
                 }
                 onDirtyCSVResourceVMSelection();
+                notif(nameof(CSVResourcesVMS));
             }
         }
 
@@ -179,7 +250,7 @@ namespace scraper.ViewModel
 
         public string CurrentWorkspaceDirectory
         {
-            get { return MainWorkspace.Directory; }
+            get { return MainWorkspace?.Directory; }
         }
 
         public string CurrentWorkspaceName
@@ -222,7 +293,7 @@ namespace scraper.ViewModel
             } set {
                 _ScrapingTasksVMS = value;
                 BindingOperations.EnableCollectionSynchronization(_ScrapingTasksVMS, ScrapingTasksVMS_lock);
-
+                notif(nameof(ScrapingTasksVMS));
 
             }
         } 
@@ -237,8 +308,20 @@ namespace scraper.ViewModel
         }
 
 
+        private bool _IsHelpPopupOpen;
+        public bool IsHelpPopupOpen
+        {
+            set { _IsHelpPopupOpen = value; notif(nameof(IsHelpPopupOpen)); }
+            get { return _IsHelpPopupOpen; }
+        }
+
+
+
+
         private async void handleStartScrapingCommand()
         {
+            Trace.Assert(MainWorkspace != null, "cannot start task with MainWorkspace=null");
+            Trace.Assert(MainPlugin != null, "cannot start task with main plugin=null");
             Debug.WriteLine("handleStartScrapingCommand");
 
             var newScrapTask = MainPlugin.GetTask(TargetPageQueryText);
@@ -252,12 +335,11 @@ namespace scraper.ViewModel
             Debug.WriteLine("stage");
 
 
-            newScrapTask.Stage = ScrapTaskStage.DownloadingData;
+            
             Debug.WriteLine("RunScraper");
-
+            
             await newScrapTask.RunScraper();
-            newScrapTask.Stage = ScrapTaskStage.ConvertingData;
-            await newScrapTask.RunConverter();
+            
 
             // Debug.WriteLine("return code is: scraper:" + res.ToString()+", converter:"+ res_c.ToString());
         }
@@ -331,11 +413,14 @@ namespace scraper.ViewModel
 
         private void handleRefreshWorkspaceCommand()
         {
+            Trace.Assert(MainWorkspace != null, "Cannot handleRefreshWorkspaceCommand with MainWorkspace=null");
             MainWorkspace.refresh();
             notif(nameof(CurrentWorkspaceDirectory));
+            Debug.WriteLine("clearing resources");
             CSVResourcesVMS.Clear();
             foreach (var sr in MainWorkspace.CSVResources)
             {
+                Debug.WriteLine("adding resource");
                 CSVResourcesVMS.Add(new CSVResourceVM(sr));
             }
 
@@ -354,12 +439,36 @@ namespace scraper.ViewModel
 
         public ICommand OpenWorkspaceCommand { get
             {
-                return new MICommand(hndlOpenWorkspaceCommand);
+                return new MICommand<string>(hndlOpenWorkspaceCommand);
             } }
 
-        private void hndlOpenWorkspaceCommand()
+        private void hndlOpenWorkspaceCommand(string ws_dir)
         {
-            throw new NotImplementedException();
+            if (!Directory.Exists(ws_dir))
+            {
+                try
+                {
+                    Directory.CreateDirectory(ws_dir);
+                }
+                catch (Exception)
+                {
+                    
+                    return;
+                }
+                
+            }
+            Workspace.MakeCurrent(ws_dir);
+            var ws = Workspace.Current;
+            IPlugin p = new BLScraper() { WorkspaceDirectory = ws.Directory };
+            MainWorkspace = ws;
+            MainPlugin = p;
+            Init();
+            if (IsWorkspaceSetupMode == true)
+            {
+                IsWorkspaceSetupMode = false;
+            }
+            ConfigService.Instance.WorkspaceDirectory = ws.Directory;
+            ConfigService.Instance.Save();
         }
 
         public ICommand OpenPluginOptionsCommand { get { return new MICommand(hndlOpenPluginOptionsCommand); } }
@@ -368,6 +477,13 @@ namespace scraper.ViewModel
         {
             PluginOptionsWindow pow = new PluginOptionsWindow();
             pow.ShowDialog();
+        }
+
+        public ICommand OpenHelpPopupCommand { get { return new MICommand(hndlOpenHelpPopupCommand); } }
+
+        private void hndlOpenHelpPopupCommand()
+        {
+            IsHelpPopupOpen = true;
         }
     }
 }

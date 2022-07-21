@@ -14,18 +14,21 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="PluginOptionsWindow" Height="300" Width="870.775">
+        Title="PluginOptionsWindow" Height="468.6" Width="491.775" WindowStartupLocation="CenterScreen">
     <ScrollViewer Margin="8,0,0,0">
         <Grid VerticalAlignment="Top">
             <Grid.RowDefinitions>
-                <RowDefinition Height="85"/>
+                <RowDefinition Height="64"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid Margin="0">
-                <ToggleButton
-  Style="{StaticResource MaterialDesignSwitchToggleButton}"
-  ToolTip="Default ToggleButton Style" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" d:LayoutOverrides="Height">
+                    <TextBlock Margin="0,0,4,0" VerticalAlignment="Center"  >Follow pages untill the end</TextBlock>
+                    <ToggleButton
+            			Style="{StaticResource MaterialDesignSwitchToggleButton}"
+            			ToolTip="The task will automatically start the next page task untill reaching the last page" VerticalAlignment="Center" d:LayoutOverrides="Width, TopMargin, BottomMargin, LeftPosition, RightPosition" HorizontalAlignment="Center" />
+                </StackPanel>
             </Grid>
 
             <Grid x:Name="enabledFieldsControl" d:LayoutOverrides="Width" Grid.Row="1" Margin="0,0,0,12">
@@ -62,7 +65,7 @@
 
                 </materialDesign:Card>
                 <custom:PackIconMaterial Kind="Information" Width="12" Height="12" Grid.Row="1" VerticalAlignment="Top" Margin="0,1,0,0"/>
-                <TextBlock x:Name="textBlock_Copy"  Foreground="{StaticResource MaterialDesignBodyLight}" TextWrapping="Wrap" Text="Disabled fields are not collected, fields wont be collected, (keeping only 'Name' and 'Address' will cause the scraper to run faster because no navigations are required)  " HorizontalAlignment="Left" Margin="18,0,4,0" Grid.Row="1" FontSize="12"/>
+                <TextBlock x:Name="textBlock_Copy"  Foreground="{StaticResource MaterialDesignBodyLight}" TextWrapping="Wrap" Text="Disabled fields wont be collected" HorizontalAlignment="Left" Margin="18,0,4,0" Grid.Row="1" FontSize="12"/>
             </Grid>
             <Grid x:Name="mandatoryFieldsControl" d:LayoutOverrides="Width" Grid.Row="2">
                 <Grid.RowDefinitions>
@@ -72,7 +75,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="Mandatory fields:" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="14.667" d:LayoutOverrides="TopPosition, BottomPosition" Margin="0" FontFamily="Roboto Medium"/>
-                <TextBlock x:Name="textBlock_Copy1" TextWrapping="Wrap"  Foreground="{StaticResource MaterialDesignBodyLight}" Text="Records that are missing one of the mandatory fields are considered corrupt and are filtered out of the output file" HorizontalAlignment="Left" Margin="18,0,4,0" Grid.Row="1" FontSize="12"/>
+                <TextBlock x:Name="textBlock_Copy1" TextWrapping="Wrap"  Foreground="{StaticResource MaterialDesignBodyLight}" Text="Records with missing mandatory fields are not included in the output files" HorizontalAlignment="Left" Margin="18,0,4,0" Grid.Row="1" FontSize="12"/>
                 <materialDesign:Card Grid.Row="2" Margin="0,4,8,4">
                     <ListBox
                 		Style="{StaticResource MaterialDesignFilterChipOutlineListBox}" d:LayoutOverrides="LeftPosition, RightPosition" Margin="4" VerticalAlignment="Center">

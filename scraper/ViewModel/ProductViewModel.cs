@@ -26,16 +26,10 @@ namespace scraper.ViewModel
             Link = p.link;
             ImgUrl = p.imageUrl;
             ID =  p.ID;
-            this.Employees = p.employees;
-            try
-            {
-                Website = new Uri(p.link).Host;
-            }
-            catch (Exception)
-            {
-                Debug.WriteLine("no uri " + Link);
-                
-            }
+            Employees = p.employees;
+            Address = p.address;
+            Website = p.website;
+            
             
         }
         private string _Name;
@@ -58,6 +52,15 @@ namespace scraper.ViewModel
             set { _PhoneNumber = value; notif(nameof(PhoneNumber)); }
             get { return _PhoneNumber; }
         }
+
+
+        private string _Address;
+        public string Address
+        {
+            set { _Address = value; notif(nameof(Address)); }
+            get { return _Address; }
+        }
+
 
 
         private string _Email;

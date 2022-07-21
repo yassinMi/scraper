@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using CsvHelper;
+using HtmlAgilityPack;
 using Mi.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using scraper.Model;
@@ -68,145 +69,212 @@ namespace scraper.ViewModel.Tests
         }
 
         [TestMethod()]
+        public void testInfosEnumerator()
+        {
+            Workspace.MakeCurrent(@"E:\TOOLS\scraper\tests.yass\blWorkspace");
+            var raw = BLScrapingTask.downloadOrRead(@"https://www.businesslist.ph/company/301559/automation-and-security-inc",
+            Workspace.Current.GetHtmlObjectsFolder());
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(raw);
+            foreach (var item in BLScrapingTask.getInfos(doc.DocumentNode))
+            {
+                Debug.WriteLine(item.Item1);
+                if (item.Item1 == "Employees" && item.Item4==true)
+                {
+                    Debug.WriteLine(item.Item2);
+                }
+
+            }
+
+            return;
+
+            List<string> keys = new List<string>();
+            foreach (var node in union())
+            {
+                foreach (var item in BLScrapingTask.getInfos(node.Value))
+                {
+                    if (item.Item1 == "Employees")
+                    {
+                        Debug.WriteLine(item.Item3.InnerHtml);
+                    }
+                }
+                
+            }
+            
+        }
+
+
+        [TestMethod()]
         public void asm()
         {
 
+            var recs = Enumerable.Range(0, 4).Select(s => new { e = 4, name = "yass" });
+            
+            Assert.IsTrue(recs.Count() == 4,"nope");
+
+            using (var sw = new StreamWriter(@"E:\TOOLS\scraper\tests.yass\blWorkspace\tex.csv"))
+            using (var csvw = new CsvWriter(sw, System.Globalization.CultureInfo.InvariantCulture))
+            {
+                csvw.WriteRecords(recs);
+            }
+
            
-            
 
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        string getAddress(HtmlNode node)
-        {
-            var div = node.SelectSingleNode(".//div[@class='address']");
-            if (div == null) return null;
-            if (string.IsNullOrWhiteSpace(div.InnerHtml)) return null;
-            return Utils.StripHTML(div.InnerHtml);
-        }
-        string getName(HtmlNode node)
-        {
-            return node.SelectSingleNode("./h4//a")?.InnerHtml;
-        }
-        string getLink(HtmlNode node)
-        {
-            return node.SelectSingleNode(".//h4//a")?.GetAttributeValue<string>("href", null);
-        }
-        string getDesc(HtmlNode node)
-        {
-            return "unresolved";
-        }
-        string getThumb(HtmlNode node)
-        {
-            var img = node.SelectSingleNode(".//div[@class='details']//a//span[@class='logo']//img");
-            return (img != null) ? img.GetAttributeValue("src", "") : null;
-        }
-
-
-        IEnumerable<Business> getCompactElementsInPage(HtmlNode targetpagenode)
-        {
-            IEnumerable<HtmlNode> nodes = targetpagenode.Descendants(0)
-             .Where(n => n.HasClass("company")&&!n.HasClass("company_ad"));
-            
-            foreach (HtmlNode node in nodes)
+            using (var sr = new StreamReader(@"E:\TOOLS\scraper\tests.yass\blWorkspace\tex.csv"))
+                using(var csvr = new CsvReader(sr, System.Globalization.CultureInfo.InvariantCulture))
             {
-                Debug.WriteLine(node.InnerHtml);
-                var name = getName(node);
-                if (name == null)
-                {
-                    Debug.WriteLine("wrong: name parsing");
-                }
-                var addr = getAddress(node);
-                if (name == null)
-                {
-                    Debug.WriteLine("wrong: addr parsing");
-                }
-                var relativeLink = getLink(node);
-                if (name == null)
-                {
-                    Debug.WriteLine("wrong: relativeLink parsing");
-                }
-                var thumb = getThumb(node);
-
-                yield return new Business()
-                {
-
-                    name = name,
-                    //desc = getDesc(node),
-                    address = addr,
-                    link = @"https://www.businesslist.ph" + relativeLink,
-                    imageUrl = thumb,
-
-
-                };
+                var i = csvr.GetRecords(recs.First().GetType()).Count();
+                Assert.IsTrue(i==4,$"got {i} not 4");
             }
+                
+
+
         }
 
 
-        /// <summary>
-        /// only required by downloadOrReadFromObject, returns a filesystem-friendly hash
-        /// </summary>
-        string getUniqueLinkHash(string businessLink)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [TestMethod()]
+        public void testEnnumeratePages()
         {
-            return Utils. CreateMD5(businessLink);
+            string urlwith4pg = @"https://www.businesslist.ph/category/industrial-premises"; //pc=4
+            bool v =BLScrapingTask.EnumeratePages(urlwith4pg).Count() == 4;
+            Assert.IsTrue(v, "nope");
         }
-        public string downloadOrReadFromTargetPageObject(string businessLink)
+
+
+
+        public HtmlNode resolvePageTest(string link)
         {
-            string blWSpath = @"E:\TOOLS\scraper\tests.yass\blWorkspace";
+            string restsFolder = @"E:\TOOLS\scraper\tests.yass\blWorkspace\tempTestsTargestPages";
+            var res = BLScrapingTask.downloadOrRead(link, restsFolder);
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(res);
+            return doc.DocumentNode;
+        }
 
-            Debug.WriteLine("calculating unique html name");
-            string uniqueFilename = Path.Combine(blWSpath, ConfigService.Instance.TargetPagesRelativeLocation, getUniqueLinkHash(businessLink) + ".html");
-            if (File.Exists(uniqueFilename))
+
+        public IEnumerable<KeyValuePair<string,HtmlNode>> union()
+        {
+            string t2 = @"E:\TOOLS\scraper\tests.yass\blWorkspace\tempTestsTargestPages";
+
+            var t1 = @"E:\TOOLS\scraper\tests.yass\blWorkspace\companies-raw\html";
+
+           return Directory.GetFiles(t1).Select(f =>
             {
-                //load
-                Debug.WriteLine("exists");
+                var res = File.ReadAllText(f);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(res);
+                return  new KeyValuePair<string,HtmlNode>(f, doc.DocumentNode);
+            });
 
-                return File.ReadAllText(uniqueFilename);
-            }
-            else
+
+        }
+
+
+        [TestMethod()]
+        public void testValidators()
+        {
+
+           
+            string[] multiplePages = new string[] {
+                @"https://www.businesslist.ph/category/retail-services" ,
+                @"https://www.businesslist.ph/category/fire-safety-consultants" ,
+               @"https://www.businesslist.ph/location/laoag" ,
+            } ;
+            string[] singlePage = new string[] {
+                @"https://www.businesslist.ph/location/bayawan" ,
+                @"https://www.businesslist.ph/location/escalante" ,
+                @"https://www.businesslist.ph/category/after-school-programs" ,
+                @"https://www.businesslist.ph/location/new-lucena" ,
+            };
+            string[]  emptyListing = new string[] {
+                @"https://www.businesslist.ph/category/local-authorities" ,
+                @"https://www.businesslist.ph/category/child-daycare-services" ,
+                @"https://www.businesslist.ph/category/political" ,
+            };
+            string [] noneListings = new string[] {
+                @"https://www.businesslist.ph/" ,
+                @"https://www.businesslist.ph/browse-business-cities" ,
+                @"https://www.businesslist.ph/company/304612/golden-haven",
+            };
+
+            string url1 = @"https://www.businesslist.ph/category/letting-agents"; //last page:6 elements count: 165
+            string url2 = @" https://www.businesslist.ph/category/general-business"; //pc=607 cc=18209
+            foreach (var item in noneListings)
             {
-                //download
-                Debug.WriteLine("new");
-                string rawElementPage = WebHelper.instance.GetPageTextSync(businessLink);
-                File.WriteAllText(uniqueFilename, rawElementPage);
-                return rawElementPage;
-
+                Assert.IsFalse(BLScrapingTask.isBusinessesListings(resolvePageTest(item)), $"isBusinessesListings excpected true forr page {item}");
+                Assert.IsFalse(BLScrapingTask.isNoneEmptyBusinessesListings(resolvePageTest(item)), $"isNoneEmptyBusinessesListings excpected true forr page {item}");
+                Assert.IsFalse(BLScrapingTask.isMultiplePagesBusinessesListings(resolvePageTest(item)), $"isMultiplePagesBusinessesListings excpected true forr page {item}");
             }
 
+            foreach (var item in emptyListing)
+            {
+                Assert.IsTrue(BLScrapingTask.isBusinessesListings(resolvePageTest(item)), $"isBusinessesListings excpected true forr page {item}");
+                Assert.IsFalse(BLScrapingTask.isNoneEmptyBusinessesListings(resolvePageTest(item)), $"isNoneEmptyBusinessesListings excpected true forr page {item}");
+                Assert.IsFalse(BLScrapingTask.isMultiplePagesBusinessesListings(resolvePageTest(item)), $"isMultiplePagesBusinessesListings excpected true forr page {item}");
+            }
+
+            foreach (var item in singlePage)
+            {
+                Assert.IsTrue(BLScrapingTask.isBusinessesListings(resolvePageTest(item)), $"isBusinessesListings excpected true forr page {item}");
+                Assert.IsTrue(BLScrapingTask.isNoneEmptyBusinessesListings(resolvePageTest(item)), $"isNoneEmptyBusinessesListings excpected true forr page {item}");
+                Assert.IsFalse(BLScrapingTask.isMultiplePagesBusinessesListings(resolvePageTest(item)), $"isMultiplePagesBusinessesListings excpected true forr page {item}");
+            }
+
+           
+
+            foreach (var item in multiplePages)
+            {
+                Assert.IsTrue(BLScrapingTask.isBusinessesListings(resolvePageTest(item)), $"isBusinessesListings excpected true forr page {item}");
+                Assert.IsTrue(BLScrapingTask.isNoneEmptyBusinessesListings(resolvePageTest(item)), $"isNoneEmptyBusinessesListings excpected true forr page {item}");
+                Assert.IsTrue(BLScrapingTask.isMultiplePagesBusinessesListings(resolvePageTest(item)), $"isMultiplePagesBusinessesListings excpected true forr page {item}");
+            }
+
+
+
+
+            Assert.IsTrue(BLScrapingTask.getLastPageNumber(resolvePageTest(url1)) == 6);
+            Assert.IsTrue(BLScrapingTask.getLastPageNumber(resolvePageTest(url2)) == 607);
         }
 
-
-        string getPageTitle(HtmlNode targetpagenode)
+        //
+        [TestMethod()]
+        public void mutliplePages()
         {
-            var h1 = targetpagenode.SelectSingleNode("//main//section//h1");
-            return h1?.InnerHtml;
+            string url4 = @"https://www.businesslist.ph/category/industrial-premises";
+            string rawPage = BLScrapingTask.downloadOrRead(url4, Workspace.Current.GetTPFolder());
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(rawPage);
+            string ResolvedTitle = BLScrapingTask.getPageTitle(doc.DocumentNode);
+            var compactElements = BLScrapingTask.getCompactElementsInPage(doc.DocumentNode).ToList();
+            Assert.IsTrue(compactElements.Count == 30, $"not 30 on page 1 but {compactElements.Count}");
+            Assert.IsTrue(compactElements.All(e =>
+            {
+                return
+                string.IsNullOrWhiteSpace(e.name) == false
+                && string.IsNullOrWhiteSpace(e.link) == false
+                ;
+            }), "not all compacts on page1 have name and link");
         }
 
-        string getPageNumber(HtmlNode targetpagenode)
-        {
-            return "3";
-        }
+
 
 
         [TestMethod()]
@@ -214,11 +282,11 @@ namespace scraper.ViewModel.Tests
         {
             string url1 = @"https://www.businesslist.ph/location/manila/3";
             string url2 = @"https://www.businesslist.ph/category/specialist-printing/city:manila";
-            string rawPage = downloadOrReadFromTargetPageObject(url1);
+            string rawPage = BLScrapingTask. downloadOrRead(url1,Workspace.Current.GetTPFolder());
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(rawPage);
-            string ResolvedTitle = getPageTitle(doc.DocumentNode);
-            var compactElements = getCompactElementsInPage(doc.DocumentNode).ToList();
+            string ResolvedTitle = BLScrapingTask. getPageTitle(doc.DocumentNode);
+            var compactElements = BLScrapingTask. getCompactElementsInPage(doc.DocumentNode).ToList();
             Assert.IsTrue(compactElements.Count == 30, $"not 30 on page 1 but {compactElements.Count}");
             Assert.IsTrue(compactElements.All(e =>
             {
@@ -234,11 +302,11 @@ namespace scraper.ViewModel.Tests
         {
             string testName = "page2";
             string url2 = @"https://www.businesslist.ph/category/specialist-printing/city:manila";
-            string rawPage = downloadOrReadFromTargetPageObject(url2);
+            string rawPage = BLScrapingTask. downloadOrRead(url2, Workspace.Current.GetTPFolder());
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(rawPage);
-            string ResolvedTitle = getPageTitle(doc.DocumentNode);
-            var compactElements = getCompactElementsInPage(doc.DocumentNode).ToList();
+            string ResolvedTitle = BLScrapingTask. getPageTitle(doc.DocumentNode);
+            var compactElements = BLScrapingTask. getCompactElementsInPage(doc.DocumentNode).ToList();
             Assert.IsTrue(compactElements.Count == 23, $"not 30 on {testName} but {compactElements.Count}");
             Assert.IsTrue(compactElements.All(e =>
             {
@@ -251,18 +319,7 @@ namespace scraper.ViewModel.Tests
 
 
 
-        [TestMethod()]
-        public void downloadOrReadFromObjectTest()
-        {
-            string blWSpath = @"E:\TOOLS\scraper\tests.yass\blWorkspace";
-            Workspace.MakeCurrent(blWSpath);
-            BLScrapingTask bt = new BLScrapingTask() { WorkspaceDirectory = Workspace.Current.Directory};
-           string s = bt.downloadOrReadFromObject(@"https://www.businesslist.ph/company/264051/maximo-a-lim-dental-clinic");
-
-            Assert.IsTrue(s.Length == 78039, $"not the excpected ength but: {s.Length} ");
-
-        }
-
+      
         
 
         [TestMethod()]

@@ -36,7 +36,10 @@
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="stageTB" Text="{Binding CurrentScrapTaskStage, Converter={StaticResource ScrapingTaskStageToUIString}, Mode=OneWay}" VerticalAlignment="Center"/>
+                    <StackPanel Margin="0,9" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock x:Name="stageTB"  Text="{Binding CurrentScrapTaskStage, Converter={StaticResource ScrapingTaskStageToUIString}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                        <TextBlock x:Name="error" Text="{Binding FailingReason}"  VerticalAlignment="Center" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Failed, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontStyle="Italic" HorizontalAlignment="Left" Margin="6,0,0,0" ></TextBlock>
+                    </StackPanel>
                     <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="{Binding Info, FallbackValue=733 objects · 7.8 MB}" TextTrimming="CharacterEllipsis" Grid.Row="1" VerticalAlignment="Center" FontSize="10.667"/>
                 </Grid>
                 <materialDesign:Card
@@ -50,12 +53,15 @@
                         <TextBlock x:Name="progTB" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="{Binding DownloadProgress}" VerticalAlignment="Center" Foreground="{DynamicResource AppImportantDataColor}" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontWeight="Bold" FontSize="13.333"/>
                     </Grid>
                 </materialDesign:Card>
-                <TextBlock x:Name="TitleTB" Margin="0" TextWrapping="Wrap" Text="{Binding Title, FallbackValue=Long title jhjhfdkjfhdkj jkhkjfhk sfkj}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold"/>
+                <TextBlock x:Name="TitleTB" Margin="0,0,8,0" TextWrapping="Wrap"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Grid.ColumnSpan="2">
+                   <Run Text="{Binding Title, FallbackValue=Long title jhjhfdkjfhdkj jkhkjfhk sfkj}"/> <Run Text="{Binding CurrentPage, FallbackValue=4/86}"></Run>
+                </TextBlock>
                 <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Bottom" />
 
                 <Button x:Name="stopButt" Style="{StaticResource MaterialDesignFlatButton}"  Content="STOP" Height="Auto" Margin="4,0,10,0" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" d:LayoutOverrides="Width" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}"/>
                 <Button x:Name="StartButt" Style="{StaticResource MaterialDesignFlatButton}"  Content="START" Height="Auto" Margin="10,0,4,0" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  d:LayoutOverrides="Width" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}"/>
                 <Button x:Name="ExportButt"  materialDesign:RippleAssist.IsDisabled="False"  Style="{StaticResource MaterialDesignFlatDarkButton}" materialDesign:ColorZoneAssist.Foreground="#FFF1A80B"  Content="SAVE AS..." Height="Auto" Margin="4,2,10,2" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" d:LayoutOverrides="Width" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Success, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" BorderThickness="0" Foreground="#FFF1A80B"/>
+                <Button x:Name="Retry" Command="{Binding RetryCommand}" materialDesign:RippleAssist.IsDisabled="False"  Style="{StaticResource MaterialDesignFlatDarkButton}" materialDesign:ColorZoneAssist.Foreground="#FFF1A80B"  Content="RETRY" Height="Auto" Margin="4,2,10,2" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Failed, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" BorderThickness="0" Foreground="#FFF1A80B"/>
 
             </Grid>
         </materialDesign:Card>
