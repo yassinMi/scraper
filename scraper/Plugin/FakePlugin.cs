@@ -87,6 +87,19 @@ namespace scraper.Plugin
 
         public string TargetPage { get; set; } = null;
 
+        public TaskStatsInfo TaskStatsInfo
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public event EventHandler<string> OnError;
         public event EventHandler<string> OnPage;
         public event EventHandler<DownloadingProg> OnProgress;

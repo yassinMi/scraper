@@ -103,6 +103,8 @@ namespace scraper.Plugin
 
         public DownloadingProg DownloadingProgress { get; set; }
 
+        public TaskStatsInfo TaskStatsInfo { get; set; } = new TaskStatsInfo();
+
 
         public string ResolvedTitle { get; set; } = null;
 
@@ -121,6 +123,8 @@ namespace scraper.Plugin
         {
             throw new NotImplementedException();
         }
+
+        
 
         //not used
         async public Task RunConverter()
@@ -249,11 +253,15 @@ namespace scraper.Plugin
         /// existing fields are  name, desc, thumb, location, link
         /// </summary>
         /// <param name="compactElement"></param>
-        public static void resolveFullElement(Business compactElement)
+        public static void resolveFullElement(Business compactElement, out int writtenBytes , out int WrittenObjectsCoutnt)
         {
+            writtenBytes = 0; WrittenObjectsCoutnt = 0;
+
             Debug.WriteLine("downloading or reading html link: "+ compactElement.link);
             
             string rawElementPage = downloadOrRead(compactElement.link, Workspace.Current.GetHtmlObjectsFolder());
+            WrittenObjectsCoutnt++;
+            writtenBytes += rawElementPage.Length;
             HtmlDocument elementDoc = new HtmlDocument();
             elementDoc.LoadHtml(rawElementPage);
             Debug.WriteLine("resolving missing fields from html");
@@ -482,19 +490,21 @@ Video
             return "3";
         }
 
-        object lock_ = new object();
+        static Synchronizer<string> targetPageBasedLock = new Services.Synchronizer<string>();
 
         async public Task RunScraper()
         {
-            lock (lock_)
+            lock (targetPageBasedLock[TargetPage])
             {
                 Debug.WriteLine("RunScraper entered");
+                TaskStatsInfo.Reset();
                 Stage = ScrapTaskStage.DownloadingData;
                 this.OnStageChanged?.Invoke(this, this.Stage);
                 string raw;
                 try
                 {
                     raw = downloadOrRead(TargetPage, Workspace.Current.GetTPFolder());
+                    TaskStatsInfo.incSize(raw.Length);
                 }
                 catch(HttpRequestException )
                 {
@@ -522,11 +532,11 @@ Video
                     int i = 0;
                     foreach (var item in compactElements)
                     {
-                        
-                            resolveFullElement(item);
-                        
-                       
-                        
+                        int objs, bytes = 0;
+                        resolveFullElement(item, out bytes, out objs);
+                            TaskStatsInfo.incObject(objs);
+                            TaskStatsInfo.incSize(bytes);
+                            TaskStatsInfo.incElem(1);
                         i++;
                         OnProgress?.Invoke(this, new DownloadingProg() { Total = compactElements.Count, Current = i });
                         OnTaskDetail?.Invoke(this, $"Collecting business info: {item.name}");

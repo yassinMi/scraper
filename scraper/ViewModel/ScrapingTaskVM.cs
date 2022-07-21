@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using scraper.Model;
 using scraper.Core;
 using System.Windows.Input;
+using scraper.Services;
 
 namespace scraper.ViewModel
 {
@@ -23,6 +24,8 @@ namespace scraper.ViewModel
             notif(nameof(CurrentScrapTaskStage));
             m.OnProgress += (s, p) => {
                 this.DownloadProgress = p;
+                notif(nameof(StatsInfo));
+                notif(nameof(Info));
             };
             m.OnTaskDetail += (s, td) => {
                 notif(nameof(CurrentScrapTaskStage));
@@ -57,7 +60,14 @@ namespace scraper.ViewModel
         public string Info
         {
            
-            get { return string.Join(" · "  ,new string[] { "321 Elements", "733 Objects" , "7.8 MB" } ); }
+            get { return string.Join(" · "  ,new string[] { $"{StatsInfo.Elements} Elements", $"{StatsInfo.Objects} Objects" , Utils.BytesToString(StatsInfo.TotalSize)} ); }
+        }
+
+
+        public TaskStatsInfo StatsInfo
+        {
+            
+            get { return Model.TaskStatsInfo; }
         }
 
 

@@ -13,9 +13,49 @@ using System.IO;
 
 namespace scraper.Services
 {
+
+    //@configurator way
+    public class Synchronizer<T> 
+    {
+        private Dictionary<T, object> locks;
+        private object myLock;
+
+        public Synchronizer()
+        {
+            locks = new Dictionary<T, object>();
+            myLock = new object();
+        }
+
+        public object this[T index]
+        {
+            get
+            {
+                lock (myLock)
+                {
+                    object result;
+                    if (locks.TryGetValue(index, out result))
+                        return result;
+
+                    result = new object();
+                    locks[index] = result;
+                    return result;
+                }
+            }
+        }
+    }
     public static class Utils
     {
-
+        //@deepee1
+        public static String BytesToString(long byteCount)
+        {
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+            if (byteCount == 0)
+                return "0" + suf[0];
+            long bytes = Math.Abs(byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (Math.Sign(byteCount) * num).ToString() + suf[place];
+        }
 
         public static void CSVAppendRecords(string filename, IEnumerable records)
         {
