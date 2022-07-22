@@ -23,15 +23,17 @@
 			Padding="8,8,8,4" Margin="4" Background="#FF252525" BorderBrush="White" BorderThickness="1"  >
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="31*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32"/>
                     <RowDefinition/>
                     <RowDefinition Height="36"/>
                 </Grid.RowDefinitions>
-                <Grid Margin="0,4,4,4" Grid.Row="1" VerticalAlignment="Center" Height="64">
+                <TextBlock x:Name="pageNum" FontSize="14.667" Text="{Binding CurrentPage, FallbackValue=4/86}" Grid.Column="2" VerticalAlignment="Center" Margin="4,0,10,0"/>
+                <Grid Margin="0,9,84,9" Grid.Row="1" VerticalAlignment="Center" Height="64" Grid.ColumnSpan="2">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -40,11 +42,11 @@
                         <TextBlock x:Name="stageTB"  Text="{Binding CurrentScrapTaskStage, Converter={StaticResource ScrapingTaskStageToUIString}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
                         <TextBlock x:Name="error" Text="{Binding FailingReason}"  VerticalAlignment="Center" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Failed, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontStyle="Italic" HorizontalAlignment="Left" Margin="6,0,0,0" ></TextBlock>
                     </StackPanel>
-                    <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="{Binding Info, FallbackValue=733 objects · 7.8 MB}" TextTrimming="CharacterEllipsis" Grid.Row="1" VerticalAlignment="Center" FontSize="10.667"/>
+                    <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="{Binding Info, FallbackValue=733 objects · 7.8 MB}" TextTrimming="CharacterEllipsis" Grid.Row="1" VerticalAlignment="Center" FontSize="10.667" HorizontalAlignment="Left"/>
                 </Grid>
                 <materialDesign:Card
 					UniformCornerRadius="80"
-					Padding="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF1C1C1C" Background="#00232323"  Margin="0,0,0,4" Grid.ColumnSpan="2" Grid.Column="1">
+					Padding="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FF1C1C1C" Background="#00232323"  Margin="0,7,10,11" Grid.ColumnSpan="2" Grid.Column="1">
                     <Grid Height="64" Width="64">
                         <custom:PackIconMaterial Foreground="{StaticResource AppImportantDataColor}" Kind="CheckCircle" Height="48" Width="48" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Success, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <ProgressBar 
@@ -53,15 +55,15 @@
                         <TextBlock x:Name="progTB" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="{Binding DownloadProgress}" VerticalAlignment="Center" Foreground="{DynamicResource AppImportantDataColor}" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontWeight="Bold" FontSize="13.333"/>
                     </Grid>
                 </materialDesign:Card>
-                <TextBlock x:Name="TitleTB" Margin="0,0,8,0" TextWrapping="Wrap"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Grid.ColumnSpan="2">
-                   <Run Text="{Binding Title, FallbackValue=Long title jhjhfdkjfhdkj jkhkjfhk sfkj}"/> <Run Text="{Binding CurrentPage, FallbackValue=4/86}"></Run>
+                <TextBlock x:Name="TitleTB" Margin="0,6" TextWrapping="Wrap"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2">
+                   <Run Text="{Binding Title, FallbackValue=Long title jhjhfdkjfhdkj jkhkjfhk sfkj}"/>
                 </TextBlock>
-                <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Bottom" />
+                <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Bottom" />
 
-                <Button x:Name="stopButt" Style="{StaticResource MaterialDesignFlatButton}"  Content="STOP" Height="Auto" Margin="4,0,10,0" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" d:LayoutOverrides="Width" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}"/>
-                <Button x:Name="StartButt" Style="{StaticResource MaterialDesignFlatButton}"  Content="START" Height="Auto" Margin="10,0,4,0" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  d:LayoutOverrides="Width" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}"/>
-                <Button x:Name="ExportButt"  materialDesign:RippleAssist.IsDisabled="False"  Style="{StaticResource MaterialDesignFlatDarkButton}" materialDesign:ColorZoneAssist.Foreground="#FFF1A80B"  Content="SAVE AS..." Height="Auto" Margin="4,2,10,2" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" d:LayoutOverrides="Width" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Success, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" BorderThickness="0" Foreground="#FFF1A80B"/>
-                <Button x:Name="Retry" Command="{Binding RetryCommand}" materialDesign:RippleAssist.IsDisabled="False"  Style="{StaticResource MaterialDesignFlatDarkButton}" materialDesign:ColorZoneAssist.Foreground="#FFF1A80B"  Content="RETRY" Height="Auto" Margin="4,2,10,2" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Failed, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" BorderThickness="0" Foreground="#FFF1A80B"/>
+                <Button x:Name="stopButt" Style="{StaticResource MaterialDesignFlatButton}"  Content="STOP" Height="Auto" Margin="4,1,10,1" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" Grid.ColumnSpan="2"/>
+                <Button x:Name="StartButt" Style="{StaticResource MaterialDesignFlatButton}"  Content="START" Height="Auto" Margin="10,1,4,1" Grid.Row="2" VerticalAlignment="Center" Padding="10,8" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Ready, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}"/>
+                <Button x:Name="ExportButt"  materialDesign:RippleAssist.IsDisabled="False"  Style="{StaticResource MaterialDesignFlatDarkButton}" materialDesign:ColorZoneAssist.Foreground="#FFF1A80B"  Content="SAVE AS..." Height="Auto" Margin="4,18,10,18" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" BorderThickness="0" Foreground="#FFF1A80B" Visibility="Collapsed" Grid.ColumnSpan="2"/>
+                <Button x:Name="Retry" Command="{Binding RetryCommand}" materialDesign:RippleAssist.IsDisabled="False"  Style="{StaticResource MaterialDesignFlatDarkButton}" materialDesign:ColorZoneAssist.Foreground="#FFF1A80B"  Content="RETRY" Height="Auto" Margin="4,2,10,2" Grid.Row="2" VerticalAlignment="Center" Padding="10,8"  Grid.Column="1" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Failed, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" BorderThickness="0" Foreground="#FFF1A80B" Grid.ColumnSpan="2"/>
 
             </Grid>
         </materialDesign:Card>

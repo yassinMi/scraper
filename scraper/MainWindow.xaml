@@ -242,10 +242,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <Style x:Key="ViewHeaderStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="NoWrap"/>
             <Setter Property="TextTrimming" Value="None"/>
-            <Setter Property="FontFamily" Value="Poppins Light"/>
+            <Setter Property="FontFamily" Value="Fonts/#Poppins Light"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
@@ -595,148 +596,6 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                            <StackPanel Orientation="Vertical" d:LayoutOverrides="Height" Margin="4,0" Visibility="Collapsed">
-                                <View:ProductCardView />
-                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width">
-                                    <Grid Margin="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="18*"/>
-                                            <RowDefinition Height="22*"/>
-                                            <RowDefinition Height="19*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="64"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Image x:Name="image2" Margin="4" Grid.RowSpan="3" Source="laptop1-0648451_390864.jpg"/>
-
-                                        <TextBlock x:Name="textBlock1" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="textBlock_Copy2" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        <TextBlock x:Name="upc_val2" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="sku_val2" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val2" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
-
-                                    </Grid>
-                                </materialDesign:Card>
-                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" d:LayoutOverrides="Width">
-                                    <Grid Margin="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="18*"/>
-                                            <RowDefinition Height="22*"/>
-                                            <RowDefinition Height="19*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="64"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Image x:Name="image3" Margin="4" Grid.RowSpan="3" Source="laptop2-636984_269753_01_front_thumbnail.jpg"/>
-
-                                        <TextBlock x:Name="textBlock5" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" FontFamily="Roboto" FontSize="10.667" ToolTip="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="textBlock_Copy3" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        <TextBlock x:Name="upc_val3" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="sku_val3" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val3" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
-
-                                    </Grid>
-                                </materialDesign:Card>
-                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width">
-                                    <Grid Margin="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="18*"/>
-                                            <RowDefinition Height="22*"/>
-                                            <RowDefinition Height="19*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="64"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Image x:Name="image4" Margin="4" Grid.RowSpan="3" Source="laptop1-0648451_390864.jpg"/>
-
-                                        <TextBlock x:Name="textBlock6" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="textBlock_Copy4" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        <TextBlock x:Name="upc_val4" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="sku_val4" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val4" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
-
-                                    </Grid>
-                                </materialDesign:Card>
-                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" d:LayoutOverrides="Width">
-                                    <Grid Margin="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="18*"/>
-                                            <RowDefinition Height="22*"/>
-                                            <RowDefinition Height="19*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="64"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Image x:Name="image5" Margin="4" Grid.RowSpan="3" Source="laptop2-636984_269753_01_front_thumbnail.jpg"/>
-
-                                        <TextBlock x:Name="textBlock7" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" FontFamily="Roboto" FontSize="10.667" ToolTip="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="textBlock_Copy5" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        <TextBlock x:Name="upc_val5" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="sku_val5" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val5" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
-
-                                    </Grid>
-                                </materialDesign:Card>
-                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" BorderBrush="#FF9C9C9C" d:LayoutOverrides="Width">
-                                    <Grid Margin="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="18*"/>
-                                            <RowDefinition Height="22*"/>
-                                            <RowDefinition Height="19*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="64"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Image x:Name="image6" Margin="4" Grid.RowSpan="3" Source="laptop1-0648451_390864.jpg"/>
-
-                                        <TextBlock x:Name="textBlock8" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="textBlock_Copy6" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="959.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        <TextBlock x:Name="upc_val6" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="196337955523" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="sku_val6" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="390864" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val6" Grid.Column="1"  Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
-
-                                    </Grid>
-                                </materialDesign:Card>
-                                <materialDesign:Card Height="64" Margin="0,4" VerticalAlignment="Top" FontFamily="Roboto" Background="#FF303030" d:LayoutOverrides="Width">
-                                    <Grid Margin="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="18*"/>
-                                            <RowDefinition Height="22*"/>
-                                            <RowDefinition Height="19*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="64"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Image x:Name="image7" Margin="4" Grid.RowSpan="3" Source="laptop2-636984_269753_01_front_thumbnail.jpg"/>
-
-                                        <TextBlock x:Name="textBlock9" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" FontFamily="Roboto" FontSize="10.667" ToolTip="Dell Latitude E7470 14&quot; Laptop Computer (Refurbished) - Black" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="textBlock_Copy7" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="529.99 $" FontFamily="Roboto" FontSize="10.667" ToolTip="HP Pavilion 15-eg2078nr 15.6&quot; Laptop Computer - Silver" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        <TextBlock x:Name="upc_val7" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="724962761709" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="sku_val7" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="269753" FontFamily="Roboto" FontSize="10.667" ToolTip="Copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="origin_val7" Grid.Column="1" Margin="6,0,6,6" TextWrapping="Wrap" Text="targetwebsite.com" FontFamily="Roboto" FontSize="10.667" ToolTip="copy product url" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFAAAAAA"/>
-
-                                    </Grid>
-                                </materialDesign:Card>
-                            </StackPanel>
                         </Grid>
                     </Grid>
                     <Grid x:Name="dragging_area_right" Margin="0" Background="#00E41F1F" Height="48" VerticalAlignment="Top" MouseLeftButtonDown="dragging_area_right_MouseLeftButtonDown"/>
@@ -800,7 +659,7 @@
                                 </Grid.RowDefinitions>
                                 <Button x:Name="add_csv_file"
             					Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
-            					ToolTip="MaterialDesignFloatingActionDarkButton" VerticalAlignment="Bottom" Margin="0,0,24,24" HorizontalAlignment="Right" Grid.Row="3" Command="{Binding LoadCSVFileCommand}" Width="48" Height="48">
+            					ToolTip="MaterialDesignFloatingActionDarkButton" VerticalAlignment="Bottom" Margin="0,0,24,24" HorizontalAlignment="Right" Grid.Row="3" Command="{Binding LoadCSVFileCommand}" Width="48" Height="48" Visibility="Collapsed">
                                     <materialDesign:PackIcon
             						Kind="Plus"
             						Height="24"
@@ -809,39 +668,6 @@
                                 <Grid x:Name="head1" Margin="4,14,0,14" VerticalAlignment="Center">
                                     <TextBlock x:Name="head_string1" HorizontalAlignment="Left" Margin="2,0,0,0"  Text="{Binding ElementNamePlural, FallbackValue=Scrap Elements, Mode=OneWay, StringFormat=Scrap \{0\}}" VerticalAlignment="Center" Style="{DynamicResource ViewHeaderStyle}" TextOptions.TextFormattingMode="Ideal"/>
                                 </Grid>
-                                <StackPanel Margin="4,0,0,0" Orientation="Vertical" Grid.Row="1" Visibility="Collapsed">
-                                    <Grid x:Name="searchSection1" Height="48">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="24"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="48"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="head_string1e" HorizontalAlignment="Left" Margin="2,17,0,17" TextWrapping="Wrap" Text="main-source.csv" FontFamily="Roboto Light" VerticalAlignment="Center" FontSize="12" Grid.Column="1" />
-                                        <Border HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" BorderBrush="#FF63E05D" BorderThickness="1" Grid.Column="2" Background="#FF073A04" CornerRadius="5" >
-                                            <TextBlock x:Name="head_string1e_Copy" TextWrapping="Wrap" Text="231" FontFamily="Roboto Light" FontSize="12" Foreground="#FF63E05D" Margin="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
-
-                                        </Border>
-                                        <Image x:Name="image" HorizontalAlignment="Center" Height="22" Margin="1,13" VerticalAlignment="Center" Width="22" Source="media/img/svg-22-white-regular.png"/>
-
-                                    </Grid>
-                                    <Grid x:Name="searchSection1_Copy" Height="48">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="24"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="48"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="head_string1e1" HorizontalAlignment="Left" Margin="2,17,0,17" TextWrapping="Wrap" Text="path/to/myFile.csv" FontFamily="Roboto Light" VerticalAlignment="Center" FontSize="12" Grid.Column="1" />
-                                        <Border HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" BorderBrush="#FF63E05D" BorderThickness="1" Grid.Column="2" Background="#FF073A04" CornerRadius="5" >
-                                            <TextBlock x:Name="head_string1e_Copy1" TextWrapping="Wrap" Text="6224" FontFamily="Roboto Light" FontSize="12" Foreground="#FF63E05D" Margin="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
-
-                                        </Border>
-                                        <Image x:Name="image1" HorizontalAlignment="Center" Height="22" Margin="1,13" VerticalAlignment="Center" Width="22" Source="media/img/svg-22-white-regular.png"/>
-
-                                    </Grid>
-
-                                </StackPanel>
                                 <Grid Grid.Row="1" VerticalAlignment="Top" Height="24">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>

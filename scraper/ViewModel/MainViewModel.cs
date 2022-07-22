@@ -238,6 +238,9 @@ namespace scraper.ViewModel
                         it.OnDeleteRequest -= handelFilterRulesVMSDeleteRequest;
                     }
                 }
+
+            notif(nameof(BusinessesViewModels));
+
         }
 
         public HelpVM PluginHelpVM { get
@@ -339,12 +342,18 @@ namespace scraper.ViewModel
 
 
 
-        public ObservableCollection<BusinessViewModel> BusinessesViewModels { get {
-                if(string.IsNullOrWhiteSpace(SearchQuery)) return new ObservableCollection<BusinessViewModel>(
-                    BusinessViewModels_arr);
-            
-                return new ObservableCollection<BusinessViewModel>(
-                    BusinessViewModels_arr.Where(p => p.Name.ToLower().Contains(SearchQuery.ToLower().Trim())));
+        public IEnumerable<BusinessViewModel> BusinessesViewModels { get {
+                if(string.IsNullOrWhiteSpace(SearchQuery)) return
+                    BusinessViewModels_arr
+                    .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
+                ;
+                string lowertrim = SearchQuery.ToLower().Trim();
+                return 
+                    BusinessViewModels_arr
+                    .Where(p => p.Name.ToLower().Contains(lowertrim))
+                    .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
+
+                    ;
                 }
             set {
                 notif(nameof(BusinessesViewModels));
@@ -639,7 +648,7 @@ namespace scraper.ViewModel
 
         private bool canExecuteSaveResultsCommand()
         {
-            return BusinessesViewModels.Count > 0;
+            return BusinessesViewModels.Count() > 0;
         }
 
         private void hndlSaveResultsCommand()

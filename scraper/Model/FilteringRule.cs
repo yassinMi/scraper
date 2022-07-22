@@ -45,10 +45,10 @@ namespace scraper.Model
                 case FilteringRuleType.IsNotEmpty:
                     return $"{fieldName} is not empty";
                 case FilteringRuleType.Equals:
-                    return $"{fieldName} = {RuleParam}";
+                    return $"{fieldName} = '{RuleParam}'";
                     
                 case FilteringRuleType.Contains:
-                    return $"{fieldName} contains {RuleParam}";
+                    return $"{fieldName} contains '{RuleParam}'";
                 default:
                     return "";
                     
