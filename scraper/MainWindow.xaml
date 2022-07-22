@@ -17,7 +17,7 @@
         TextOptions.TextFormattingMode="Display" 
         TextOptions.TextRenderingMode="Auto"
         FontFamily="Roboto"
-        Title="MainWindow" Height="499" Width="795.55" UseLayoutRounding="True" WindowStyle="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="True" Background="{x:Null}"
+        Title="MainWindow" Height="499" Width="795.55" UseLayoutRounding="True" ResizeMode="CanResizeWithGrip" Background="{x:Null}"
     d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}"
         
         
