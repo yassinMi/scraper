@@ -17,8 +17,8 @@
         TextOptions.TextFormattingMode="Display" 
         TextOptions.TextRenderingMode="Auto"
         FontFamily="Roboto"
-        Title="MainWindow" Height="499" Width="795.55" UseLayoutRounding="True" ResizeMode="CanResizeWithGrip" Background="{x:Null}"
-    d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}"
+        Title="scraper v0.1.1 (businesslist.ph)" Height="499" Width="795.55" UseLayoutRounding="True" ResizeMode="CanResizeWithGrip" Background="{x:Null}"
+    d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}" Icon="scraper.ico"
         
         
         
@@ -337,7 +337,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Grid x:Name="dragging_area_middle" Margin="0,0,80,0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown" Grid.Column="1"/>
+                    <Grid x:Name="dragging_area_middle" Margin="0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown" Grid.Column="1"/>
                     <Grid x:Name="controlPanel" Margin="0,0,4,0" Grid.RowSpan="3" Background="#FF232323">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="48"/>
@@ -789,7 +789,7 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="161"/>
                             </Grid.RowDefinitions>
-                            <Grid x:Name="dragging_area_middle_Copy" Margin="234,0,80,0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" Grid.ColumnSpan="4" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown"/>
+                            <Grid x:Name="dragging_area_middle_Copy" Margin="234,0,0,0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" Grid.ColumnSpan="4" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown"/>
 
                             <Grid x:Name="controlPanel1" Margin="0,0,4,0" Grid.RowSpan="4" Background="#FF232323">
                                 <Grid.RowDefinitions>
@@ -1011,7 +1011,7 @@
                                 </Grid>
                             </Border>
                             <TextBlock x:Name="textBlock10" Grid.ColumnSpan="3" Grid.Column="1" Margin="10,10,10,2" Grid.Row="2" TextWrapping="Wrap" Text="{Binding CurrentTaskDetail}" VerticalAlignment="Top"/>
-                            <Grid x:Name="dragging_area_right_Copy" Margin="0,0,4,0" Background="#00E41F1F" Height="48" VerticalAlignment="Top" MouseLeftButtonDown="dragging_area_right_MouseLeftButtonDown"/>
+                            <Grid x:Name="dragging_area_right_Copy" Margin="0" Background="#00E41F1F" Height="48" VerticalAlignment="Top" MouseLeftButtonDown="dragging_area_right_MouseLeftButtonDown"/>
 
                         </Grid>
 
@@ -1033,28 +1033,18 @@
 
                 </TabItem.Header>
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
                     <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,12,0,0" ><Run Text="v0.1.0"/></TextBlock>
+                    <Grid x:Name="dragging_area_middle_Copy1" Margin="0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown"/>
                 </Grid>
             </TabItem>
             <Grid/>
         </TabControl>
-        <Grid x:Name="windowControl" Grid.ColumnSpan="2">
-            <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Margin="0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Right">
-                <Button x:Name="button" materialDesign:ButtonAssist.CornerRadius="0" Style="{DynamicResource ButtonWndowControlsStyle}"  HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Command="{Binding CloseWindowCommand}">
-                    <custom:PackIconMaterial Kind="WindowClose" Width="10" Height="10"/>
-                </Button>
-                <Button x:Name="maximizeButt"  Style="{DynamicResource ButtonWndowControlsStyle}"
-                    materialDesign:ButtonAssist.CornerRadius="0"
-                        
-					HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Foreground="#FF818181" FontFamily="Roboto" Click="button2_Click">
-                    <Image x:Name="maximizeButtImg"  Width="10" Height="10" Source="media/img/maximize-10-white.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
-                <Button x:Name="mnimizeButton" materialDesign:ButtonAssist.CornerRadius="0" Style="{DynamicResource ButtonWndowControlsStyle}" HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Foreground="#FF818181" Click="mnimizeButton_Click" FontFamily="Roboto">
-                    <Image  Width="10" Height="10" Source="media/img/minimize-10-white.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
-            </StackPanel>
-        </Grid>
-        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" d:IsHidden="True" >
+        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" d:IsHidden="True" Grid.RowSpan="2" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="381*"/>
                 <RowDefinition Height="94*"/>
@@ -1087,6 +1077,22 @@
                 </StackPanel>
             </StackPanel>
 
+        </Grid>
+        <Grid x:Name="windowControl" Grid.ColumnSpan="2">
+            <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Margin="0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Right">
+                <Button x:Name="button" materialDesign:ButtonAssist.CornerRadius="0" Style="{DynamicResource ButtonWndowControlsStyle}"  HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Command="{Binding CloseWindowCommand}">
+                    <custom:PackIconMaterial Kind="WindowClose" Width="10" Height="10"/>
+                </Button>
+                <Button x:Name="maximizeButt"  Style="{DynamicResource ButtonWndowControlsStyle}"
+        			materialDesign:ButtonAssist.CornerRadius="0"
+                        
+        			HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Foreground="#FF818181" FontFamily="Roboto" Click="button2_Click">
+                    <Image x:Name="maximizeButtImg"  Width="10" Height="10" Source="media/img/maximize-10-white.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+                <Button x:Name="mnimizeButton" materialDesign:ButtonAssist.CornerRadius="0" Style="{DynamicResource ButtonWndowControlsStyle}" HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Foreground="#FF818181" Click="mnimizeButton_Click" FontFamily="Roboto">
+                    <Image  Width="10" Height="10" Source="media/img/minimize-10-white.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
