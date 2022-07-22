@@ -70,7 +70,9 @@ namespace scraper.ViewModel
 
             ScrapingTasksVMS = new ObservableCollection<ScrapingTaskVM>();
             notif(nameof(ElementNamePlural));
+            ElementFieldsNamesInFilterPanel = typeof(Business).GetProperties().Select(p=>p.Name);
 
+            FilterRulesVMS = new ObservableCollection<FilteringRuleViewModel>();
         }
 
 
@@ -103,6 +105,20 @@ namespace scraper.ViewModel
         }
         IEnumerable<BusinessViewModel> BusinessViewModels_arr = new List<BusinessViewModel>();
 
+        
+
+        private IEnumerable<string> _ElementFieldsNamesInFilterPanel;
+        public IEnumerable<string> ElementFieldsNamesInFilterPanel
+        {
+            set { _ElementFieldsNamesInFilterPanel = value; notif(nameof(ElementFieldsNamesInFilterPanel)); }
+            get { return _ElementFieldsNamesInFilterPanel; }
+        }
+
+
+        public IEnumerable<string> FilterRuleTypesNames { get; set; } = Enum.GetNames(typeof(FilteringRuleType));
+        
+
+
 
         //to be extended to more detailed PluginInfo struct
         public string CurrentPluginName
@@ -110,6 +126,52 @@ namespace scraper.ViewModel
 
             get { return MainPlugin?.Name; }
         }
+
+
+
+
+        private FilteringRuleType _CurrentFilteringRuleTypeInput;
+        public string CurrentFilteringRuleTypeInput
+        {
+            set {
+                if(value is string)
+                {
+                    _CurrentFilteringRuleTypeInput = (FilteringRuleType) Enum.Parse(typeof(FilteringRuleType), value);
+                }
+                
+                notif(nameof(CurrentFilteringRuleTypeInput));
+                notif(nameof(IsCurrentFilteringRuleParamInputVisible));
+            }
+            get { return Enum.GetName(typeof(FilteringRuleType), _CurrentFilteringRuleTypeInput) ; }
+        }
+
+
+        
+        public bool IsCurrentFilteringRuleParamInputVisible
+        {
+            get { return _CurrentFilteringRuleTypeInput!= FilteringRuleType.IsNotEmpty; }
+        }
+
+
+
+        private string _CurrentFilteringRuleFiedlInput;
+        public string CurrentFilteringRuleFiedlInput
+        {
+            set { _CurrentFilteringRuleFiedlInput = value;
+                notif(nameof(CurrentFilteringRuleFiedlInput)); }
+            get { return _CurrentFilteringRuleFiedlInput; }
+        }
+
+
+        private string _CurrentFilteringRuleParamInput;
+        public string CurrentFilteringRuleParamInput
+        {
+            set { _CurrentFilteringRuleParamInput = value; notif(nameof(CurrentFilteringRuleParamInput)); }
+            get { return _CurrentFilteringRuleParamInput; }
+        }
+
+
+
 
 
         public bool _IsWorkspaceSetupMode ;
@@ -127,8 +189,56 @@ namespace scraper.ViewModel
             get { return _WorkingDirectoryInputValue; }
         }
 
+        private ObservableCollection<FilteringRuleViewModel> _FilterRulesVMS = null;
+        public ObservableCollection<FilteringRuleViewModel> FilterRulesVMS { get
+            {
+                return _FilterRulesVMS;
+            }
+            set
+            {
+                _FilterRulesVMS = value;
+                FilterRulesVMS.CollectionChanged += hndlFilterRulesVMSCollectionChanged;
+                foreach (var item in FilterRulesVMS)
+                {
+                    item.OnDeleteRequest += handelFilterRulesVMSDeleteRequest;
+                }
+            }
+        }
 
+        public void handelFilterRulesVMSDeleteRequest(object s, EventArgs e)
+        {
+            FilteringRuleViewModel it = s as FilteringRuleViewModel;
+            if (it != null)
+            {
+                FilterRulesVMS.Remove(it);
+            }
+            
+        }
 
+        private void hndlFilterRulesVMSCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ////trigger refiltering
+            if(e.NewItems!=null)
+            foreach (var item in e.NewItems)
+            {
+
+                    FilteringRuleViewModel it = item as FilteringRuleViewModel;
+                    if (it != null)
+                    {
+                        it.OnDeleteRequest += handelFilterRulesVMSDeleteRequest;
+                    }
+            }
+            if (e.OldItems != null)
+                foreach (var item in e.OldItems)
+                {
+
+                    FilteringRuleViewModel it = item as FilteringRuleViewModel;
+                    if (it != null)
+                    {
+                        it.OnDeleteRequest -= handelFilterRulesVMSDeleteRequest;
+                    }
+                }
+        }
 
         public HelpVM PluginHelpVM { get
             {
@@ -315,7 +425,17 @@ namespace scraper.ViewModel
                 notif(nameof(ScrapingTasksVMS));
 
             }
-        } 
+        }
+
+
+
+        private bool _IsCreatingFilterRuleDlgOpen;
+        public bool IsCreatingFilterRuleDlgOpen
+        {
+            set { _IsCreatingFilterRuleDlgOpen = value; notif(nameof(IsCreatingFilterRuleDlgOpen)); }
+            get { return _IsCreatingFilterRuleDlgOpen; }
+        }
+
 
 
 
@@ -576,6 +696,36 @@ namespace scraper.ViewModel
             {
                 this.WorkingDirectoryInputValue = s;
             }, "Chose working directory");
+        }
+
+        public ICommand AddFilterRuleCommand { get { return new MICommand(hndlAddFilterRuleCommand); } }
+
+        private void hndlAddFilterRuleCommand()
+        {
+            var newFilteringRuleViewModel = new FilteringRuleViewModel(new FilteringRule()
+            {
+                fieldName = CurrentFilteringRuleFiedlInput,
+                RuleTtype = _CurrentFilteringRuleTypeInput,
+                RuleParam = CurrentFilteringRuleParamInput
+            });
+            
+            FilterRulesVMS.Add(newFilteringRuleViewModel);
+            IsCreatingFilterRuleDlgOpen = false;
+        }
+
+        public ICommand ShowCreatingFilterRuleDlgCommand { get { return new MICommand(hndShowCreatingFilterRuleDlgCommand); } }
+
+        private void hndShowCreatingFilterRuleDlgCommand()
+        {
+            IsCreatingFilterRuleDlgOpen = true;
+        }
+
+        public ICommand CancelCreatingFilterRuleDlgCommand { get { return new MICommand(hndCancelCreatingFilterRuleDlgCommand); } }
+
+        private void hndCancelCreatingFilterRuleDlgCommand()
+        {
+            IsCreatingFilterRuleDlgOpen = false;
+
         }
     }
 }

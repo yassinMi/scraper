@@ -145,6 +145,7 @@
     <Compile Include="CsvExport.cs" />
     <Compile Include="Model\Element.cs" />
     <Compile Include="Model\Business.cs" />
+    <Compile Include="Model\FilteringRule.cs" />
     <Compile Include="Model\ScrapingTaskModel.cs" />
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Plugin\BLScraper.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="Services\WebHelper.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\CSVResourceVM.cs" />
+    <Compile Include="ViewModel\FilteringRuleViewModel.cs" />
     <Compile Include="ViewModel\HelpVM.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductViewModel.cs" />

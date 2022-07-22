@@ -38,6 +38,15 @@
         <Converters:VisibleIfEnumValueMatchesStringParam x:Key="VisibleIfEnumValueMatchesStringParam"/>
         <Converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+        <Style x:Key="BasicListViewItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter  ></ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="ListBoxItemStyle1" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -279,6 +288,14 @@
         <Style x:Key="TextBlockStyle1" TargetType="{x:Type TextBlock}">
             <Setter Property="Margin" Value="2,0"/>
         </Style>
+        <DataTemplate x:Key="FilterRulesListBoxItemTemplate">
+            <Grid Margin="4">
+                <materialDesign:Chip Content="{Binding Caption}" IsDeletable="True" DeleteCommand="{Binding DeleteCommand}"></materialDesign:Chip>
+            </Grid>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="FilterRulesListboxItemsPanelTemplate">
+            <WrapPanel IsItemsHost="True"/>
+        </ItemsPanelTemplate>
     </Window.Resources>
     <Grid MouseDown="Grid_MouseDown" Background="{StaticResource MaterialDesignPaper}">
         <Grid.ColumnDefinitions>
@@ -290,11 +307,12 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}" 
+            Visibility="{Binding IsWorkspaceSetupModern, Converter={StaticResource BooleanToVisibilityInverted}}"
 			materialDesign:NavigationRailAssist.CornerRadius="8" 
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
 			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
-			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityInverted}}" >
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2"  >
             <TabItem x:Name="overview"  
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
@@ -347,52 +365,70 @@
 
                         <StackPanel Grid.Row="2">
                             <Expander HorizontalAlignment="Stretch" Header="Categories" Background="#00571919">
-                                <WrapPanel VerticalAlignment="Top" d:LayoutOverrides="Width" Margin="4,0">
-                                    <CheckBox
-                                			Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
-                                			IsChecked="True"
-                                			Content="targetwebsite.com" Margin="2,4" />
-                                    <CheckBox
-                                			Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
-                                			IsChecked="True"
-                                			Content="secondwebsite.com" Margin="2,4" />
-                                </WrapPanel>
+                                <Grid Margin="4,0,4,4">
+                                    <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center"><Run Text="None"/></TextBlock>
+                                    <WrapPanel VerticalAlignment="Top" Visibility="Collapsed">
+                                        <CheckBox
+                            				Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
+                            				IsChecked="True"
+                            				Content="targetwebsite.com" Margin="2,4" Visibility="Collapsed" />
+                                        <CheckBox
+                            				Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
+                            				IsChecked="True"
+                            				Content="secondwebsite.com" Margin="2,4" Visibility="Collapsed" />
+                                    </WrapPanel>
+                                </Grid>
                             </Expander>
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
 
-                            <Expander HorizontalAlignment="Stretch" Header="Locations" Background="#00571919">
-                                <StackPanel Orientation="Vertical"  Margin="24,8,24,16">
-                                    <Grid x:Name="price_filter" Height="40" VerticalAlignment="Top" d:LayoutOverrides="TopPosition, BottomPosition" HorizontalAlignment="Left" Margin="2,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox
-									materialDesign:ColorZoneAssist.Mode="Dark"
-									materialDesign:TextFieldAssist.TrailingIcon="Dollar"
-									materialDesign:TextFieldAssist.HasTrailingIcon="True"
-									materialDesign:TextFieldAssist.TrailingIconSize="16"
-									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
-									materialDesign:HintAssist.Hint="any"
-                                    
-									materialDesign:TextFieldAssist.UnderlineBrush="White"
-									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0,7.5" Grid.Column="1" MinWidth="50" MaxWidth="70" />
-                                        <TextBox
-									materialDesign:ColorZoneAssist.Mode="Dark"
-									materialDesign:TextFieldAssist.TrailingIcon="Dollar"
-									materialDesign:TextFieldAssist.HasTrailingIcon="True"
-									materialDesign:TextFieldAssist.TrailingIconSize="16"
-									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
-									materialDesign:HintAssist.Hint="any"
-                                    
-									materialDesign:TextFieldAssist.UnderlineBrush="White"
-									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0,8.5" Grid.Column="3" MinWidth="50" MaxWidth="70" />
-                                        <TextBlock x:Name="textBlock3" Margin="2,0" TextWrapping="Wrap" Text="between" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <TextBlock x:Name="textBlock3_Copy" Margin="2,0" TextWrapping="Wrap" Text="and" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2"/>
+                            <Expander HorizontalAlignment="Stretch" Header="Filter" Background="#00571919" IsExpanded="True">
+                                <materialDesign:DialogHost materialDesign:TransitionAssist.DisableTransitions="True"  IsOpen="{Binding IsCreatingFilterRuleDlgOpen}" CloseOnClickAway="True"
+  OverlayBackground="#00000000"
+  DialogTheme="Inherit" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                                    <materialDesign:DialogHost.DialogContent>
+                                        <Grid Background="{StaticResource MaterialDesignPaper}" Width="220">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"  />
+                                                <RowDefinition Height="auto"  />
+                                                <RowDefinition Height="auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid >
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition  Width="*"/>
+                                                    <ColumnDefinition  Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox SelectedItem="{Binding CurrentFilteringRuleFiedlInput}" ItemsSource="{Binding ElementFieldsNamesInFilterPanel}" MinWidth="80" Margin="6" SelectedIndex="0" />
+                                                <ComboBox SelectedItem="{Binding CurrentFilteringRuleTypeInput}" Margin="10,0" Grid.Column="1" SelectedIndex="0" ItemsSource="{Binding FilterRuleTypesNames}">
+
+
+                                                </ComboBox>
+
+                                            </Grid>
+                                            <TextBox Text="{Binding CurrentFilteringRuleParamInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Parameter" Margin="12,4" VerticalAlignment="Center" Grid.Row="1" Visibility="{Binding IsCurrentFilteringRuleParamInputVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"></TextBox>
+                                            <StackPanel  Grid.Row="2"  Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,2">
+
+                                                <Button  Style="{StaticResource MaterialDesignFlatDarkBgButton}" VerticalAlignment="Center" Margin="6" Command="{Binding CancelCreatingFilterRuleDlgCommand, Mode=OneWay}">Cancel</Button>
+                                                <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}" VerticalAlignment="Center" Margin="6" Command="{Binding AddFilterRuleCommand, Mode=OneWay}">OK</Button>
+
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </materialDesign:DialogHost.DialogContent>
+                                    <Grid Margin="4">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+
+                                        </Grid.RowDefinitions>
+                                        <Button Command="{Binding ShowCreatingFilterRuleDlgCommand}"
+                            	Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            	ToolTip="Add a filtering rule" HorizontalAlignment="Left" Width="28" Height="28" Margin="4,0">
+                                            <custom:PackIconMaterial Kind="FilterPlus"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="16" Height="16"/>
+                                        </Button>
+                                        <ListBox  ItemsSource="{Binding FilterRulesVMS}" ItemTemplate="{DynamicResource FilterRulesListBoxItemTemplate}" ItemsPanel="{DynamicResource FilterRulesListboxItemsPanelTemplate}" ItemContainerStyle="{StaticResource BasicListViewItemStyle}" Grid.Row="1" />
                                     </Grid>
-                                </StackPanel>
+                                </materialDesign:DialogHost>
+
                             </Expander>
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
                             <Expander
@@ -401,36 +437,27 @@
                                 <StackPanel
         Orientation="Vertical"
         Margin="24,8,24,16">
-                                    <Grid x:Name="rating_filter" Height="40" VerticalAlignment="Top" d:LayoutOverrides="TopPosition, BottomPosition" HorizontalAlignment="Left" Margin="2,0">
+                                    <Grid x:Name="yearFilter" Height="40" VerticalAlignment="Top" d:LayoutOverrides="TopPosition, BottomPosition" Margin="2,0">
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBox
 									materialDesign:ColorZoneAssist.Mode="Dark"
-									materialDesign:TextFieldAssist.TrailingIcon="Star"
-									materialDesign:TextFieldAssist.HasTrailingIcon="True"
-									materialDesign:TextFieldAssist.TrailingIconSize="16"
 									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
-									materialDesign:HintAssist.Hint="any"
+									materialDesign:HintAssist.Hint="Min"
                                     
 									materialDesign:TextFieldAssist.UnderlineBrush="White"
-									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" Grid.Column="1" MinWidth="46" MaxWidth="60" />
+									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" MinWidth="46" MaxWidth="60" />
                                         <TextBox
 									materialDesign:ColorZoneAssist.Mode="Dark"
-									materialDesign:TextFieldAssist.TrailingIcon="Star"
-									materialDesign:TextFieldAssist.HasTrailingIcon="True"
-									materialDesign:TextFieldAssist.TrailingIconSize="16"
 									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
-									materialDesign:HintAssist.Hint="any"
+									materialDesign:HintAssist.Hint="Max"
                                     
 									materialDesign:TextFieldAssist.UnderlineBrush="White"
-									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" Grid.Column="3" MinWidth="46" MaxWidth="60" />
-                                        <TextBlock x:Name="textBlock4" Margin="2,0" TextWrapping="Wrap" Text="between" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <TextBlock x:Name="textBlock3_Copy4" Margin="2,0" TextWrapping="Wrap" Text="and" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2"/>
+									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" Grid.Column="2" MinWidth="46" MaxWidth="60" />
+                                        <TextBlock x:Name="textBlock3_Copy4" Margin="2,0" TextWrapping="Wrap" Text="to" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
                                     </Grid>
                                 </StackPanel>
                             </Expander>
@@ -1005,10 +1032,11 @@
                     </Grid>
 
                 </TabItem.Header>
+                <Grid>
+                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,12,0,0" ><Run Text="v0.1.0"/></TextBlock>
+                </Grid>
             </TabItem>
-            <Grid>
-
-            </Grid>
+            <Grid/>
         </TabControl>
         <Grid x:Name="windowControl" Grid.ColumnSpan="2">
             <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Margin="0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Right">
@@ -1026,7 +1054,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" >
+        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" d:IsHidden="True" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="381*"/>
                 <RowDefinition Height="94*"/>
