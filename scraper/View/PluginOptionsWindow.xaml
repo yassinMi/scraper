@@ -15,7 +15,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
         Title="PluginOptionsWindow" Height="468.6" Width="491.775" WindowStartupLocation="CenterScreen">
-    <ScrollViewer Margin="8,0,0,0">
+    <ScrollViewer Margin="8,0,0,0" VerticalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="64"/>
