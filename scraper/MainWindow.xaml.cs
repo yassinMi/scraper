@@ -204,5 +204,12 @@ namespace scraper
         {
             DragMove();
         }
+
+        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            string text = (sender as TextBlock)?.Text;
+            if (text != null)
+                Clipboard.SetText(text);
+        }
     }
 }

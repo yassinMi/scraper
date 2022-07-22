@@ -485,8 +485,8 @@ namespace scraper.ViewModel
 
             
             Debug.WriteLine("RunScraper");
-            
-            await newScrapTask.RunScraper();
+            tvm.currentCTS = new System.Threading.CancellationTokenSource();
+            await newScrapTask.RunScraper(tvm.currentCTS.Token);
             
 
             // Debug.WriteLine("return code is: scraper:" + res.ToString()+", converter:"+ res_c.ToString());
@@ -734,6 +734,24 @@ namespace scraper.ViewModel
         private void hndCancelCreatingFilterRuleDlgCommand()
         {
             IsCreatingFilterRuleDlgOpen = false;
+
+        }
+
+        public ICommand ExitWorkspaceCommand { get { return new MICommand(hndlExitWorkspaceCommand); } }
+
+        private void hndlExitWorkspaceCommand()
+        {
+            if(!ScrapingTasksVMS.All(s=>s.CurrentScrapTaskStage!= ScrapTaskStage.DownloadingData))
+            {
+                MessageBox.Show("There are ongoing tasks please stop them or wait untill they complete.");
+                return;
+            }
+            ConfigService.Instance.WorkspaceDirectory = null;
+            ConfigService.Instance.Save();
+            
+            this.MainWorkspace = null;
+            this.IsWorkspaceSetupMode = true;
+            WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
 
         }
     }

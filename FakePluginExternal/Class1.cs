@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using scraper.Core;
+using System.Threading;
 
 namespace FakePluginExternal
 {
@@ -119,7 +120,7 @@ namespace FakePluginExternal
             this.OnStageChanged?.Invoke(this, this.Stage);
         }
 
-        public async Task RunScraper()
+        public async Task RunScraper(CancellationToken ct)
         {
             await Task.Delay(30);
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace scraper.Core
@@ -160,7 +161,7 @@ namespace scraper.Core
         /// </summary>
         /// <param name="pageUrl"></param>
         /// <returns></returns>
-        Task RunScraper();
+        Task RunScraper(CancellationToken ct);
         Task RunConverter();
         /// <summary>
         /// the Title of the target page as in specification this is resolved before starting download

@@ -22,7 +22,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Margin="0">
+            <TextBlock Foreground="#FFFF3A3A" VerticalAlignment="Top" Margin="0,8,0,0" >(These options are currently not supported)</TextBlock>
+            <Grid Margin="0,4,0,0" VerticalAlignment="Center" Visibility="Collapsed">
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" d:LayoutOverrides="Height">
                     <TextBlock Margin="0,0,4,0" VerticalAlignment="Center"  >Follow pages untill the end</TextBlock>
                     <ToggleButton

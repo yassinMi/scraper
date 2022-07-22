@@ -7,6 +7,7 @@ using scraper.Model;
 using scraper.Core;
 using System.Windows.Input;
 using scraper.Services;
+using System.Threading;
 
 namespace scraper.ViewModel
 {
@@ -119,22 +120,23 @@ namespace scraper.ViewModel
 
         private void hndlPauseCommand()
         {
-            Model.Pause();
+            currentCTS?.Cancel();
         }
 
         private bool canExecutePauseCommand()
         {
-            return Model.Stage == ScrapTaskStage.DownloadingData;
+            return ((Model?.Stage) != null) && ( Model.Stage ==ScrapTaskStage.DownloadingData);
         }
+        public CancellationTokenSource currentCTS { get; set; }
 
         public ICommand RetryCommand { get { return new Mi.Common.MICommand(hndlRetryCommand); } }
 
         private  void hndlRetryCommand()
         {
-
+            currentCTS = new CancellationTokenSource();
             var t = new Task(async () =>
             {
-                await Model.RunScraper();
+                await Model.RunScraper(currentCTS.Token);
             }
             );
             t.Start();

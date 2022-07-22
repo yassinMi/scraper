@@ -61,17 +61,21 @@ namespace scraper.Plugin
                         new TargetPageUrlUseCaseHelp() {Description="Locations pages",
                         ExampleUrls = new string[]
                         {
-                            "https://www.businesslist.ph/location/manila/",
-                            "https://www.businesslist.ph/location/manila/2"
+                            "https://www.businesslist.ph/location/santa-rosa-city/5"
                         }
                         },
                         new TargetPageUrlUseCaseHelp() {Description="Categories pages",
                         ExampleUrls = new string[]
                         {
-                            "https://www.businesslist.ph/cat/manila/",
-                            "https://www.businesslist.ph/cat/manila/2"
+                            "https://www.businesslist.ph/category/industrial-premises",
                         }
                         },
+                        /*new TargetPageUrlUseCaseHelp() {Description="Other pages",
+                        ExampleUrls = new string[]
+                        {
+                            "search results pages etc",
+                        }
+                        },*/
 
                     }
                 };
@@ -524,7 +528,7 @@ Video
 
         static Synchronizer<string> targetPageBasedLock = new Services.Synchronizer<string>();
 
-        async public Task RunScraper()
+        async public Task RunScraper(CancellationToken ct)
         {
             lock (targetPageBasedLock[TargetPage])
             {
@@ -556,16 +560,29 @@ Video
                 try
                 {
 
-                
-                foreach (var page in EnumeratePages(TargetPage))
+                    string uniqueOutputFileName = Utils.SanitizeFileName(this.ResolvedTitle) + ".csv";
+                    var outputPath = Path.Combine(WorkspaceDirectory, ConfigService.Instance.CSVOutputRelativeLocation, uniqueOutputFileName);
+
+                    foreach (var page in EnumeratePages(TargetPage))
                 {
                     OnPage?.Invoke(this, $"[page {page.Item1}/{page.Item2}]");
                     var compactElements = getCompactElementsInPage(page.Item3).ToList();
+                        List<Business> resolvedElements = new List<Business>(compactElements.Count);
                     int i = 0;
                     foreach (var item in compactElements)
                     {
+                            if (ct.IsCancellationRequested)
+                            {
+                                Debug.WriteLine("saving csv");
+                                Utils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
+                                Debug.WriteLine("saved current page conent:" + outputPath);
+                                Stage = ScrapTaskStage.Success;
+                                this.OnStageChanged?.Invoke(this, this.Stage);
+                                return;
+                            }
                         int objs, bytes = 0;
                         resolveFullElement(item, out bytes, out objs);
+                            resolvedElements.Add(item);
                             TaskStatsInfo.incObject(objs);
                             TaskStatsInfo.incSize(bytes);
                             TaskStatsInfo.incElem(1);
@@ -574,9 +591,7 @@ Video
                         OnTaskDetail?.Invoke(this, $"Collecting business info: {item.company}");
                     }
                     Debug.WriteLine("saving csv");
-                    string uniqueOutputFileName = Utils.SanitizeFileName(this.ResolvedTitle) + ".csv";
-                    var outputPath = Path.Combine(WorkspaceDirectory, ConfigService.Instance.CSVOutputRelativeLocation, uniqueOutputFileName);
-                    Utils.CSVWriteRecords(outputPath, compactElements, page.Item1 > 1);
+                    Utils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
                     Debug.WriteLine("saved current page conent:" + outputPath);
                 }
 

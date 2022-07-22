@@ -24,18 +24,19 @@ namespace Mi.Common
             // Environment.CurrentDirectory
         }
 
-        public static bool IsDev { get; set; } = true;
+        public static bool IsDev { get; set; } = false;
         public static string APP_DEV_NAME = "Scraper"; //used in creating app data directory and such
 
         //these fields are to be displayed to the user 
-        public static string APP_TITLE { get;  } = "Scraper 1.0";
+        public static string APP_TITLE { get;  } = "Scraper";
         public static string APP_SUB_TITLE { get;  } = "© Mi 2022 ";
-        public static string APP_SHORT_DESCRIPTION { get; } = "webscraper designed to collect publicly visible products info at microcenter.com, hbhotovideo.com";
+        public static string APP_SHORT_DESCRIPTION { get; } = "An extensible, plugin-driven GUI web scraping tool";
+        public static string APP_VERSION_NOTE { get; } = "(this version is designed to only target businesslist.ph)";
     
-        public static string APP_VERSION { get; } = "0.1.0 (unreleased)" + (IsDev ? " [dev]" : "");
-        public static string APP_DEVELOPER_NAME { get; set; } = "Yass.Mi";
-        public static string APP_GUI_DESIGNER_NAME { get; set; } = "Yass.Mi";
-        public static string APP_GITHUB_URL { get; set; } = "https://github.com/yassinMi/";
+        public static string APP_VERSION { get; } = "0.1.1 " + (IsDev ? " [dev]" : "(22-07-2022)");
+        public static string APP_DEVELOPER_NAME { get; set; } = "YassinMi";
+        public static string APP_GUI_DESIGNER_NAME { get; set; } = "YassinMi";
+        public static string APP_GITHUB_URL { get; set; } = "https://github.com/yassinMi/scraper";
         public static string APP_DEVELOPER_EMAIL { get; set; } = "DIR16CAT17@gmail.com";
         //public static int Host_Rendering_Tier { get; set; } = RenderCapability.Tier >> 16;
     
