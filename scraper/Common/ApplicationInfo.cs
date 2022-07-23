@@ -31,9 +31,9 @@ namespace Mi.Common
         public static string APP_TITLE { get;  } = "Scraper";
         public static string APP_SUB_TITLE { get;  } = "© Mi 2022 ";
         public static string APP_SHORT_DESCRIPTION { get; } = "An extensible, plugin-driven GUI web scraping tool";
-        public static string APP_VERSION_NOTE { get; } = "(this version is designed to only target businesslist.ph)";
+        public static string APP_VERSION_NOTE { get; } = "";
     
-        public static string APP_VERSION { get; } = "0.1.1 " + (IsDev ? " [dev]" : "(22-07-2022)");
+        public static string APP_VERSION { get; } = "0.1.2 " + (IsDev ? " [dev]" : "()");
         public static string APP_DEVELOPER_NAME { get; set; } = "YassinMi";
         public static string APP_GUI_DESIGNER_NAME { get; set; } = "YassinMi";
         public static string APP_GITHUB_URL { get; set; } = "https://github.com/yassinMi/scraper";
