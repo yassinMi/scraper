@@ -64,8 +64,27 @@ namespace scraper.ViewModel.Tests
             {
                 item.IsActive = true;
             }
-            Debug.WriteLine($"number of items: {mvm.BusinessesViewModels.Count}");
-            Assert.IsTrue(mvm.BusinessesViewModels.Count > 10);
+            Debug.WriteLine($"number of items: {mvm.BusinessesViewModels.Count()}");
+            Assert.IsTrue(mvm.BusinessesViewModels.Count() > 10);
+        }
+
+        [TestMethod()]
+        public void ListAllInfoKeys()
+        {
+
+            List<string> keys = new List<string>();
+            foreach (var item in union())
+            {
+                foreach (var i in BLScrapingTask.getInfos(item.Value))
+                {
+                    if (!keys.Contains(i.Item1)) keys.Add(i.Item1);
+                } 
+            }
+            Debug.WriteLine($"{keys.Count} keys found in the union elements:");
+            foreach (var k in keys)
+            {
+                Debug.WriteLine(k);
+            }
         }
 
         [TestMethod()]
@@ -88,35 +107,19 @@ namespace scraper.ViewModel.Tests
 
              return;*/
 
-            List<string> keys = new List<string>();
             foreach (var node in union())
             {
-                string hascONTACT = "", hasMang = "";
                 foreach (var item in BLScrapingTask.getInfos(node.Value))
-                {
-                    /*if (keys.Contains(item.Item1) == false)
+                {                 
+                    if(item.Item1.ToLower()== "Location map".ToLower())
                     {
-                        keys.Add(item.Item1);
-                        Debug.WriteLine(item.Item1);
+                        Debug.WriteLine(item.Item2);
                     }
-                    continue;*/
-                    if(item.Item1.ToLower()=="Contact person".ToLower())
-                    {
-                        hascONTACT = item.Item2;
-                    }
-                    if (item.Item1.ToLower() == "Company manager".ToLower())
-                    {
-                        hasMang = item.Item2;
-                    }
-
                 }
-                if (!(string.IsNullOrWhiteSpace(hasMang) || string.IsNullOrWhiteSpace(hascONTACT)))
-                {
-                    Debug.WriteLine($"{hascONTACT}(Contact person), {hasMang}(Company manager)");
-                }
-                
             }
-            
+
+            Debug.WriteLine($"union had {union().Count()} elements");
+
         }
 
 
