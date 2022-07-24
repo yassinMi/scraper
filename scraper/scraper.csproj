@@ -144,16 +144,12 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="CsvExport.cs" />
     <Compile Include="Model\Element.cs" />
-    <Compile Include="Model\Business.cs" />
     <Compile Include="Model\FilteringRule.cs" />
     <Compile Include="Model\ScrapingTaskModel.cs" />
-    <Compile Include="Model\Workspace.cs" />
-    <Compile Include="Plugin\BLScraper.cs" />
     <Compile Include="Plugin\FakePlugin.cs" />
     <Compile Include="Services\FakeWebHelper.cs" />
     <Compile Include="Services\PluginsManager.cs" />
     <Compile Include="Services\Utils.cs" />
-    <Compile Include="Services\WebHelper.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\CSVResourceVM.cs" />
     <Compile Include="ViewModel\FilteringRuleViewModel.cs" />

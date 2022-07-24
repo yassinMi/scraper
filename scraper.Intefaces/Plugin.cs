@@ -59,6 +59,7 @@ namespace scraper.Core
         string ElementName { get; }
         string ElementNamePlural { get; }
         IElementDescription ElementDescription { get; }
+        Type ElementModelType { get; }
         PluginUsageInfo UsageInfo { get; }
     }
 
@@ -84,7 +85,11 @@ namespace scraper.Core
 
     public interface IField
     {
+        /// <summary>
+        /// the nameused in csv, properties names, 
+        /// </summary>
         string Name { get; }
+        string UIName { get; }
         /// <summary>
         /// for the user information (used as tooltips)
         /// </summary>
@@ -138,16 +143,18 @@ namespace scraper.Core
     public struct Field : IField
     {
         public string Name { get; set; }
-        
+
         public Type NativeType { get; set; }
 
         public FieldRole Role { get; set; }
 
         public string UserDescription { get; set; }
-        public bool IsRequired { get; set; } 
+        public bool IsRequired { get; set; }
+
+        public string UIName { get; }
     }
 
-    public interface IPluginScrapingTask
+        public interface IPluginScrapingTask
     {
         event EventHandler<DownloadingProg> OnProgress;
         event EventHandler<string> OnTaskDetail; //stdout prints something like T: downloading image.jpg

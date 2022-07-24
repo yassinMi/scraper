@@ -22,6 +22,8 @@ using scraper.View;
 using scraper.Plugin;
 using System.Windows;
 using System.Collections;
+using scraper.Core.Workspace;
+using scraper.Core.Utils;
 
 namespace scraper.ViewModel
 {
@@ -64,13 +66,14 @@ namespace scraper.ViewModel
 
             CSVResourcesVMS = new ObservableCollection<CSVResourceVM>(MainWorkspace.CSVResources.Select((sr) =>
             {
+                
                 return new CSVResourceVM(sr);
             }));
             notif(nameof(CurrentPluginName));
 
             ScrapingTasksVMS = new ObservableCollection<ScrapingTaskVM>();
             notif(nameof(ElementNamePlural));
-            ElementFieldsNamesInFilterPanel = typeof(Business).GetProperties().Select(p=>p.Name);
+            //ElementFieldsNamesInFilterPanel = MainPlugin.ElementDescription.Fields.Select(f=>f.UIName); //todo after lossless refactoring 
 
             FilterRulesVMS = new ObservableCollection<FilteringRuleViewModel>();
         }
@@ -103,7 +106,7 @@ namespace scraper.ViewModel
 
             }
         }
-        IEnumerable<BusinessViewModel> BusinessViewModels_arr = new List<BusinessViewModel>();
+        IEnumerable<ElementViewModel> BusinessViewModels_arr = new List<ElementViewModel>();
 
         
 
@@ -283,12 +286,12 @@ namespace scraper.ViewModel
             //logic that need to be performed when some items changest's IsActive
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
 
-            BusinessViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<BusinessViewModel>>(new List<BusinessViewModel>(), (i, csvVM) => {
-                var enumerated = Utils.parseCSVfile(csvVM.FullPath);
+            BusinessViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ElementViewModel>>(new List<ElementViewModel>(), (i, csvVM) => {
+                var enumerated = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, csvVM.FullPath) .Cast<dynamic>();//ufr
                 if (enumerated == null) return i;
-                return i.Concat(enumerated.Select(p => new BusinessViewModel(p)));
+                return i.Concat(enumerated.Select(p => new ElementViewModel(p)));
             });
-            BusinessesViewModels = new ObservableCollection<BusinessViewModel>(BusinessViewModels_arr);
+            BusinessesViewModels = new ObservableCollection<ElementViewModel>(BusinessViewModels_arr);
             notif(nameof(BusinessesViewModels));
             await Task.Delay(0);
 
@@ -312,9 +315,9 @@ namespace scraper.ViewModel
         }
 
 
-        private ObservableCollection<BusinessViewModel>  _GridResults = new ObservableCollection<BusinessViewModel>();
+        private ObservableCollection<ElementViewModel>  _GridResults = new ObservableCollection<ElementViewModel>();
 
-        public ObservableCollection<BusinessViewModel>  GridResults
+        public ObservableCollection<ElementViewModel>  GridResults
         {
             set { _GridResults = value; notif(nameof(GridResults)); }
     get { return _GridResults ; }
@@ -342,7 +345,7 @@ namespace scraper.ViewModel
 
 
 
-        public IEnumerable<BusinessViewModel> BusinessesViewModels { get {
+        public IEnumerable<ElementViewModel> BusinessesViewModels { get {
                 if(string.IsNullOrWhiteSpace(SearchQuery)) return
                     BusinessViewModels_arr
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
@@ -540,11 +543,11 @@ namespace scraper.ViewModel
             {
                 if (canceled)
                     return;
-                var lst = Utils.parseCSVfile(maybeFile).Select((p) =>
+            var lst = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, maybeFile).Cast<dynamic>().Select((p) => //ufr
                 {
-                    return new BusinessViewModel(p);
+                    return new ElementViewModel(p);
                 }).ToList();
-                BusinessViewModels_arr = new ObservableCollection<BusinessViewModel> (lst);
+                BusinessViewModels_arr = new ObservableCollection<ElementViewModel> (lst);
                 notif(nameof( BusinessesViewModels));
                 
 
@@ -607,7 +610,8 @@ namespace scraper.ViewModel
             }
             Workspace.MakeCurrent(ws_dir);
             var ws = Workspace.Current;
-            IPlugin p = new BLScraper() { WorkspaceDirectory = ws.Directory };
+            IPlugin p = PluginsManager.GetFirstOrDefaultPluginUnderWorkspace(ws);
+            Trace.Assert(p != null, "failed to load any plugins, make sure to have a .scraper/plugins file pointing to existing global plugins");
             MainWorkspace = ws;
             MainPlugin = p;
             Init();
@@ -658,7 +662,7 @@ namespace scraper.ViewModel
             {
                 if (!canceled)
                 {
-                    Utils.CSVOverwriteRecords(s, BusinessesViewModels.Select(vm => vm.Model));
+                    CSVUtils.CSVOverwriteRecords(s, BusinessesViewModels.Select(vm => vm.Model));
                     MessageBox.Show($"Saved to s{s}","Saved", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 
@@ -667,7 +671,7 @@ namespace scraper.ViewModel
 
         public ICommand SaveSelectionCommand { get { return new MICommand(hndlSaveSelectionCommand, canExecuteSaveSelectionCommand); } }
 
-        public IEnumerable<BusinessViewModel> DataGridSelectedItemsRef { get; internal set; }
+        public IEnumerable<ElementViewModel> DataGridSelectedItemsRef { get; internal set; }
 
         private bool canExecuteSaveSelectionCommand()
         {
@@ -683,7 +687,7 @@ namespace scraper.ViewModel
 
                     if((DataGridSelectedItemsRef?.Any() ??false)!=false)
                     {
-                        Utils.CSVOverwriteRecords(s, (DataGridSelectedItemsRef as IEnumerable<BusinessViewModel>)?.Select(vm => vm.Model));
+                        CSVUtils.CSVOverwriteRecords(s, (DataGridSelectedItemsRef as IEnumerable<ElementViewModel>)?.Select(vm => vm.Model));
                         MessageBox.Show($"Saved to s{s}", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     }

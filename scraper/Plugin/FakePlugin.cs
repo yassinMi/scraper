@@ -19,6 +19,14 @@ namespace scraper.Plugin
             }
         }
 
+        public Type ElementModelType
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public string ElementName
         {
             get

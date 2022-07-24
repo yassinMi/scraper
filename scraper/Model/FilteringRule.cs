@@ -17,7 +17,7 @@ namespace scraper.Model
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        public bool Check(Business b)
+        public bool Check(object b)
         {
             object value = b.GetType().GetProperty(fieldName).GetValue(b);
             switch (RuleTtype)

@@ -4,27 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace scraper.Model
+namespace BusinesslistPhPlugin.Model
 {
     public struct Rating
     {
         int stars_cc, total_stars, vote_count;
     }
-    public struct ProductID: IElementID
-    {
-        public string id { get; set; }
-        public static implicit operator ProductID (string x) => new ProductID(x);
-        public ProductID(string id) 
-        {
-            this.id = id;            
-        }
-        public override string ToString()
-        {
-            return id;
-        }
-    }
-
-
+   
     public class Business 
     {
         //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?

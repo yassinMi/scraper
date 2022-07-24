@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace scraper.Services
+namespace scraper.Core.Utils
 {
     public interface IWebHelper
     {

@@ -8,6 +8,7 @@ using Mi.Common;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using scraper.Core.Workspace;
 
 namespace scraper.Services
 {
@@ -53,5 +54,16 @@ namespace scraper.Services
             }
         }
 
+        internal static IPlugin GetFirstOrDefaultPluginUnderWorkspace(Workspace ws)
+        {
+            IPlugin res = null;
+            try
+            {
+                string[] pluginsNames = File.ReadAllLines(ws.PluginsPtrFilePath);
+                res = PluginsManager.GetGlobalPlugins().FirstOrDefault(p => p.Name == pluginsNames.FirstOrDefault());
+            }
+            catch (Exception) { }
+            return res;
+        }
     }
 }

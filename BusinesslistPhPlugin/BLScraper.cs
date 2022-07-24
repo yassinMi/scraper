@@ -1,9 +1,9 @@
-﻿using CsvHelper;
+﻿using BusinesslistPhPlugin.Model;
+using CsvHelper;
 using HtmlAgilityPack;
-using Mi.Common;
 using scraper.Core;
-using scraper.Model;
-using scraper.Services;
+using scraper.Core.Utils;
+using scraper.Core.Workspace;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace scraper.Plugin
+namespace BusinesslistPhPlugin
 {
     public class BusinessCompact
     {
@@ -79,6 +79,14 @@ namespace scraper.Plugin
 
                     }
                 };
+            }
+        }
+
+        public Type ElementModelType
+        {
+            get
+            {
+                return typeof(Business);
             }
         }
 
@@ -169,7 +177,7 @@ namespace scraper.Plugin
                     if (cc >=2)
                     {
                         originalValueNode = infoElem.ChildNodes[1];
-                        Formattedvalue = Utils.StripHTML(originalValueNode.InnerHtml);
+                        Formattedvalue = CoreUtils.StripHTML(originalValueNode.InnerHtml);
                     }
                     else if (cc == 1)
                     {
@@ -211,14 +219,7 @@ namespace scraper.Plugin
             return new HtmlNode(HtmlNodeType.Element, new HtmlDocument(),5);
         }
 
-        /// <summary>
-        /// only required by downloadOrReadFromObject, returns a filesystem-friendly hash
-        /// </summary>
-        static string getUniqueLinkHash(string businessLink)
-        {
-            return Utils. CreateMD5(businessLink);
-        }
-
+       
 
         /// <summary>
         /// exceptions: HttpRequestException
@@ -230,7 +231,7 @@ namespace scraper.Plugin
         public static string downloadOrRead(string pageLink, string folder)
         {
             Debug.WriteLine("downloadOrRead ");
-            string uniqueFilename = Path.Combine(folder,getUniqueLinkHash(pageLink) + ".html")  ;
+            string uniqueFilename = Path.Combine(folder,CoreUtils. getUniqueLinkHash(pageLink) + ".html")  ;
             if (File.Exists(uniqueFilename)){return File.ReadAllText(uniqueFilename);}
             else
             {
@@ -257,13 +258,13 @@ namespace scraper.Plugin
         /// existing fields are  name, desc, thumb, location, link
         /// </summary>
         /// <param name="compactElement"></param>
-        public static void resolveFullElement(Business compactElement, out int writtenBytes , out int WrittenObjectsCoutnt)
+        public static void resolveFullElement( Business compactElement, out int writtenBytes , out int WrittenObjectsCoutnt)
         {
             writtenBytes = 0; WrittenObjectsCoutnt = 0;
 
             Debug.WriteLine("downloading or reading html link: "+ compactElement.link);
             
-            string rawElementPage = downloadOrRead(compactElement.link, Workspace.Current.GetHtmlObjectsFolder());
+            string rawElementPage = downloadOrRead(compactElement.link, Workspace.Current.HtmlObjectsFolder);
             WrittenObjectsCoutnt++;
             writtenBytes += rawElementPage.Length;
             HtmlDocument elementDoc = new HtmlDocument();
@@ -379,7 +380,7 @@ Video
             var div = node.SelectSingleNode(".//div[@class='address']");
             if (div == null) return null;
             if  (string.IsNullOrWhiteSpace(div.InnerHtml) ) return null;
-            return System.Net.WebUtility.HtmlDecode(Utils. StripHTML(div.InnerHtml));
+            return System.Net.WebUtility.HtmlDecode(CoreUtils. StripHTML(div.InnerHtml));
         }
         public static string getName(HtmlNode node)
         {
@@ -451,7 +452,7 @@ Video
         /// <returns></returns>
         public static IEnumerable<Tuple<int,int,HtmlNode>> EnumeratePages(string targetRootPage)
         {
-            string pageRaw= downloadOrRead(targetRootPage, Workspace.Current.GetTPFolder());
+            string pageRaw= downloadOrRead(targetRootPage, Workspace.Current.TPFolder);
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageRaw);
             var paegs_container = doc.DocumentNode.SelectSingleNode("//div[@class='pages_container']");
@@ -470,7 +471,7 @@ Video
             foreach (var pg in Enumerable.Range(min, max))
             {
                 string pageLink = AppendPageNumToUrl(ClearPageNumFromUrl(targetRootPage), pg);
-                string raw = downloadOrRead(pageLink, Workspace.Current.GetTPFolder());
+                string raw = downloadOrRead(pageLink, Workspace.Current.TPFolder);
                 HtmlDocument newDoc = new HtmlDocument();
                 newDoc.LoadHtml(raw);
                 yield return new Tuple<int,int, HtmlNode>(pg, max, newDoc.DocumentNode);
@@ -526,8 +527,13 @@ Video
             return "3";
         }
 
-        static Synchronizer<string> targetPageBasedLock = new Services.Synchronizer<string>();
+        static Synchronizer<string> targetPageBasedLock = new Synchronizer<string>();
 
+        /// <summary>
+        /// static deps: Workspace.current,
+        /// </summary>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         async public Task RunScraper(CancellationToken ct)
         {
             lock (targetPageBasedLock[TargetPage])
@@ -539,7 +545,7 @@ Video
                 string raw;
                 try
                 {
-                    raw = downloadOrRead(TargetPage, Workspace.Current.GetTPFolder());
+                    raw = downloadOrRead(TargetPage, Workspace.Current.TPFolder);
                     TaskStatsInfo.incSize(raw.Length);
                 }
                 catch(HttpRequestException )
@@ -560,8 +566,8 @@ Video
                 try
                 {
 
-                    string uniqueOutputFileName = Utils.SanitizeFileName(this.ResolvedTitle) + ".csv";
-                    var outputPath = Path.Combine(WorkspaceDirectory, ConfigService.Instance.CSVOutputRelativeLocation, uniqueOutputFileName);
+                    string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle) + ".csv";
+                    var outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName);
 
                     foreach (var page in EnumeratePages(TargetPage))
                 {
@@ -574,7 +580,7 @@ Video
                             if (ct.IsCancellationRequested)
                             {
                                 Debug.WriteLine("saving csv");
-                                Utils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
+                                CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
                                 Debug.WriteLine("saved current page conent:" + outputPath);
                                 Stage = ScrapTaskStage.Success;
                                 this.OnStageChanged?.Invoke(this, this.Stage);
@@ -591,7 +597,7 @@ Video
                         OnTaskDetail?.Invoke(this, $"Collecting business info: {item.company}");
                     }
                     Debug.WriteLine("saving csv");
-                    Utils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
+                    CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
                     Debug.WriteLine("saved current page conent:" + outputPath);
                 }
 

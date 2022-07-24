@@ -1,5 +1,6 @@
 ﻿using Mi.Common;
 using scraper.Core;
+using scraper.Core.Workspace;
 using scraper.Model;
 using scraper.Plugin;
 using scraper.Services;
@@ -7,6 +8,7 @@ using scraper.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,8 +44,11 @@ namespace scraper
             {
                 Workspace.MakeCurrent(ws_dir);
                 var ws = Workspace.Current;
-                IPlugin p = new BLScraper() { WorkspaceDirectory = ws.Directory };
-                DataContext = new MainViewModel(p,ws);
+                IPlugin plugin = PluginsManager.GetFirstOrDefaultPluginUnderWorkspace(ws);
+                
+                Trace.Assert(plugin != null, "failed to load any plugins into the workspace, make sure to have a .scraper/plugins file pointing to existing global plugins");
+                 //new BLScraper() { WorkspaceDirectory = ws.Directory };
+                DataContext = new MainViewModel(plugin,ws);
             }
 
             
@@ -83,6 +88,9 @@ namespace scraper
 
         Point _startPosition;
         bool _isResizing = false;
+
+       
+
         private void resizeGrip_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //if (Mouse.Capture(resizeGrip))
@@ -195,7 +203,7 @@ namespace scraper
             if (dc != null)
             {
                 dc.SelectionCount = elementsDatagrid.SelectedItems.Count;
-                dc.DataGridSelectedItemsRef = elementsDatagrid.SelectedItems.Cast<BusinessViewModel>();
+                dc.DataGridSelectedItemsRef = elementsDatagrid.SelectedItems.Cast<ElementViewModel>();
             }
             
         }

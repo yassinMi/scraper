@@ -11,12 +11,13 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows;
+using scraper.Core.Workspace;
 
 namespace scraper.ViewModel
 {
-    public class BusinessViewModel : BaseViewModel
+    public class ElementViewModel : BaseViewModel
     {
-        public BusinessViewModel(Business p)
+        public ElementViewModel(dynamic p)
         {
             Model = p;
             //Name, address,Phonenumber,MobilePhonenumberEmail, Employees,deligation, etc.
@@ -35,7 +36,7 @@ namespace scraper.ViewModel
             
         }
 
-        public Business Model { get; set; }
+        public dynamic Model { get; set; }
 
         private string _Name;
         public string Name

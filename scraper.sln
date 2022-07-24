@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scraper.Core", "scraper.Int
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakePluginExternal", "FakePluginExternal\FakePluginExternal.csproj", "{1F17E141-D361-4C50-8D6F-17DD940CA4D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinesslistPhPlugin", "BusinesslistPhPlugin\BusinesslistPhPlugin.csproj", "{E05164D0-465B-47C9-B54E-FB667041D743}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{1F17E141-D361-4C50-8D6F-17DD940CA4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F17E141-D361-4C50-8D6F-17DD940CA4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F17E141-D361-4C50-8D6F-17DD940CA4D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E05164D0-465B-47C9-B54E-FB667041D743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E05164D0-465B-47C9-B54E-FB667041D743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E05164D0-465B-47C9-B54E-FB667041D743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E05164D0-465B-47C9-B54E-FB667041D743}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
