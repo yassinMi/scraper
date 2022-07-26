@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using scraper.ViewModel.HomeScreen;
 
 namespace Mi.Common
 {
@@ -95,6 +96,15 @@ namespace Mi.Common
             set { _CSVOutputRelativeLocation = value; notif(nameof(CSVOutputRelativeLocation)); }
         }
 
+        private ObservableCollection<string> _RecentWorkspaces;
+        public ObservableCollection<string> RecentWorkspaces
+        {
+            set { _RecentWorkspaces = value; notif(nameof(RecentWorkspaces)); }
+            get { return _RecentWorkspaces; }
+        }
+
+
+       
 
         /*
         public string RememberedDownloadOutputDirectory
@@ -186,6 +196,7 @@ namespace Mi.Common
             var facto = new ConfigService();
             //facto.WorkspaceDirectory = @"E:\TOOLS\scraper\scraper\scripts"; DEV ONLY TO SAVE SETUP TIME
             facto.WorkspaceDirectory = null;
+            facto.RecentWorkspaces = new ObservableCollection<string>(new string[] { "kljl", "lkj" });
             return facto;
         }
 

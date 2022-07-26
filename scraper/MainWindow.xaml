@@ -11,28 +11,17 @@
         xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.MainWindow"
         
         mc:Ignorable="d"
-        TextElement.Foreground="{StaticResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Display" 
         TextOptions.TextRenderingMode="Auto"
         FontFamily="Roboto"
         Title="scraper v0.1.1 (businesslist.ph)" Height="499" Width="795.55" UseLayoutRounding="True" ResizeMode="CanResizeWithGrip" Background="{x:Null}"
-    d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}" Icon="scraper.ico"
+    d:DataContext="{d:DesignData /SampleData/MainViewModelSampleData.xaml}" Icon="scraper.ico"
         
         
         
         >
-    <Window.InputBindings>
-        <KeyBinding Command="{Binding OpenWorkspaceCommand}" Key="O"/>
-        <KeyBinding CommandParameter="9" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad9"/>
-
-        <KeyBinding CommandParameter="4" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad4"/>
-    </Window.InputBindings>
-    <WindowChrome.WindowChrome>
-        <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" 
-            UseAeroCaptionButtons="False" ResizeBorderThickness="6" />
-    </WindowChrome.WindowChrome>
     <Window.Resources>
         <materialDesign:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Converters:VisibleIfEnumValueMatchesStringParam x:Key="VisibleIfEnumValueMatchesStringParam"/>
@@ -43,7 +32,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <ContentPresenter  ></ContentPresenter>
+                        <ContentPresenter  />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -292,13 +281,43 @@
         </Style>
         <DataTemplate x:Key="FilterRulesListBoxItemTemplate">
             <Grid Margin="4">
-                <materialDesign:Chip Content="{Binding Caption}" IsDeletable="True" DeleteCommand="{Binding DeleteCommand}"></materialDesign:Chip>
+                <materialDesign:Chip Content="{Binding Caption}" IsDeletable="True" DeleteCommand="{Binding DeleteCommand}"/>
             </Grid>
         </DataTemplate>
         <ItemsPanelTemplate x:Key="FilterRulesListboxItemsPanelTemplate">
             <WrapPanel IsItemsHost="True"/>
         </ItemsPanelTemplate>
+        <DataTemplate x:Key="RecentWorkspaceItemTemlate">
+            <Grid d:DesignWidth="476" d:DesignHeight="135.5" VerticalAlignment="Top" Height="32">
+                <TextBlock  x:Name="textBlock" TextWrapping="Wrap" Cursor="Hand" Foreground="#FF50A3F5" HorizontalAlignment="Left" VerticalAlignment="Center"  >
+                    <TextBlock.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Open"  UseLayoutRounding="True" ></MenuItem>
+                            <MenuItem Command="Copy" Header="Pin to this list" ></MenuItem>
+                            <MenuItem Header="Remove from this list" ></MenuItem>
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                    <Run Text="{Binding Name}"></Run> <Run Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding TotalSize}"></Run>
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="RecentsWorkspacesItemsPanelTemplate">
+            <StackPanel IsItemsHost="True"/>
+        </ItemsPanelTemplate>
     </Window.Resources>
+    <TextElement.Foreground>
+        <StaticResource ResourceKey="MaterialDesignBody"/>
+    </TextElement.Foreground>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding OpenWorkspaceCommand}" Key="O"/>
+        <KeyBinding CommandParameter="9" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad9"/>
+
+        <KeyBinding CommandParameter="4" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad4"/>
+    </Window.InputBindings>
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" 
+            UseAeroCaptionButtons="False" ResizeBorderThickness="6" />
+    </WindowChrome.WindowChrome>
     <Grid MouseDown="Grid_MouseDown" Background="{StaticResource MaterialDesignPaper}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="146*"/>
@@ -309,7 +328,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}" 
-            Visibility="{Binding IsWorkspaceSetupModern, Converter={StaticResource BooleanToVisibilityInverted}}"
+			Visibility="{Binding IsWorkspaceSetupModern, Converter={StaticResource BooleanToVisibilityInverted}}"
 			materialDesign:NavigationRailAssist.CornerRadius="8" 
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
@@ -371,13 +390,13 @@
                                     <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center"><Run Text="None"/></TextBlock>
                                     <WrapPanel VerticalAlignment="Top" Visibility="Collapsed">
                                         <CheckBox
-                            				Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
-                            				IsChecked="True"
-                            				Content="targetwebsite.com" Margin="2,4" Visibility="Collapsed" />
+											Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
+											IsChecked="True"
+											Content="targetwebsite.com" Margin="2,4" Visibility="Collapsed" />
                                         <CheckBox
-                            				Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
-                            				IsChecked="True"
-                            				Content="secondwebsite.com" Margin="2,4" Visibility="Collapsed" />
+											Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
+											IsChecked="True"
+											Content="secondwebsite.com" Margin="2,4" Visibility="Collapsed" />
                                     </WrapPanel>
                                 </Grid>
                             </Expander>
@@ -385,8 +404,8 @@
 
                             <Expander HorizontalAlignment="Stretch" Header="Filter" Background="#00571919" IsExpanded="True">
                                 <materialDesign:DialogHost materialDesign:TransitionAssist.DisableTransitions="True"  IsOpen="{Binding IsCreatingFilterRuleDlgOpen}" CloseOnClickAway="True"
-  OverlayBackground="#00000000"
-  DialogTheme="Inherit" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+									OverlayBackground="#00000000"
+									DialogTheme="Inherit" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                     <materialDesign:DialogHost.DialogContent>
                                         <Grid Background="{StaticResource MaterialDesignPaper}" Width="220">
                                             <Grid.RowDefinitions>
@@ -400,17 +419,14 @@
                                                     <ColumnDefinition  Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <ComboBox SelectedItem="{Binding CurrentFilteringRuleFiedlInput}" ItemsSource="{Binding ElementFieldsNamesInFilterPanel}" MinWidth="80" Margin="6" SelectedIndex="0" />
-                                                <ComboBox SelectedItem="{Binding CurrentFilteringRuleTypeInput}" Margin="10,0" Grid.Column="1" SelectedIndex="0" ItemsSource="{Binding FilterRuleTypesNames}">
-
-
-                                                </ComboBox>
+                                                <ComboBox SelectedItem="{Binding CurrentFilteringRuleTypeInput}" Margin="10,0" Grid.Column="1" SelectedIndex="0" ItemsSource="{Binding FilterRuleTypesNames}"/>
 
                                             </Grid>
-                                            <TextBox Text="{Binding CurrentFilteringRuleParamInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Parameter" Margin="12,4" VerticalAlignment="Center" Grid.Row="1" Visibility="{Binding IsCurrentFilteringRuleParamInputVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"></TextBox>
+                                            <TextBox Text="{Binding CurrentFilteringRuleParamInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Parameter" Margin="12,4" VerticalAlignment="Center" Grid.Row="1" Visibility="{Binding IsCurrentFilteringRuleParamInputVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
                                             <StackPanel  Grid.Row="2"  Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,2">
 
-                                                <Button  Style="{StaticResource MaterialDesignFlatDarkBgButton}" VerticalAlignment="Center" Margin="6" Command="{Binding CancelCreatingFilterRuleDlgCommand, Mode=OneWay}">Cancel</Button>
-                                                <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}" VerticalAlignment="Center" Margin="6" Command="{Binding AddFilterRuleCommand, Mode=OneWay}">OK</Button>
+                                                <Button  Style="{StaticResource MaterialDesignFlatDarkBgButton}" VerticalAlignment="Center" Margin="6" Command="{Binding CancelCreatingFilterRuleDlgCommand, Mode=OneWay}" Content="Cancel"/>
+                                                <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}" VerticalAlignment="Center" Margin="6" Command="{Binding AddFilterRuleCommand, Mode=OneWay}" Content="OK"/>
 
                                             </StackPanel>
 
@@ -423,8 +439,8 @@
 
                                         </Grid.RowDefinitions>
                                         <Button Command="{Binding ShowCreatingFilterRuleDlgCommand}"
-                            	Style="{StaticResource MaterialDesignIconForegroundButton}"
-                            	ToolTip="Add a filtering rule" HorizontalAlignment="Left" Width="28" Height="28" Margin="4,0">
+											Style="{StaticResource MaterialDesignIconForegroundButton}"
+											ToolTip="Add a filtering rule" HorizontalAlignment="Left" Width="28" Height="28" Margin="4,0">
                                             <custom:PackIconMaterial Kind="FilterPlus"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="16" Height="16"/>
                                         </Button>
                                         <ListBox  ItemsSource="{Binding FilterRulesVMS}" ItemTemplate="{DynamicResource FilterRulesListBoxItemTemplate}" ItemsPanel="{DynamicResource FilterRulesListboxItemsPanelTemplate}" ItemContainerStyle="{StaticResource BasicListViewItemStyle}" Grid.Row="1" />
@@ -434,11 +450,11 @@
                             </Expander>
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
                             <Expander
-      HorizontalAlignment="Stretch"
-      Header="Year" Background="#00763838">
+								HorizontalAlignment="Stretch"
+								Header="Year" Background="#00763838">
                                 <StackPanel
-        Orientation="Vertical"
-        Margin="24,8,24,16">
+									Orientation="Vertical"
+									Margin="24,8,24,16">
                                     <Grid x:Name="yearFilter" Height="40" VerticalAlignment="Top" d:LayoutOverrides="TopPosition, BottomPosition" Margin="2,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -446,19 +462,19 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBox
-									materialDesign:ColorZoneAssist.Mode="Dark"
-									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
-									materialDesign:HintAssist.Hint="Min"
+											materialDesign:ColorZoneAssist.Mode="Dark"
+											materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
+											materialDesign:HintAssist.Hint="Min"
                                     
-									materialDesign:TextFieldAssist.UnderlineBrush="White"
-									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" MinWidth="46" MaxWidth="60" />
+											materialDesign:TextFieldAssist.UnderlineBrush="White"
+											FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" MinWidth="46" MaxWidth="60" />
                                         <TextBox
-									materialDesign:ColorZoneAssist.Mode="Dark"
-									materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
-									materialDesign:HintAssist.Hint="Max"
+											materialDesign:ColorZoneAssist.Mode="Dark"
+											materialDesign:TextFieldAssist.TextBoxViewMargin="4 0 2 0"
+											materialDesign:HintAssist.Hint="Max"
                                     
-									materialDesign:TextFieldAssist.UnderlineBrush="White"
-									FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" Grid.Column="2" MinWidth="46" MaxWidth="60" />
+											materialDesign:TextFieldAssist.UnderlineBrush="White"
+											FontSize="12" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0" Grid.Column="2" MinWidth="46" MaxWidth="60" />
                                         <TextBlock x:Name="textBlock3_Copy4" Margin="2,0" TextWrapping="Wrap" Text="to" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
                                     </Grid>
                                 </StackPanel>
@@ -477,8 +493,8 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth0" Padding="4"
-                    		Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-                    		UniformCornerRadius="10" FontFamily="Roboto" Background="#FF252525" Margin="0,2,0,4" MaxHeight="350">
+							Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+							UniformCornerRadius="10" FontFamily="Roboto" Background="#FF252525" Margin="0,2,0,4" MaxHeight="350">
                             <Grid Margin="0,0,0,2">
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -512,7 +528,7 @@
                                 <Button x:Name="saveResultsButt" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  Height="Auto" Margin="10,0" Grid.Row="1" VerticalAlignment="Center" Padding="10,8" ToolTip="Save the elements of the grid into a new file" Command="{Binding SaveResultsCommand, Mode=OneWay}">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock VerticalAlignment="Center" Text="{Binding BusinessesViewModels.Count, FallbackValue=SAVE RESULTS, Mode=OneWay, StringFormat=SAVE RESULTS (\{0\})}" />
-                                        <Image Source="media/img/svg-22-white-regular.png" Width="22" Height="22" VerticalAlignment="Center" Margin="4,0,0,0" Visibility="Collapsed" ></Image>
+                                        <Image Source="media/img/svg-22-white-regular.png" Width="22" Height="22" VerticalAlignment="Center" Margin="4,0,0,0" Visibility="Collapsed" />
                                     </StackPanel>
                                 </Button>
                                 <Button x:Name="saveSelection" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  Height="Auto" Margin="10,0" Grid.Row="2" VerticalAlignment="Center" Padding="10,8" ToolTip="Save the selected elements of the grid into a new file" Command="{Binding SaveSelectionCommand, Mode=OneWay}">
@@ -563,8 +579,8 @@
                             </Button>
                             <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding ProductViewModels.Count, Mode=OneWay, StringFormat=\{0\} Items}" VerticalAlignment="Center" Visibility="{Binding ProductViewModels.Count, Converter={StaticResource IntToVisibilityConverter}, Mode=OneWay}"/>
                             <Button Command="{Binding SwitchElementsViewType}"
-                            	Style="{StaticResource MaterialDesignIconForegroundButton}"
-                            	ToolTip="Grid view/List view" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28" Grid.Column="2">
+								Style="{StaticResource MaterialDesignIconForegroundButton}"
+								ToolTip="Grid view/List view" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28" Grid.Column="2">
                                 <Image Source="media/img/cards-view-16-white.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="16" Height="16"/>
                             </Button>
                         </Grid>
@@ -576,18 +592,16 @@
                                     </ContextMenu>
                                 </DataGrid.ContextMenu>
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn  Header="Company" Binding="{Binding Name}" Width="82"></DataGridTextColumn>
-                                    <DataGridTextColumn  Header="Contact person" Binding="{Binding ContactPerson}" Width="80"></DataGridTextColumn>
+                                    <DataGridTextColumn  Header="Company" Binding="{Binding Name}" Width="82"/>
+                                    <DataGridTextColumn  Header="Contact person" Binding="{Binding ContactPerson}" Width="80"/>
                                     <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="100"/>
-                                    <DataGridTextColumn Header="Phone number" Binding="{Binding PhoneNumber}" Width="100"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="100"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Employees" Binding="{Binding Employees}" Width="70"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Website" Binding="{Binding Website}" Width="80"></DataGridTextColumn>
-                                    <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="60"></DataGridTextColumn>
-                                    <DataGridHyperlinkColumn   Header="Link" Binding="{Binding Link}" CellStyle="{DynamicResource DataGridCellStyle1}" ElementStyle="{DynamicResource TextBlockStyle1}" Width="100">
-
-                                    </DataGridHyperlinkColumn>
-                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Phone number" Binding="{Binding PhoneNumber}" Width="100"/>
+                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="100"/>
+                                    <DataGridTextColumn Header="Employees" Binding="{Binding Employees}" Width="70"/>
+                                    <DataGridTextColumn Header="Website" Binding="{Binding Website}" Width="80"/>
+                                    <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="60"/>
+                                    <DataGridHyperlinkColumn   Header="Link" Binding="{Binding Link}" CellStyle="{DynamicResource DataGridCellStyle1}" ElementStyle="{DynamicResource TextBlockStyle1}" Width="100"/>
+                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                             <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" ItemsSource="{Binding BusinessesViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
@@ -626,11 +640,11 @@
                 </TabItem.Header>
                 <Grid>
                     <materialDesign:DialogHost
-  IsOpen="{Binding IsHelpPopupOpen}"
+						IsOpen="{Binding IsHelpPopupOpen}"
   
-  CloseOnClickAway="True"
-  OverlayBackground="#00000000"
-  DialogTheme="Inherit" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+						CloseOnClickAway="True"
+						OverlayBackground="#00000000"
+						DialogTheme="Inherit" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                         <materialDesign:DialogHost.DialogContent>
                             <Grid>
                                 <View:HelpView DataContext="{Binding PluginHelpVM}"/>
@@ -659,12 +673,12 @@
                                     <RowDefinition Height="100"/>
                                 </Grid.RowDefinitions>
                                 <Button x:Name="add_csv_file"
-            					Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
-            					ToolTip="MaterialDesignFloatingActionDarkButton" VerticalAlignment="Bottom" Margin="0,0,24,24" HorizontalAlignment="Right" Grid.Row="3" Command="{Binding LoadCSVFileCommand}" Width="48" Height="48" Visibility="Collapsed">
+									Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+									ToolTip="MaterialDesignFloatingActionDarkButton" VerticalAlignment="Bottom" Margin="0,0,24,24" HorizontalAlignment="Right" Grid.Row="3" Command="{Binding LoadCSVFileCommand}" Width="48" Height="48" Visibility="Collapsed">
                                     <materialDesign:PackIcon
-            						Kind="Plus"
-            						Height="24"
-            						Width="24" />
+										Kind="Plus"
+										Height="24"
+										Width="24" />
                                 </Button>
                                 <Grid x:Name="head1" Margin="4,14,0,14" VerticalAlignment="Center">
                                     <TextBlock x:Name="head_string1" HorizontalAlignment="Left" Margin="2,0,0,0"  Text="{Binding ElementNamePlural, FallbackValue=Scrap Elements, Mode=OneWay, StringFormat=Scrap \{0\}}" VerticalAlignment="Center" Style="{DynamicResource ViewHeaderStyle}" TextOptions.TextFormattingMode="Ideal"/>
@@ -710,8 +724,8 @@
                             </Grid>
                             <Grid x:Name="scraping_panel" Grid.Column="1" Margin="10,0" Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Grid.RowSpan="2">
                                 <materialDesign:Card Padding="4" materialDesign:ShadowAssist.ShadowDepth="Depth0"
-            					Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-            					UniformCornerRadius="10" FontFamily="Roboto" Background="#001C1C1C" Margin="6,2,9,2" d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}">
+									Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+									UniformCornerRadius="10" FontFamily="Roboto" Background="#001C1C1C" Margin="6,2,9,2" d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="80"/>
@@ -727,11 +741,11 @@
                                             </Button>
 
                                             <TextBox materialDesign:ColorZoneAssist.Mode="Standard"
-            								materialDesign:TextFieldAssist.LeadingIcon="Globe"
-            								materialDesign:TextFieldAssist.HasLeadingIcon="True"
-            								materialDesign:HintAssist.Hint="Products page URL"
-            								materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-            								FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,16,0" KeyDown="TextBox_KeyDown" >
+												materialDesign:TextFieldAssist.LeadingIcon="Globe"
+												materialDesign:TextFieldAssist.HasLeadingIcon="True"
+												materialDesign:HintAssist.Hint="Products page URL"
+												materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+												FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,16,0" KeyDown="TextBox_KeyDown" >
                                                 <TextBox.InputBindings>
                                                     <KeyBinding Command="{Binding StartScrapingCommand}" Key="Return"/>
                                                 </TextBox.InputBindings>
@@ -739,7 +753,7 @@
                                             <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0,0,16,0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task"/>
                                             <StackPanel  Orientation="Horizontal"   Grid.Row="1">
                                                 <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" Margin="0,0,6,0" ><Run Text="Using plugin:"/><Run Foreground="{StaticResource SecondaryHueMidBrush}" Text="{Binding CurrentPluginName, FallbackValue=null, Mode=OneWay, StringFormat=\{0\}}"/></TextBlock>
-                                                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding OpenPluginOptionsCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0" Visibility="Collapsed">
+                                                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding OpenPluginOptionsCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0">
                                                     <custom:PackIconMaterial Height="12" Width="12" Kind="Cog"/>
                                                 </Button>
 
@@ -846,7 +860,7 @@
                 </Grid>
             </TabItem>
             <TabItem x:Name="settings"  
-            	Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="64" FontFamily="Roboto" Height="64" VerticalContentAlignment="Stretch" Margin="0">
+				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="64" FontFamily="Roboto" Height="64" VerticalContentAlignment="Stretch" Margin="0">
                 <TabItem.Header >
 
                     <Grid HorizontalAlignment="Center" materialDesign:BadgedAssist.Badge="5" materialDesign:BadgedAssist.BadgePlacementMode="TopRight" Width="32" ToolTip="Settings">
@@ -865,7 +879,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"   Padding="16,6" VerticalContentAlignment="Center" Command="{Binding ExitWorkspaceCommand}"  Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,0,0,0" >EXIT WORKSPACE</Button>
+                    <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"   Padding="16,6" VerticalContentAlignment="Center" Command="{Binding ExitWorkspaceCommand}"  Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,0,0,0" Content="EXIT WORKSPACE" />
                     <StackPanel Orientation="Vertical" d:LayoutOverrides="Height" DataContext="{StaticResource ApplicationInfo}" VerticalAlignment="Top" Margin="10,0,0,0" Grid.IsSharedSizeScope="True" Grid.Row="1" Grid.RowSpan="2">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBlock Text="{Binding APP_TITLE}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" />
@@ -913,10 +927,10 @@
             </TabItem>
             <Grid/>
         </TabControl>
-        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" d:IsHidden="True" Grid.RowSpan="2" >
+        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" Grid.RowSpan="2" d:IsHidden="True" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="381*"/>
-                <RowDefinition Height="94*"/>
+                <RowDefinition Height="255*"/>
+                <RowDefinition Height="214*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,12,0,24">
@@ -928,7 +942,7 @@
                     <TextBlock Text="Select the working directory" VerticalAlignment="Center"/>
                     <TextBox Grid.Column="1" Margin="8,0" MinWidth="250" VerticalAlignment="Center" Text="{Binding WorkingDirectoryInputValue}"/>
                     <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickWorkspaceFolderCommand}"
-        				ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
+						ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
                         <custom:PackIconMaterial Kind="FolderOpen"/>
                     </Button>
 
@@ -945,17 +959,26 @@
 
                 </StackPanel>
             </StackPanel>
+            <Grid Margin="254,33,193,61" Grid.Row="1" d:LayoutOverrides="Height">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" Text="Recent" FontSize="16" d:LayoutOverrides="Height" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                <ItemsControl  x:Name="listView" ItemsSource="{Binding RecentlyOpenedWorkspaces}" ItemTemplate="{DynamicResource RecentWorkspaceItemTemlate}" ItemsPanel="{DynamicResource RecentsWorkspacesItemsPanelTemplate}" d:LayoutOverrides="Height" Grid.Row="1" HorizontalContentAlignment="Stretch"/>
+
+            </Grid>
 
         </Grid>
-        <Grid x:Name="windowControl" Grid.ColumnSpan="2">
+        <Grid x:Name="windowControl" Grid.ColumnSpan="2" d:IsHidden="True">
             <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Margin="0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Right">
                 <Button x:Name="button" materialDesign:ButtonAssist.CornerRadius="0" Style="{DynamicResource ButtonWndowControlsStyle}"  HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Command="{Binding CloseWindowCommand}">
                     <custom:PackIconMaterial Kind="WindowClose" Width="10" Height="10"/>
                 </Button>
                 <Button x:Name="maximizeButt"  Style="{DynamicResource ButtonWndowControlsStyle}"
-        			materialDesign:ButtonAssist.CornerRadius="0"
+					materialDesign:ButtonAssist.CornerRadius="0"
                         
-        			HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Foreground="#FF818181" FontFamily="Roboto" Click="button2_Click">
+					HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Foreground="#FF818181" FontFamily="Roboto" Click="button2_Click">
                     <Image x:Name="maximizeButtImg"  Width="10" Height="10" Source="media/img/maximize-10-white.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Button>
                 <Button x:Name="mnimizeButton" materialDesign:ButtonAssist.CornerRadius="0" Style="{DynamicResource ButtonWndowControlsStyle}" HorizontalAlignment="Right" Height="24" Margin="0" Width="32" VerticalAlignment="Center" Foreground="#FF818181" Click="mnimizeButton_Click" FontFamily="Roboto">

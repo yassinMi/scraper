@@ -1,0 +1,364 @@
+﻿<ViewModel:MainViewModel xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:Model="clr-namespace:scraper.Model" xmlns:Core="clr-namespace:scraper.Core;assembly=scraper.Core" xmlns:Threading="clr-namespace:System.Threading;assembly=mscorlib" xmlns:Media="clr-namespace:System.Windows.Media;assembly=PresentationCore" xmlns:scraper="clr-namespace:scraper" xmlns:CompilerServices="clr-namespace:System.Runtime.CompilerServices;assembly=mscorlib" CurrentFilteringRuleParamInput="Mus tincidunt vehicula" CurrentWorkspaceDirectory="Adipiscing himenaeos" CurrentFilteringRuleFiedlInput="Torquent ultrices penatibus porttitor" CurrentFilteringRuleTypeInput="Leo imperdiet malesuada lorem magna" CurrentPluginName="Praesent aenean phasellus vestibulum mauris" CurrentWorkspaceName="Etiam commodo conubia mauris maecenas" ElementsViewType="List" ElementName="Vel faucibus nam fringilla habitasse" ElementNamePlural="Eget vestibulum vitae" IsHelpPopupOpen="False" IsCreatingFilterRuleDlgOpen="True" IsCurrentFilteringRuleParamInputVisible="True" IsWorkspaceSetupMode="True" SelectionCount="90" SearchQuery="Parturient vestibulum quis vestibulum" TotalRecordsCountString="Cubilia imperdiet dapibus egestas" TargetPageQueryText="Maecenas nam class aliquam curabitur" WorkingDirectoryInputValue="Massa metus volutpat luctus">
+	<ViewModel:MainViewModel.BusinessesViewModels>
+		<ViewModel:ElementViewModel Address="Eros vestibulum" ContactPerson="Nunc euismod odio auctor" Description="Nullam vitae habitasse" Email="Fringilla nulla" Employees="Nibh vestibulum porta eleifend purus" ImgUrl="Aptent nisi hendrerit egestas nisl" Link="Faucibus habitant mauris" Name="Fermentum conubia" PhoneNumber="Cubilia parturient netus dictumst aenean" Website="Facilisi risus velit adipiscing dapibus" Year="Class curae inceptos interdum feugiat"/>
+		<ViewModel:ElementViewModel Address="Fusce lorem morbi cursus" ContactPerson="Parturient dolor vestibulum lectus posuere" Description="Dictum laoreet" Email="Vestibulum orci adipiscing hac lacinia" Employees="Leo imperdiet parturient vestibulum pede" ImgUrl="Natoque augue non" Link="Nec quam adipiscing" Name="Congue lobortis donec gravida parturient" PhoneNumber="Himenaeos etiam iaculis vestibulum" Website="Nulla mus vestibulum proin" Year="Potenti vestibulum"/>
+		<ViewModel:ElementViewModel Address="Felis porttitor pharetra tincidunt sodales" ContactPerson="Litora justo" Description="Sem venenatis" Email="Viverra aliquam" Employees="Sed libero adipiscing" ImgUrl="Cras pulvinar duis sit" Link="Tristique placerat ultricies" Name="Fames pretium quis malesuada" PhoneNumber="Penatibus nascetur per rhoncus" Website="Ligula urna ipsum parturient" Year="Vel sagittis integer"/>
+		<ViewModel:ElementViewModel Address="Vivamus vestibulum suscipit vulputate" ContactPerson="Morbi vehicula mus diam eget" Description="Cubilia parturient vestibulum vestibulum ante" Email="Aliquam lorem magna luctus aliquet" Employees="Dis massa blandit metus torquent" ImgUrl="Convallis adipiscing leo ultrices arcu" Link="Adipiscing hac consequat amet conubia" Name="Nam lacus nunc" PhoneNumber="Quisque sed senectus sociosqu" Website="Commodo est curabitur vestibulum phasellus" Year="Dignissim neque elementum magnis mattis"/>
+		<ViewModel:ElementViewModel Address="Volutpat fermentum fringilla enim" ContactPerson="Per iaculis sed nostra sem" Description="Praesent vestibulum" Email="Purus maecenas mollis" Employees="Risus erat habitasse eros" ImgUrl="Feugiat velit vitae accumsan gravida" Link="Montes himenaeos non euismod" Name="Parturient mauris netus vestibulum dapibus" PhoneNumber="Elit nulla egestas porta facilisis" Website="Nibh hendrerit nec" Year="Ornare class"/>
+		<ViewModel:ElementViewModel Address="Malesuada vestibulum natoque platea" ContactPerson="Adipiscing orci" Description="Rutrum vel" Email="Sit posuere bibendum" Employees="Nisi dictumst potenti curae primis" ImgUrl="Eleifend odio nam fusce" Link="Vestibulum donec nunc etiam" Name="Imperdiet adipiscing" PhoneNumber="Lacinia laoreet parturient" Website="Penatibus nisl porttitor" Year="Sapien parturient semper vestibulum sociis"/>
+		<ViewModel:ElementViewModel Address="Faucibus rhoncus" ContactPerson="Proin augue dolor interdum curabitur" Description="Quis vulputate quisque" Email="Sodales tristique" Employees="Viverra lorem aliquam habitant ultricies" ImgUrl="Urna cras nulla" Link="Quam dis venenatis" Name="Tincidunt vestibulum pede facilisi" PhoneNumber="Sed taciti pretium" Website="Integer morbi tellus inceptos" Year="Vivamus adipiscing"/>
+		<ViewModel:ElementViewModel Address="Convallis nascetur dignissim pharetra nunc" ContactPerson="Leo habitasse hendrerit" Description="Tempus felis diam" Email="Fames elementum blandit vestibulum" Employees="Amet ante" ImgUrl="Conubia fringilla cubilia" Link="Vestibulum fermentum commodo arcu tempor" Name="Est duis phasellus parturient" PhoneNumber="Lobortis aliquam consequat aliquet" Website="Facilisis hac" Year="Tortor dapibus egestas"/>
+		<ViewModel:ElementViewModel Address="Himenaeos euismod adipiscing" ContactPerson="Enim sagittis" Description="Magna elit" Email="Non feugiat imperdiet" Employees="Lacus gravida iaculis malesuada" ImgUrl="Lacinia massa metus porttitor" Link="Lorem eget pulvinar" Name="Mus placerat" PhoneNumber="Ipsum justo turpis nec" Website="Penatibus per" Year="Varius aenean mauris parturient nullam"/>
+		<ViewModel:ElementViewModel Address="Tristique ultricies senectus" ContactPerson="Lectus potenti sit phasellus" Description="Dictum suscipit adipiscing nibh" Email="Auctor morbi venenatis" Employees="Congue erat neque" ImgUrl="Nisi posuere parturient" Link="Vulputate sem cursus curabitur sociosqu" Name="Sed laoreet" PhoneNumber="Natoque tincidunt aptent" Website="Vestibulum eros vestibulum" Year="Vestibulum libero"/>
+	</ViewModel:MainViewModel.BusinessesViewModels>
+	<ViewModel:MainViewModel.CSVResourcesVMS>
+		<ViewModel:CSVResourceVM FilenameOnly="Vestibulum netus vel pretium rhoncus" FullPath="Nulla nam consequat adipiscing" IsRemoved="True" IsBadFormat="True" IsActive="False" RowsCount="82"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Convallis parturient sed sodales porta" FullPath="Ligula viverra torquent" IsRemoved="False" IsBadFormat="False" IsActive="True" RowsCount="65"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Purus aliquam" FullPath="Integer litora nisl" IsRemoved="True" IsBadFormat="True" IsActive="False" RowsCount="14"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Dignissim vestibulum risus quisque" FullPath="Velit ultrices" IsRemoved="False" IsBadFormat="False" IsActive="True" RowsCount="46"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Dis vehicula volutpat" FullPath="Vivamus nunc elementum vestibulum" IsRemoved="True" IsBadFormat="True" IsActive="False" RowsCount="56"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Adipiscing parturient odio" FullPath="Aliquam est facilisis" IsRemoved="False" IsBadFormat="False" IsActive="True" RowsCount="88"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Fermentum aliquet" FullPath="Vestibulum vestibulum hac" IsRemoved="True" IsBadFormat="True" IsActive="False" RowsCount="12"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Blandit orci luctus adipiscing" FullPath="Parturient fringilla vitae class" IsRemoved="False" IsBadFormat="False" IsActive="True" RowsCount="78"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Vestibulum habitasse" FullPath="Magnis pede curae" IsRemoved="True" IsBadFormat="True" IsActive="False" RowsCount="43"/>
+		<ViewModel:CSVResourceVM FilenameOnly="Vestibulum leo donec hendrerit quam" FullPath="Mus mattis" IsRemoved="False" IsBadFormat="False" IsActive="True" RowsCount="78"/>
+	</ViewModel:MainViewModel.CSVResourcesVMS>
+	<ViewModel:MainViewModel.DataGridSelectedItemsRef>
+		<ViewModel:ElementViewModel Address="Amet risus mollis aliquam adipiscing" ContactPerson="Class volutpat curae vestibulum" Description="Arcu sit blandit vestibulum diam" Email="Aliquet elementum facilisis" Employees="Velit parturient" ImgUrl="Vehicula vitae" Link="Habitasse montes" Name="Convallis dignissim mattis sem" PhoneNumber="Suscipit purus torquent mauris" Website="Fermentum fringilla ultrices ante" Year="Commodo donec adipiscing nostra"/>
+		<ViewModel:ElementViewModel Address="Hendrerit vestibulum cubilia fusce" ContactPerson="Sapien vestibulum" Description="Penatibus bibendum" Email="Primis himenaeos eget maecenas imperdiet" Employees="Praesent vestibulum sed adipiscing" ImgUrl="Dictumst enim euismod rutrum feugiat" Link="Egestas parturient dis" Name="Ornare parturient vel" PhoneNumber="Etiam platea nam conubia" Website="Dapibus malesuada accumsan elit" Year="Eleifend vestibulum semper lorem"/>
+		<ViewModel:ElementViewModel Address="Adipiscing nulla iaculis erat" ContactPerson="Felis ultricies lobortis nisi venenatis" Description="Inceptos tellus hac interdum" Email="Est taciti" Employees="Proin faucibus augue" ImgUrl="Nibh dolor fames tristique vestibulum" Link="Habitant eros tincidunt" Name="Facilisi morbi" PhoneNumber="Gravida sociis" Website="Parturient porttitor" Year="Lacinia vulputate ipsum justo nisl"/>
+		<ViewModel:ElementViewModel Address="Magna laoreet orci" ContactPerson="Posuere pulvinar potenti tortor vestibulum" Description="Quis leo mus metus morbi" Email="Tempus nascetur" Employees="Pharetra placerat phasellus pede" ImgUrl="Neque netus nulla natoque urna" Link="Parturient quam" Name="Lacus lorem nunc" PhoneNumber="Tempor vestibulum curabitur odio" Website="Adipiscing massa" Year="Pretium rhoncus nec non vestibulum"/>
+		<ViewModel:ElementViewModel Address="Sed sem porta aliquam sagittis" ContactPerson="Parturient ante nam arcu" Description="Aenean suscipit elementum nunc" Email="Integer purus sit vel risus" Employees="Cras convallis" ImgUrl="Velit facilisis amet torquent" Link="Varius dignissim sociosqu" Name="Adipiscing per" PhoneNumber="Consequat sodales turpis viverra" Website="Duis senectus" Year="Diam vitae quisque vestibulum ultrices"/>
+		<ViewModel:ElementViewModel Address="Aliquam curae vehicula fermentum auctor" ContactPerson="Malesuada penatibus nulla accumsan vestibulum" Description="Praesent parturient dictum lectus" Email="Congue elit donec cursus fringilla" Employees="Volutpat etiam habitasse fusce enim" ImgUrl="Erat himenaeos imperdiet" Link="Lorem morbi hendrerit vestibulum adipiscing" Name="Eget class vestibulum adipiscing vivamus" PhoneNumber="Parturient mauris nullam aptent" Website="Vestibulum maecenas" Year="Eros vestibulum adipiscing nibh porttitor"/>
+		<ViewModel:ElementViewModel Address="Nisi libero ligula vestibulum tristique" ContactPerson="Vulputate leo vestibulum" Description="Est fames dapibus parturient hac" Email="Vestibulum ultricies dictumst" Employees="Dis blandit commodo eleifend" ImgUrl="Nisl vestibulum egestas euismod venenatis" Link="Dolor conubia cubilia" Name="Aliquet sed tincidunt" PhoneNumber="Parturient bibendum" Website="Facilisi faucibus proin adipiscing augue" Year="Adipiscing habitant mus nec nunc"/>
+		<ViewModel:ElementViewModel Address="Luctus ipsum justo phasellus consequat" ContactPerson="Parturient pede" Description="Magna dignissim mauris" Email="Lacus inceptos" Employees="Lorem magnis interdum vestibulum" ImgUrl="Lobortis nascetur" Link="Orci sed" Name="Parturient curabitur" PhoneNumber="Non odio felis per litora" Website="Convallis mattis vestibulum feugiat adipiscing" Year="Vestibulum sem massa"/>
+		<ViewModel:ElementViewModel Address="Placerat pulvinar sagittis lacinia vel" ContactPerson="Nostra potenti parturient sociosqu" Description="Netus vestibulum fringilla senectus nulla" Email="Elementum laoreet metus" Employees="Facilisis quam natoque morbi neque" ImgUrl="Posuere adipiscing quis" Link="Nam vestibulum" Name="Pharetra mollis vestibulum sit" PhoneNumber="Montes gravida iaculis adipiscing" Website="Fermentum parturient" Year="Habitasse ornare"/>
+		<ViewModel:ElementViewModel Address="Primis hendrerit torquent ultrices sed" ContactPerson="Penatibus praesent hac accumsan" Description="Malesuada class maecenas" Email="Risus urna dis velit vehicula" Employees="Vestibulum himenaeos pretium adipiscing" ImgUrl="Nunc rhoncus sodales parturient" Link="Vitae rutrum duis" Name="Vestibulum porta suscipit" PhoneNumber="Purus platea" Website="Est cras volutpat imperdiet" Year="Viverra sapien bibendum"/>
+	</ViewModel:MainViewModel.DataGridSelectedItemsRef>
+	<ViewModel:MainViewModel.ElementFieldsNamesInFilterPanel>
+		<System:String>Adipiscing accumsan cras sed</System:String>
+		<System:String>Integer nullam</System:String>
+		<System:String>Curae duis parturient</System:String>
+		<System:String>Vestibulum bibendum dictumst consequat</System:String>
+		<System:String>Eleifend convallis quisque donec etiam</System:String>
+		<System:String>Dis vestibulum</System:String>
+		<System:String>Aptent facilisi vivamus auctor faucibus</System:String>
+		<System:String>Est hac adipiscing</System:String>
+		<System:String>Fusce lorem congue leo mus</System:String>
+		<System:String>Habitant inceptos nec</System:String>
+	</ViewModel:MainViewModel.ElementFieldsNamesInFilterPanel>
+	<ViewModel:MainViewModel.FilterRulesVMS>
+		<ViewModel:FilteringRuleViewModel Caption="Mattis nibh" IsRuleTypeRequiresParam="True">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="IsNotEmpty" RuleParam="Euismod accumsan bibendum nec" fieldName="Maecenas tristique morbi praesent magnis"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Netus nisl parturient nunc eleifend" IsRuleTypeRequiresParam="False">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Equals" RuleParam="Mollis nisi" fieldName="Mauris dictumst non neque per"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Porta feugiat purus sed" IsRuleTypeRequiresParam="True">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Equals" RuleParam="Vestibulum nulla" fieldName="Odio montes"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Vulputate lacinia" IsRuleTypeRequiresParam="False">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Contains" RuleParam="Iaculis ultricies orci venenatis" fieldName="Gravida facilisi"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Curabitur phasellus" IsRuleTypeRequiresParam="True">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Equals" RuleParam="Quam vestibulum ornare risus sit" fieldName="Nostra pede sem"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Natoque nam sed quis posuere" IsRuleTypeRequiresParam="False">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="IsNotEmpty" RuleParam="Vel adipiscing platea laoreet" fieldName="Consequat velit"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Faucibus habitant urna" IsRuleTypeRequiresParam="True">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Equals" RuleParam="Dis convallis rutrum" fieldName="Vitae primis"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Lobortis amet elementum pretium" IsRuleTypeRequiresParam="False">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Equals" RuleParam="Dignissim est parturient vestibulum interdum" fieldName="Cras duis nunc potenti inceptos"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Nec nascetur viverra vestibulum" IsRuleTypeRequiresParam="True">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Contains" RuleParam="Ante mus class" fieldName="Rhoncus facilisis hac leo sodales"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+		<ViewModel:FilteringRuleViewModel Caption="Fringilla quisque vivamus aliquam" IsRuleTypeRequiresParam="False">
+			<ViewModel:FilteringRuleViewModel.Model>
+				<Model:FilteringRule RuleTtype="Equals" RuleParam="Sapien aliquam fermentum integer" fieldName="Arcu pharetra adipiscing"/>
+			</ViewModel:FilteringRuleViewModel.Model>
+		</ViewModel:FilteringRuleViewModel>
+	</ViewModel:MainViewModel.FilterRulesVMS>
+	<ViewModel:MainViewModel.FilterRuleTypesNames>
+		<System:String>Aliquam aliquet nunc cursus</System:String>
+		<System:String>Dignissim morbi blandit elementum</System:String>
+		<System:String>Dictum parturient amet commodo interdum</System:String>
+		<System:String>Ante nulla arcu lobortis</System:String>
+		<System:String>Vestibulum vestibulum proin non</System:String>
+		<System:String>Nascetur augue conubia</System:String>
+		<System:String>Dolor fames</System:String>
+		<System:String>Adipiscing pharetra cubilia placerat pulvinar</System:String>
+		<System:String>Diam per</System:String>
+		<System:String>Facilisis sed fermentum</System:String>
+r	</ViewModel:MainViewModel.FilterRuleTypesNames>
+	<ViewModel:MainViewModel.GridResults>
+		<ViewModel:ElementViewModel Address="Sociis taciti dis" ContactPerson="Vestibulum tortor nibh nascetur donec" Description="Tellus est parturient" Email="Enim hendrerit" Employees="Vestibulum himenaeos" ImgUrl="Tempor curae eros vestibulum tempus" Link="Malesuada erat adipiscing lobortis" Name="Class sed habitant elit" PhoneNumber="Inceptos semper" Website="Interdum imperdiet quisque vivamus" Year="Nisi penatibus"/>
+		<ViewModel:ElementViewModel Address="Vestibulum turpis varius vestibulum aliquet" ContactPerson="Parturient placerat vulputate" Description="Adipiscing nisl" Email="Etiam adipiscing blandit" Employees="Fusce hac parturient leo" ImgUrl="Venenatis cubilia nunc dapibus egestas" Link="Ultricies lorem morbi conubia" Name="Adipiscing porttitor parturient tincidunt" PhoneNumber="Tristique aliquam" Website="Commodo vestibulum vestibulum pharetra" Year="Curabitur nulla odio orci euismod"/>
+		<ViewModel:ElementViewModel Address="Pede senectus" ContactPerson="Laoreet quis" Description="Elementum facilisis nec fermentum" Email="Sociosqu proin vestibulum quam" Employees="Vestibulum suscipit" ImgUrl="Adipiscing parturient" Link="Iaculis dignissim lacinia" Name="Pulvinar feugiat aenean phasellus consequat" PhoneNumber="Mus convallis sagittis mauris" Website="Gravida augue" Year="Torquent vestibulum nullam dolor urna"/>
+		<ViewModel:ElementViewModel Address="Duis posuere felis congue potenti" ContactPerson="Praesent parturient" Description="Sem vestibulum sit amet rhoncus" Email="Fringilla ipsum non cursus habitasse" Employees="Nunc ultrices hendrerit pretium himenaeos" ImgUrl="Imperdiet justo adipiscing" Link="Maecenas sed" Name="Cras fames" PhoneNumber="Natoque aptent auctor" Website="Per vehicula volutpat" Year="Accumsan vel ante malesuada"/>
+		<ViewModel:ElementViewModel Address="Libero vestibulum" ContactPerson="Est quisque" Description="Penatibus eleifend viverra mattis massa" Email="Ligula bibendum nam vestibulum" Employees="Sed adipiscing sodales eget litora" ImgUrl="Aliquam erat dis integer vestibulum" Link="Magnis enim" Name="Dictum arcu" PhoneNumber="Diam lectus lacus lorem" Website="Dictumst parturient magna luctus elit" Year="Porttitor metus mauris morbi vivamus"/>
+		<ViewModel:ElementViewModel Address="Neque aliquet ornare vestibulum nibh" ContactPerson="Facilisi vestibulum vestibulum velit adipiscing" Description="Vulputate non porta nisi purus" Email="Tristique platea netus ultricies leo" Employees="Blandit commodo venenatis" ImgUrl="Dapibus curabitur risus" Link="Cubilia parturient nulla nec" Name="Hac mollis montes eros aliquam" PhoneNumber="Tincidunt nostra" Website="Mus conubia adipiscing" Year="Nisl per"/>
+		<ViewModel:ElementViewModel Address="Elementum facilisis euismod" ContactPerson="Nam posuere" Description="Natoque fringilla orci etiam interdum" Email="Feugiat gravida iaculis fermentum" Employees="Vitae odio habitant lacinia class" ImgUrl="Lobortis vel habitasse hendrerit primis" Link="Sem sit" Name="Phasellus sed nunc parturient" PhoneNumber="Consequat egestas convallis faucibus dignissim" Website="Curae donec inceptos laoreet" Year="Rutrum sed fusce potenti lorem"/>
+		<ViewModel:ElementViewModel Address="Est urna rhoncus nascetur" ContactPerson="Duis quisque" Description="Pharetra porttitor nulla" Email="Semper imperdiet sociis morbi" Employees="Malesuada sodales cras penatibus" ImgUrl="Proin placerat" Link="Hac vestibulum integer" Name="Sapien dis pede" PhoneNumber="Himenaeos quam quis pretium" Website="Viverra aliquam" Year="Leo tincidunt vestibulum nunc"/>
+		<ViewModel:ElementViewModel Address="Augue tellus mus dolor" ContactPerson="Sed sociosqu suscipit vestibulum arcu" Description="Ante ipsum curabitur" Email="Fames adipiscing" Employees="Nec ultricies" ImgUrl="Justo lacus per" Link="Vulputate felis non senectus" Name="Vivamus tristique" PhoneNumber="Amet taciti pulvinar aliquam" Website="Sagittis parturient venenatis tempor vestibulum" Year="Torquent sem lorem ultrices"/>
+		<ViewModel:ElementViewModel Address="Parturient metus volutpat" ContactPerson="Blandit erat morbi" Description="Vestibulum turpis vestibulum maecenas" Email="Aliquet convallis" Employees="Sit dignissim tortor" ImgUrl="Praesent dis facilisis est accumsan" Link="Sed elementum enim" Name="Diam adipiscing eget vehicula phasellus" PhoneNumber="Elit magna consequat massa tempus" Website="Vel nam" Year="Adipiscing commodo bibendum neque varius"/>
+	</ViewModel:MainViewModel.GridResults>
+	<ViewModel:MainViewModel.PluginHelpVM>
+		<ViewModel:HelpVM Header="Placerat semper non curae">
+			<ViewModel:HelpVM.UseCases>
+				<Core:TargetPageUrlUseCaseHelp Description="Suscipit fusce vestibulum">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Pulvinar aliquet sociis taciti parturient</System:String>
+						<System:String>Sagittis habitasse hendrerit</System:String>
+						<System:String>Donec senectus</System:String>
+						<System:String>Etiam per tellus sed</System:String>
+						<System:String>Vestibulum diam tempor sem sociosqu</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Morbi volutpat">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Tempus eget himenaeos</System:String>
+						<System:String>Torquent sit adipiscing parturient</System:String>
+						<System:String>Lorem tortor blandit</System:String>
+						<System:String>Turpis vestibulum</System:String>
+						<System:String>Varius ultrices vehicula</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Eleifend imperdiet nullam">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Nulla aenean</System:String>
+						<System:String>Vestibulum maecenas</System:String>
+						<System:String>Praesent elit accumsan</System:String>
+						<System:String>Vel bibendum</System:String>
+						<System:String>Dictumst mauris enim</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Nisi dolor fames">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Adipiscing facilisi erat eros</System:String>
+						<System:String>Commodo proin faucibus</System:String>
+						<System:String>Malesuada penatibus</System:String>
+						<System:String>Nam augue habitant</System:String>
+						<System:String>Inceptos conubia interdum nibh cubilia</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Euismod feugiat">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Felis aptent</System:String>
+						<System:String>Ipsum lobortis sed nisl nascetur</System:String>
+						<System:String>Justo lacus dapibus</System:String>
+						<System:String>Dis pharetra porttitor est parturient</System:String>
+						<System:String>Placerat egestas auctor pulvinar lorem</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Orci vestibulum lacinia tristique sociosqu">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Hac sagittis congue cursus leo</System:String>
+						<System:String>Dictum mus lectus</System:String>
+						<System:String>Tincidunt vestibulum magna libero nunc</System:String>
+						<System:String>Gravida massa ligula odio</System:String>
+						<System:String>Litora senectus luctus iaculis</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Vulputate quam">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Suscipit adipiscing torquent</System:String>
+						<System:String>Nec magnis non</System:String>
+						<System:String>Ultricies ultrices</System:String>
+						<System:String>Metus vehicula morbi laoreet per</System:String>
+						<System:String>Pede neque venenatis</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Posuere duis potenti nostra">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Mattis mauris curabitur netus mollis</System:String>
+						<System:String>Quis nulla</System:String>
+						<System:String>Urna volutpat cras sed phasellus</System:String>
+						<System:String>Consequat convallis natoque montes</System:String>
+						<System:String>Dignissim sem elementum facilisis</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Purus sodales">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Nunc maecenas sit pretium</System:String>
+						<System:String>Ornare rhoncus</System:String>
+						<System:String>Amet praesent platea</System:String>
+						<System:String>Accumsan ante</System:String>
+						<System:String>Porta fermentum</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+				<Core:TargetPageUrlUseCaseHelp Description="Parturient sapien">
+					<Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+						<System:String>Primis bibendum risus</System:String>
+						<System:String>Rutrum dictumst eleifend</System:String>
+						<System:String>Viverra parturient aliquam vestibulum</System:String>
+						<System:String>Integer velit arcu vestibulum</System:String>
+						<System:String>Adipiscing facilisi diam</System:String>
+					</Core:TargetPageUrlUseCaseHelp.ExampleUrls>
+				</Core:TargetPageUrlUseCaseHelp>
+			</ViewModel:HelpVM.UseCases>
+		</ViewModel:HelpVM>
+	</ViewModel:MainViewModel.PluginHelpVM>
+	<ViewModel:MainViewModel.RecentlyOpenedWorkspaces>
+		<System:String>Eget sagittis elit enim</System:String>
+		<System:String>Sem fringilla sit senectus habitasse</System:String>
+		<System:String>Dapibus erat</System:String>
+		<System:String>Vel parturient felis ipsum</System:String>
+		<System:String>Nam sociosqu lectus vestibulum</System:String>
+		<System:String>Hendrerit eros suscipit sed</System:String>
+		<System:String>Libero ligula vestibulum</System:String>
+		<System:String>Justo himenaeos lacus</System:String>
+		<System:String>Dis litora adipiscing est</System:String>
+		<System:String>Egestas hac</System:String>
+	</ViewModel:MainViewModel.RecentlyOpenedWorkspaces>
+	<ViewModel:MainViewModel.ScrapingTasksVMS>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="Success" CurrentTaskDetail="Tristique ultricies praesent adipiscing" CurrentPage="Montes non nostra venenatis" FailingReason="Porttitor tincidunt duis mollis" Info="Penatibus cras" Title="Nec fusce urna malesuada">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="906.16" Percentage="824.05"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="62" Objects="51" StartTime="07/24/2022 22:50:16" TotalSize="63"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="Success" CurrentTaskDetail="Feugiat arcu per vestibulum sed" CurrentPage="Sem accumsan" FailingReason="Amet curabitur euismod primis ante" Info="Parturient vestibulum lorem platea" Title="Ornare nunc vulputate">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="651.41" Percentage="143.45"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="62" Objects="78" StartTime="07/24/2022 22:50:16" TotalSize="71"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="Paused" CurrentTaskDetail="Rutrum enim" CurrentPage="Erat iaculis vel eros nibh" FailingReason="Bibendum parturient gravida proin" Info="Adipiscing eget elit phasellus" Title="Morbi nulla diam sit">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="467.71" Percentage="566.57"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="30" Objects="34" StartTime="07/24/2022 22:50:16" TotalSize="85"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="ConvertingData" CurrentTaskDetail="Sociis taciti nam tellus felis" CurrentPage="Nisi parturient faucibus" FailingReason="Dictumst eleifend facilisi adipiscing" Info="Fames semper vestibulum vestibulum" Title="Augue consequat dolor lacinia sapien">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="884.39" Percentage="129.02"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="50" Objects="32" StartTime="07/24/2022 22:50:16" TotalSize="57"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="Failed" CurrentTaskDetail="Elementum facilisis inceptos fermentum dis" CurrentPage="Interdum fringilla lobortis tempus" FailingReason="Habitant sed" Info="Ipsum nunc vestibulum vestibulum tempor" Title="Convallis laoreet dignissim nisl">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="789.5" Percentage="437.26"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="29" Objects="83" StartTime="07/24/2022 22:50:16" TotalSize="72"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="Paused" CurrentTaskDetail="Tortor posuere pede" CurrentPage="Potenti turpis quam" FailingReason="Magna hendrerit orci" Info="Natoque habitasse hac odio nascetur" Title="Justo lacus est adipiscing lorem">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="788.97" Percentage="515.57"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="63" Objects="59" StartTime="07/24/2022 22:50:16" TotalSize="36"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="ConvertingData" CurrentTaskDetail="Himenaeos quis" CurrentPage="Imperdiet pharetra vestibulum malesuada mauris" FailingReason="Vestibulum pretium" Info="Parturient aenean" Title="Leo varius">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="627.81" Percentage="631.43"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="72" Objects="40" StartTime="07/24/2022 22:50:16" TotalSize="19"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="DownloadingData" CurrentTaskDetail="Pulvinar morbi mus rhoncus" CurrentPage="Lectus neque sagittis senectus vestibulum" FailingReason="Vestibulum penatibus porttitor dictum metus" Info="Adipiscing parturient placerat massa" Title="Nullam aptent auctor congue cursus">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="780.03" Percentage="620.28"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="68" Objects="91" StartTime="07/24/2022 22:50:16" TotalSize="34"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="Failed" CurrentTaskDetail="Luctus venenatis" CurrentPage="Non per vulputate sodales" FailingReason="Cras tristique ultricies" Info="Ligula nec litora" Title="Netus tincidunt urna nulla libero">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="713.19" Percentage="347.24"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="99" Objects="70" StartTime="07/24/2022 22:50:16" TotalSize="74"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+		<ViewModel:ScrapingTaskVM CurrentScrapTaskStage="Ready" CurrentTaskDetail="Phasellus consequat sed" CurrentPage="Quisque vivamus" FailingReason="Duis sociosqu integer porta nunc" Info="Curabitur aliquam" Title="Viverra magnis">
+			<ViewModel:ScrapingTaskVM.DownloadProgress>
+				<Core:DownloadingProg PercentageNormalized="308.46" Percentage="852.4"/>
+			</ViewModel:ScrapingTaskVM.DownloadProgress>
+			<ViewModel:ScrapingTaskVM.StatsInfo>
+				<Core:TaskStatsInfo Elements="96" Objects="10" StartTime="07/24/2022 22:50:16" TotalSize="28"/>
+			</ViewModel:ScrapingTaskVM.StatsInfo>
+			<ViewModel:ScrapingTaskVM.currentCTS>
+				<Threading:CancellationTokenSource/>
+			</ViewModel:ScrapingTaskVM.currentCTS>
+		</ViewModel:ScrapingTaskVM>
+	</ViewModel:MainViewModel.ScrapingTasksVMS>
+	<ViewModel:MainViewModel.brushess>
+		<Media:SolidColorBrush>#FF8F8F45</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FF3F2B83</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FF811C75</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FFEA7922</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FF168889</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FFC19441</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FFDA8410</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FFDBCFD7</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FF8D93A1</Media:SolidColorBrush>
+		<Media:SolidColorBrush>#FF2EC5DD</Media:SolidColorBrush>
+	</ViewModel:MainViewModel.brushess>
+	<ViewModel:MainViewModel.mw>
+		<scraper:MainWindow/>
+	</ViewModel:MainViewModel.mw>
+	<ViewModel:MainViewModel.scrapingTaskAwaiter>
+		<CompilerServices:TaskAwaiter/>
+	</ViewModel:MainViewModel.scrapingTaskAwaiter>
+</ViewModel:MainViewModel>

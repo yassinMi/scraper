@@ -24,6 +24,7 @@ using System.Windows;
 using System.Collections;
 using scraper.Core.Workspace;
 using scraper.Core.Utils;
+using scraper.ViewModel.HomeScreen;
 
 namespace scraper.ViewModel
 {
@@ -131,7 +132,9 @@ namespace scraper.ViewModel
         }
 
 
-
+        public IEnumerable<RecentWorkspaceVM> RecentlyOpenedWorkspaces { get {
+                return ConfigService.Instance.RecentWorkspaces.Select(p => new RecentWorkspaceVM(p));
+            } }
 
         private FilteringRuleType _CurrentFilteringRuleTypeInput;
         public string CurrentFilteringRuleTypeInput

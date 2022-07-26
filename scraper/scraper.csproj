@@ -154,6 +154,7 @@
     <Compile Include="ViewModel\CSVResourceVM.cs" />
     <Compile Include="ViewModel\FilteringRuleViewModel.cs" />
     <Compile Include="ViewModel\HelpVM.cs" />
+    <Compile Include="ViewModel\HomeScreen\RecentWorkspaceVM.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\ScrapingTaskVM.cs" />
@@ -189,6 +190,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <DesignData Include="SampleData\MainViewModelSampleData.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </DesignData>
     <Page Include="View\HelpView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -255,6 +260,7 @@
   <ItemGroup>
     <Folder Include="Model\Common\" />
     <Folder Include="NewFolder2\" />
+    <Folder Include="SampleData\DDDataContextMutable\" />
     <Folder Include="scripts\" />
   </ItemGroup>
   <ItemGroup>
