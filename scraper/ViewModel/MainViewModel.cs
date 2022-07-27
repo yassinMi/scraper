@@ -144,6 +144,16 @@ namespace scraper.ViewModel
             }
         }
 
+        public IEnumerable<IPlugin> AllPluginPickerPlugins
+        {
+            get
+            {
+                return FilePickerPlugin==null? AllInstalledPlugins : AllInstalledPlugins.Concat(new IPlugin[] { FilePickerPlugin });
+            }
+        }
+
+        public IPlugin FilePickerPlugin { get; set; } = null;
+
         private FilteringRuleType _CurrentFilteringRuleTypeInput;
         public string CurrentFilteringRuleTypeInput
         {
@@ -770,6 +780,23 @@ namespace scraper.ViewModel
                 }
 
             }, "Save selection", "CSV File|*.csv|All Files|*");
+        }
+
+        public ICommand PickPluginFileCommand { get { return new MICommand(hndlPickPluginFileCommand,()=>IsCreateModeOrOpenMode); } }
+
+        private void hndlPickPluginFileCommand()
+        {
+            IOUtils.PromptOpeningPathAsync((s, canceled) =>
+            {
+                if (canceled) return;
+                FilePickerPlugin=PluginsManager.TryLoadFromFile(s) ;
+                notif(nameof(AllPluginPickerPlugins));
+                if (FilePickerPlugin != null)
+                {
+                    PluginPickerInputValue = FilePickerPlugin;
+                }
+
+            },".dll","Open plugin", "DLL File | *.dll | All Files | *");
         }
 
         public ICommand PickWorkspaceFolderCommand { get { return new MICommand(hndlPickWorkspaceFolderCommand); } }

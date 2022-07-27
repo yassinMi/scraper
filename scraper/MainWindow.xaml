@@ -964,7 +964,7 @@
                     <ComboBox IsEnabled="{Binding IsCreateModeOrOpenMode}"
   materialDesign:HintAssist.Hint="Plugin"
   MinWidth="140"
-  ItemsSource="{Binding AllInstalledPlugins}" 
+  ItemsSource="{Binding AllPluginPickerPlugins}" 
                         ItemTemplate="{DynamicResource PluginsPickerComboBoxItemTemplate}" 
                         Grid.Column="1" VerticalAlignment="Center" Margin="8,0" SelectedItem="{Binding PluginPickerInputValue}">
 
@@ -974,7 +974,7 @@
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
                     </ComboBox>
-                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickWorkspaceFolderCommand}"
+                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickPluginFileCommand}"
                 		ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Width="22" Height="22">
                         <custom:PackIconMaterial Kind="FolderOpen"/>
                     </Button>

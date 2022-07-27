@@ -67,6 +67,30 @@ namespace scraper.Services
             }
         }
 
+        public  static IPlugin TryLoadFromFile(string f)
+        {
+            if (!(Path.GetExtension(f).ToLower().Replace(".", "") == "dll"))
+            {
+                return null;
+            }
+                object pluginInstance = null;
+            try
+            {
+                var asm = Assembly.LoadFrom(f);
+                var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t));
+                if (first_IPluginType == null) return null;
+                pluginInstance = Activator.CreateInstance(first_IPluginType);
+            }
+            catch (Exception e)
+            {
+
+                Debug.WriteLine("error loding assembly: " + f + ": " + e.Message);
+                return null;
+            }
+            if (pluginInstance != null) return pluginInstance as IPlugin;
+            return null;
+        }
+
        
     }
 }
