@@ -944,22 +944,22 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="22"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock   Text="Select the working directory" VerticalAlignment="Center"/>
+                    <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}"  Text="Select the working directory" VerticalAlignment="Center"/>
                     <TextBox materialDesign:HintAssist.Hint="Select the working directory" 
                              Grid.Column="1" Margin="8,0" MinWidth="250" VerticalAlignment="Center" Text="{Binding WorkingDirectoryInputValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="13.333"/>
                     <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickWorkspaceFolderCommand}"
-						ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
+						ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Width="24" Height="24">
                         <custom:PackIconMaterial Kind="FolderOpen"/>
                     </Button>
 
                 </Grid>
-                <Grid x:Name="pickPlugin" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,8,0,24">
+                <Grid x:Name="pickPlugin" VerticalAlignment="Center" Margin="0,8,0,24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="key" />
                         <ColumnDefinition/>
                         <ColumnDefinition Width="22"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock   Text="Select the plugin" VerticalAlignment="Center"/>
+                    <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" Text="Select the plugin" VerticalAlignment="Center"/>
 
                     <ComboBox IsEnabled="{Binding IsCreateModeOrOpenMode}"
   materialDesign:HintAssist.Hint="Plugin"
@@ -975,7 +975,7 @@
                         </ComboBox.ItemsPanel>
                     </ComboBox>
                     <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickPluginFileCommand}"
-                		ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Width="22" Height="22">
+                		ToolTip="Open plugin dll file" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Width="24" Height="24">
                         <custom:PackIconMaterial Kind="FolderOpen"/>
                     </Button>
 
