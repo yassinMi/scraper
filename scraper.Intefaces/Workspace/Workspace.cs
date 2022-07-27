@@ -90,8 +90,8 @@ namespace scraper.Core.Workspace
         
         public static Workspace CreateOne(string workspacePath,IPlugin plugin)
         {
-            if (workspacePath == null) throw new Exception("workspacePath cannot be null");
-            if (Workspace.Exists(workspacePath)) throw new Exception($"Workspace already exists at {workspacePath}");
+            if (string.IsNullOrWhiteSpace(workspacePath)) throw new Exception("workspacePath cannot be null");
+            if (Exists(workspacePath)) throw new Exception($"Workspace already exists at {workspacePath}");
             //creating the sub directories
             Workspace res = new Workspace() { Directory = workspacePath };
             res.CSVResources = new List<CSVResource>();
@@ -120,7 +120,7 @@ namespace scraper.Core.Workspace
         /// <returns></returns>
         public static Workspace Load(string workspacePath)
         {
-            if (workspacePath == null) throw new Exception("workspacePath cannot be null"); // workspacePath = ConfigService.Instance.WorkspaceDirectory;
+            if (string.IsNullOrWhiteSpace( workspacePath )) throw new Exception("workspacePath cannot be null"); // workspacePath = ConfigService.Instance.WorkspaceDirectory;
             if (!Exists(workspacePath)) throw new Exception($"cannot load workspace at '{workspacePath}' because the're is no folder and/or plugin ptr file");
             Workspace res = new Workspace() { Directory = workspacePath };
             res.CSVResources = new List<CSVResource>();

@@ -39,8 +39,11 @@ namespace scraper.ViewModel
         }
         public MainViewModel()
         {
+            int i = 1;
+            string new_suggested_ws_path = "";
+            while (System.IO.Directory.Exists(new_suggested_ws_path = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $@"\MyWorkspace{i}"))) i++;
             IsWorkspaceSetupMode = true;
-            WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
+            WorkingDirectoryInputValue = (new_suggested_ws_path);
             MainWorkspace = null; 
         }
 
@@ -665,8 +668,21 @@ namespace scraper.ViewModel
 
         public ICommand OpenWorkspaceCommand { get
             {
-                return new MICommand<string>(hndlOpenWorkspaceCommand);
+                return new MICommand<string>(hndlOpenWorkspaceCommand, canExecuteOpenWorkspaceCommand);
             } }
+
+        private bool canExecuteOpenWorkspaceCommand(string arg)
+        {
+            bool noExceptions = true;
+            try
+            {
+                Path.GetFullPath(arg);
+            }
+            catch (Exception) { noExceptions = false; }
+
+            return  noExceptions && Path.IsPathRooted(arg);
+        }
+
         /// <summary>
         /// todo: should be renamed as OpenOrCreate or be split into two separate commands
         /// </summary>
