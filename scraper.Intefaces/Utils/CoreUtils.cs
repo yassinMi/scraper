@@ -48,6 +48,11 @@ namespace scraper.Core.Utils
             return InvalidFileRegex.Replace(fileName, string.Empty);
         }
 
+        //from @Philip Rieck resp
+        public static string CamelCaseToUIText(string camelCase)
+        {
+            return Regex.Replace(camelCase, @"(?<a>(?<!^)((?:[A-Z][a-z])|(?:(?<!^[A-Z]+)[A-Z0-9]+(?:(?=[A-Z][a-z])|$))|(?:[0-9]+)))", @" ${a}");
+        }
 
         public static string CreateMD5(string input)
         {

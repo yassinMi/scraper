@@ -80,10 +80,13 @@ namespace scraper.ViewModel
             //ElementFieldsNamesInFilterPanel = MainPlugin.ElementDescription.Fields.Select(f=>f.UIName); //todo after lossless refactoring 
 
             FilterRulesVMS = new ObservableCollection<FilteringRuleViewModel>();
+            ElementFields = MainPlugin.ElementDescription.Fields.Select(f => f).ToArray();
+            ElementFieldsNames = MainPlugin.ElementDescription.Fields.Select(f => f.UIName).ToArray();
+
         }
 
 
-       
+
         IPlugin _MainPlugin;
         IPlugin MainPlugin {
             get { return _MainPlugin; }
@@ -114,11 +117,18 @@ namespace scraper.ViewModel
 
         
 
-        private IEnumerable<string> _ElementFieldsNamesInFilterPanel;
-        public IEnumerable<string> ElementFieldsNamesInFilterPanel
+        private IEnumerable<string> _ElementFieldsNames;
+        public IEnumerable<string> ElementFieldsNames
         {
-            set { _ElementFieldsNamesInFilterPanel = value; notif(nameof(ElementFieldsNamesInFilterPanel)); }
-            get { return _ElementFieldsNamesInFilterPanel; }
+            set { _ElementFieldsNames = value; notif(nameof(ElementFieldsNames)); }
+            get { return _ElementFieldsNames; }
+        }
+
+        private IEnumerable<IField> _ElementFields;
+        public IEnumerable<IField> ElementFields
+        {
+            set { _ElementFields = value; notif(nameof(ElementFields)); }
+            get { return _ElementFields; }
         }
 
 

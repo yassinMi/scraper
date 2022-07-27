@@ -100,6 +100,7 @@ namespace scraper.Core
         /// useage example: required fields having a null-like value will cause the row to be droped in cleaning processes
         /// </summary>
         bool IsRequired { get; }
+        int UIHeaderWidth { get; set; }
     }
 
     public class TaskStatsInfo
@@ -142,16 +143,34 @@ namespace scraper.Core
     }
     public struct Field : IField
     {
+        /// <summary>
+        /// this must match the Model (type) property name as it's used in the DataGrid binding path
+        /// </summary>
         public string Name { get; set; }
-
+        /// <summary>
+        /// currently not used
+        /// </summary>
         public Type NativeType { get; set; }
-
+        /// <summary>
+        /// will be used in maping properties to the right eement card positions 
+        /// </summary>
         public FieldRole Role { get; set; }
-
+        /// <summary>
+        /// if not null this will override the tooltip text which is the UIName b default
+        /// </summary>
         public string UserDescription { get; set; }
+        /// <summary>
+        /// not used yet
+        /// </summary>
         public bool IsRequired { get; set; }
-
-        public string UIName { get; }
+        /// <summary>
+        /// visible in the columnt header and other UI places
+        /// </summary>
+        public string UIName { get; set; }
+        /// <summary>
+        /// the starting column width, (recommended width about 70), the user can always resize columns
+        /// </summary>
+        public int UIHeaderWidth { get; set; }
     }
 
         public interface IPluginScrapingTask

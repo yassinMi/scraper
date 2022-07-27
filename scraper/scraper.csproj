@@ -135,10 +135,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Attached\DataGridAttachedProperties.cs" />
     <Compile Include="Common\ApplicationInfo.cs" />
     <Compile Include="Common\ConfigService.cs" />
     <Compile Include="Common\IOUtils.cs" />
     <Compile Include="Common\MICommand.cs" />
+    <Compile Include="Converters\FieldInfoCollectionToDatagridColumnObervableCollectionConverter.cs" />
     <Compile Include="Converters\ScrapingTaskStageToUIString.cs" />
     <Compile Include="Converters\VisibleIfEnumValueMatchesStringParam.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />

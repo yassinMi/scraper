@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:scraper"
         xmlns:View="clr-namespace:scraper.View"
+        xmlns:A="clr-namespace:scraper.Attached"
         xmlns:common="clr-namespace:Mi.Common"
         xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -601,24 +602,13 @@
                             </Button>
                         </Grid>
                         <Grid x:Name="contentSection" Grid.Row="1" Margin="0,6,0,0" >
-                            <DataGrid x:Name="elementsDatagrid"  IsReadOnly="True" AutoGenerateColumns="False"  ItemsSource="{Binding BusinessesViewModels}" Visibility="{Binding ElementsViewType, ConverterParameter=Grid, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}" AlternationCount="2" CanUserDeleteRows="False" CopyingRowClipboardContent="DataGrid_CopyingRowClipboardContent" SelectionChanged="elementsDatagrid_SelectionChanged">
+                            <DataGrid x:Name="elementsDatagrid" A:DataGridAttachedProperties.ColumnsMi="{Binding ElementFields}"  IsReadOnly="True" AutoGenerateColumns="False"  ItemsSource="{Binding BusinessesViewModels}" Visibility="{Binding ElementsViewType, ConverterParameter=Grid, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}" AlternationCount="2" CanUserDeleteRows="False" CopyingRowClipboardContent="DataGrid_CopyingRowClipboardContent" SelectionChanged="elementsDatagrid_SelectionChanged">
                                 <DataGrid.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Command="Copy" />
                                     </ContextMenu>
                                 </DataGrid.ContextMenu>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn  Header="Company" Binding="{Binding Name}" Width="82"/>
-                                    <DataGridTextColumn  Header="Contact person" Binding="{Binding ContactPerson}" Width="80"/>
-                                    <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="100"/>
-                                    <DataGridTextColumn Header="Phone number" Binding="{Binding PhoneNumber}" Width="100"/>
-                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="100"/>
-                                    <DataGridTextColumn Header="Employees" Binding="{Binding Employees}" Width="70"/>
-                                    <DataGridTextColumn Header="Website" Binding="{Binding Website}" Width="80"/>
-                                    <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="60"/>
-                                    <DataGridHyperlinkColumn   Header="Link" Binding="{Binding Link}" CellStyle="{DynamicResource DataGridCellStyle1}" ElementStyle="{DynamicResource TextBlockStyle1}" Width="100"/>
-                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
-                                </DataGrid.Columns>
+                                
                             </DataGrid>
                             <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" ItemsSource="{Binding BusinessesViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
                                 <ListBox.ItemTemplate>

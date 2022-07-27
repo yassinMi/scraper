@@ -28,7 +28,34 @@ namespace BusinesslistPhPlugin
         {
             get
             {
-                throw new NotImplementedException();
+                return new ElementDescription()
+                {
+                    ID = "2",
+                    Name = "Business",
+                    /*Fields = typeof(Business).GetProperties().Select(p => new Field()
+                    {
+                        Name = p.Name,
+                        
+                         NativeType=p.PropertyType,
+                         UIName = CoreUtils.CamelCaseToUIText(p.Name)
+                         
+                    }).Cast<IField>()*/ //the generic default (when switching to base class approach)
+                    Fields = new IField[]
+                    {
+                        new Field() {Name="company", UIName="Company Name", UIHeaderWidth=85 },
+                        new Field() {Name="contactPerson", UIName="Contact Person", UIHeaderWidth=80 , UserDescription="Contact person or company manager"},
+                        new Field() {Name="address", UIName="Address", UIHeaderWidth=70 },
+                        new Field() {Name="phonenumber", UIName="Phone", UIHeaderWidth=80 },
+                        new Field() {Name="email", UIName="Email", UIHeaderWidth=70 },
+                        new Field() {Name="employees", UIName="Employees", UIHeaderWidth=70 },
+                        new Field() {Name="website", UIName="Website", UIHeaderWidth=70 },
+                        new Field() {Name="year", UIName="Year", UIHeaderWidth=65 },
+                        //new Field() {Name="imageUrl", UIName="Image Url", UIHeaderWidth=70 },
+                        new Field() {Name="link", UIName="Link", UIHeaderWidth=70 },
+                        new Field() {Name="description", UIName="Description", UIHeaderWidth=70 },
+
+                    }
+                };
             }
         }
         /// <summary>
