@@ -15,11 +15,11 @@ namespace scraper.Services
     public class PluginsManager
     {
 
-        private static IPlugin[] _CachedGlobalPlugins;
+        private static Core.Plugin[] _CachedGlobalPlugins;
         /// <summary>
         /// using this is safer than GetGlobalPlugins, by means of preventing insatiating duplicate plugin instance by pre-loading all plugins into a static array
         /// </summary>
-        public static IPlugin[] CachedGlobalPlugins { get
+        public static Core.Plugin[] CachedGlobalPlugins { get
             {
                 if (_CachedGlobalPlugins ==null) _CachedGlobalPlugins = GetGlobalPlugins().ToArray();
                 return _CachedGlobalPlugins;
@@ -31,7 +31,7 @@ namespace scraper.Services
         /// </summary>
         /// <returns></returns>
         /// 
-        public static IEnumerable<IPlugin> GetGlobalPlugins()
+        public static IEnumerable<Core.Plugin> GetGlobalPlugins()
         {
             var GlobalFoldder = ApplicationInfo.PLUGINS_GLOBAL_FOLDER;
             //
@@ -51,7 +51,7 @@ namespace scraper.Services
                     try
                     {
                         var asm = Assembly.LoadFrom(f);
-                        var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t));
+                        var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(Core.Plugin).IsAssignableFrom(t));
                         if (first_IPluginType == null) continue;
                         pluginInstance = Activator.CreateInstance(first_IPluginType);
                     }
@@ -61,13 +61,13 @@ namespace scraper.Services
                         Debug.WriteLine("error loding assembly: " + f + ": " + e.Message);
                     }
                     if(pluginInstance!=null)
-                    yield return (IPlugin)pluginInstance;
+                    yield return (Core.Plugin)pluginInstance;
                 }
                     
             }
         }
 
-        public  static IPlugin TryLoadFromFile(string f)
+        public  static Core.Plugin TryLoadFromFile(string f)
         {
             if (!(Path.GetExtension(f).ToLower().Replace(".", "") == "dll"))
             {
@@ -77,7 +77,7 @@ namespace scraper.Services
             try
             {
                 var asm = Assembly.LoadFrom(f);
-                var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(IPlugin).IsAssignableFrom(t));
+                var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(Core.Plugin).IsAssignableFrom(t));
                 if (first_IPluginType == null) return null;
                 pluginInstance = Activator.CreateInstance(first_IPluginType);
             }
@@ -87,7 +87,7 @@ namespace scraper.Services
                 Debug.WriteLine("error loding assembly: " + f + ": " + e.Message);
                 return null;
             }
-            if (pluginInstance != null) return pluginInstance as IPlugin;
+            if (pluginInstance != null) return pluginInstance as Core.Plugin;
             return null;
         }
 

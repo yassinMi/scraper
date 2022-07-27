@@ -22,25 +22,17 @@ namespace BusinesslistPhPlugin
         public string name , link, address, desc, thumbnail;
 
     }
-    public class BLScraper : IPlugin
+    public class BLScraper : Plugin
     {
-        public IElementDescription ElementDescription
+        public override ElementDescription ElementDescription
         {
             get
             {
                 return new ElementDescription()
                 {
-                    ID = "2",
+                    ID = "Business element desc @Mi",
                     Name = "Business",
-                    /*Fields = typeof(Business).GetProperties().Select(p => new Field()
-                    {
-                        Name = p.Name,
-                        
-                         NativeType=p.PropertyType,
-                         UIName = CoreUtils.CamelCaseToUIText(p.Name)
-                         
-                    }).Cast<IField>()*/ //the generic default (when switching to base class approach)
-                    Fields = new IField[]
+                    Fields = new Field[]
                     {
                         new Field() {Name="company", UIName="Company Name", UIHeaderWidth=85 },
                         new Field() {Name="contactPerson", UIName="Contact Person", UIHeaderWidth=80 , UserDescription="Contact person or company manager"},
@@ -63,12 +55,12 @@ namespace BusinesslistPhPlugin
         /// </summary>
         public string WorkspaceDirectory {get;set;}
 
-        public string ElementName { get{return "Business";}}
-        public string ElementNamePlural{get{return "Businesses";} }
+        public override string ElementName { get{return "Business";}}
+        public override string ElementNamePlural{get{return "Businesses";} }
 
-        public string Name { get{return "Businesslist.ph scraper"; } }
+        public override string Name { get{return "Businesslist.ph scraper"; } }
 
-        public Version Version
+        public override Version Version
         {
             get
             {
@@ -76,7 +68,7 @@ namespace BusinesslistPhPlugin
             }
         }
 
-        public PluginUsageInfo UsageInfo
+        public override PluginUsageInfo UsageInfo
         {
             get
             {
@@ -109,7 +101,7 @@ namespace BusinesslistPhPlugin
             }
         }
 
-        public Type ElementModelType
+        public override Type ElementModelType
         {
             get
             {
@@ -117,12 +109,14 @@ namespace BusinesslistPhPlugin
             }
         }
 
-        public IPluginScrapingTask GetTask(TaskInfo taskInfo)
+        
+
+        public override IPluginScrapingTask GetTask(TaskInfo taskInfo)
         {
             throw new NotImplementedException();
         }
 
-        public IPluginScrapingTask GetTask(string targetPage)
+        public override IPluginScrapingTask GetTask(string targetPage)
         {
             return new BLScrapingTask() { TargetPage = targetPage, WorkspaceDirectory = this.WorkspaceDirectory };
         }

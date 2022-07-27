@@ -1,4 +1,5 @@
-﻿using System;
+﻿using scraper.Core.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,58 +51,58 @@ namespace scraper.Core
     /// <summary>
     /// supported pattern is: download a page's static elements
     /// </summary>
-    public interface IPlugin
+    public abstract class Plugin
     {
-        IPluginScrapingTask GetTask(string targetPage);
-        IPluginScrapingTask GetTask(TaskInfo taskInfo);
-        string Name { get; }
-        Version Version { get; }
-        string ElementName { get; }
-        string ElementNamePlural { get; }
-        IElementDescription ElementDescription { get; }
-        Type ElementModelType { get; }
-        PluginUsageInfo UsageInfo { get; }
+        public abstract IPluginScrapingTask GetTask(string targetPage);
+        public abstract IPluginScrapingTask GetTask(TaskInfo taskInfo);
+        public abstract string Name { get; }
+        public virtual Version Version { get; } = new Version(0,0);
+        public virtual string ElementName { get; } = "Element";
+        public virtual string ElementNamePlural { get; } = "Elements";
+        private ElementDescription _ElementDescription;
+        public virtual ElementDescription ElementDescription {
+            get {
+                if (_ElementDescription == null)
+                {
+                    _ElementDescription = new ElementDescription()
+                    {
+                        Fields = ElementModelType.GetProperties().Select(p => new Field()
+                        {
+                            Name = p.Name,
+                            NativeType = p.PropertyType,
+                            UIName = CoreUtils.CamelCaseToUIText(p.Name)
+
+                        }),
+                        ID = ElementName,
+                        Name = ElementName
+                    };
+
+                }
+                return _ElementDescription;
+            }
+            set
+            {
+                _ElementDescription = value;
+            }
+        }
+        public abstract Type ElementModelType { get; }
+        public virtual PluginUsageInfo UsageInfo { get; } = null;
     }
 
-    public interface IElementDescription
+   
+    public class ElementDescription 
     {
-        IEnumerable<IField> Fields { get; }
-        string Name { get; }
+        public IEnumerable<Field> Fields { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// two plugins with the same Element ID can co exist on the same workspace 
         /// the output data from the different plugis would be consistent and can be then loaded in the viewer without problems
         /// a good ID 
         /// </summary>
-        string ID { get; }
-
-
-    }
-    public class ElementDescription : IElementDescription
-    {
-        public IEnumerable<IField> Fields { get; set; }
-        public string Name { get; set; }
         public string ID { get; set; }
     }
 
-    public interface IField
-    {
-        /// <summary>
-        /// the nameused in csv, properties names, 
-        /// </summary>
-        string Name { get; }
-        string UIName { get; }
-        /// <summary>
-        /// for the user information (used as tooltips)
-        /// </summary>
-        string UserDescription { get; }
-        Type NativeType { get; }
-        FieldRole Role { get; }
-        /// <summary>
-        /// useage example: required fields having a null-like value will cause the row to be droped in cleaning processes
-        /// </summary>
-        bool IsRequired { get; }
-        int UIHeaderWidth { get; set; }
-    }
+   
 
     public class TaskStatsInfo
     {
@@ -141,7 +142,7 @@ namespace scraper.Core
             Elements += number;
         }
     }
-    public struct Field : IField
+    public class Field 
     {
         /// <summary>
         /// this must match the Model (type) property name as it's used in the DataGrid binding path
@@ -161,16 +162,31 @@ namespace scraper.Core
         public string UserDescription { get; set; }
         /// <summary>
         /// not used yet
+        /// future usage example: required fields having a null-like value will cause the row to be droped in cleaning processes
         /// </summary>
         public bool IsRequired { get; set; }
+        private string _UIName ;
         /// <summary>
-        /// visible in the columnt header and other UI places
+        /// visible in the columnt header and other UI places, not setting this propety results in it being automaticall generated from the Name  
         /// </summary>
-        public string UIName { get; set; }
+        public string UIName {
+            get
+            {
+                if (_UIName == null)
+                {
+                    _UIName = CoreUtils.CamelCaseToUIText(Name);
+                }
+                return _UIName;
+            }
+            set
+            {
+                _UIName = value;
+            }
+        }
         /// <summary>
         /// the starting column width, (recommended width about 70), the user can always resize columns
         /// </summary>
-        public int UIHeaderWidth { get; set; }
+        public int UIHeaderWidth { get; set; } = 70;
     }
 
         public interface IPluginScrapingTask

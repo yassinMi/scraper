@@ -32,7 +32,7 @@ namespace scraper.Model
     [Obsolete("use interface",true)]
     public class ScrapingTaskModel 
     {
-        public ScrapingTaskModel(string targetPage, IPlugin plugin)
+        public ScrapingTaskModel(string targetPage, Core.Plugin plugin)
         {
             this.TaskPlugin = plugin;
             this.TargetPage = targetPage;
@@ -69,7 +69,7 @@ namespace scraper.Model
        
 
         private Process Process { get; set; }
-        public IPlugin TaskPlugin { get; private set; }
+        public Core.Plugin TaskPlugin { get; private set; }
 
 
 

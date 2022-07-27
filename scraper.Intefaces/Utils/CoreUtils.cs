@@ -51,7 +51,9 @@ namespace scraper.Core.Utils
         //from @Philip Rieck resp
         public static string CamelCaseToUIText(string camelCase)
         {
-            return Regex.Replace(camelCase, @"(?<a>(?<!^)((?:[A-Z][a-z])|(?:(?<!^[A-Z]+)[A-Z0-9]+(?:(?=[A-Z][a-z])|$))|(?:[0-9]+)))", @" ${a}");
+            string res=  Regex.Replace(camelCase, @"(?<a>(?<!^)((?:[A-Z][a-z])|(?:(?<!^[A-Z]+)[A-Z0-9]+(?:(?=[A-Z][a-z])|$))|(?:[0-9]+)))", @" ${a}");
+            res = res.Substring(0,1).ToUpper()+ res.Substring(1);
+            return res;
         }
 
         public static string CreateMD5(string input)

@@ -8,9 +8,9 @@ using System.Threading;
 
 namespace FakePluginExternal
 {
-    public class FakePluginExternal : IPlugin
+    public class FakePluginExternal : Plugin
     {
-        public IElementDescription ElementDescription
+        public override ElementDescription ElementDescription
         {
             get
             {
@@ -19,23 +19,23 @@ namespace FakePluginExternal
                     Name = "Fake Product",
                     Fields = new Field[]
                 {
-                    new Field() {Name= "Price", NativeType= typeof(double), IsRequired=true },
-                    new Field() {Name= "Price", NativeType= typeof(double), IsRequired=true },
-                }.Cast<IField>(),
+                    new Field() {Name= "fakeName",  NativeType= typeof(string), IsRequired=true },
+                    new Field() {Name= "fakePrice", NativeType= typeof(double), IsRequired=true },
+                },
                     ID = "Fake Product 1"
                 };
             }
         }
 
-        public Type ElementModelType
+        public override Type ElementModelType
         {
             get
             {
-                throw new NotImplementedException();
+                return typeof(Model.FakePlugnExternalElementModel);
             }
         }
 
-        public string ElementName
+        public override string ElementName
         {
             get
             {
@@ -43,7 +43,7 @@ namespace FakePluginExternal
             }
         }
 
-        public string ElementNamePlural
+        public override string ElementNamePlural
         {
             get
             {
@@ -51,7 +51,7 @@ namespace FakePluginExternal
             }
         }
 
-        public string Name
+        public override string Name
         {
             get
             {
@@ -59,28 +59,16 @@ namespace FakePluginExternal
             }
         }
 
-        public PluginUsageInfo UsageInfo
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+       
 
-        public Version Version
-        {
-            get
-            {
-                return new Version();
-            }
-        }
+       
 
-        public IPluginScrapingTask GetTask(TaskInfo taskInfo)
+        public override IPluginScrapingTask GetTask(TaskInfo taskInfo)
         {
             return new FakePluginExternalScrapingTask();
         }
 
-        public IPluginScrapingTask GetTask(string targetPage)
+        public override IPluginScrapingTask GetTask(string targetPage)
         {
             return new FakePluginExternalScrapingTask() { TargetPage = targetPage };
         }

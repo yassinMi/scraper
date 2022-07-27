@@ -31,7 +31,7 @@ namespace scraper.ViewModel
     public class MainViewModel : BaseViewModel
     {
 
-        public MainViewModel(IPlugin plugin, Workspace workspace)
+        public MainViewModel(Core.Plugin plugin, Workspace workspace)
         {
             MainPlugin = plugin;
             MainWorkspace = workspace;
@@ -87,8 +87,8 @@ namespace scraper.ViewModel
 
 
 
-        IPlugin _MainPlugin;
-        IPlugin MainPlugin {
+        Core.Plugin _MainPlugin;
+        Core.Plugin MainPlugin {
             get { return _MainPlugin; }
             set {
                 _MainPlugin = value;
@@ -124,8 +124,8 @@ namespace scraper.ViewModel
             get { return _ElementFieldsNames; }
         }
 
-        private IEnumerable<IField> _ElementFields;
-        public IEnumerable<IField> ElementFields
+        private IEnumerable<Field> _ElementFields;
+        public IEnumerable<Field> ElementFields
         {
             set { _ElementFields = value; notif(nameof(ElementFields)); }
             get { return _ElementFields; }
@@ -149,7 +149,7 @@ namespace scraper.ViewModel
                 return ConfigService.Instance.RecentWorkspaces.Select(p => new RecentWorkspaceVM(p) { mainViewModelRef=this});
             } }
 
-        public IEnumerable<IPlugin> AllInstalledPlugins
+        public IEnumerable<Core.Plugin> AllInstalledPlugins
         {
             get
             {
@@ -157,15 +157,15 @@ namespace scraper.ViewModel
             }
         }
 
-        public IEnumerable<IPlugin> AllPluginPickerPlugins
+        public IEnumerable<Core.Plugin> AllPluginPickerPlugins
         {
             get
             {
-                return FilePickerPlugin==null? AllInstalledPlugins : AllInstalledPlugins.Concat(new IPlugin[] { FilePickerPlugin });
+                return FilePickerPlugin==null? AllInstalledPlugins : AllInstalledPlugins.Concat(new Core.Plugin[] { FilePickerPlugin });
             }
         }
 
-        public IPlugin FilePickerPlugin { get; set; } = null;
+        public Core.Plugin FilePickerPlugin { get; set; } = null;
 
         private FilteringRuleType _CurrentFilteringRuleTypeInput;
         public string CurrentFilteringRuleTypeInput
@@ -271,8 +271,8 @@ namespace scraper.ViewModel
 
 
 
-        private IPlugin _PluginPickerInputValue = PluginsManager.CachedGlobalPlugins.FirstOrDefault();
-        public IPlugin PluginPickerInputValue
+        private Core.Plugin _PluginPickerInputValue = PluginsManager.CachedGlobalPlugins.FirstOrDefault();
+        public Core.Plugin PluginPickerInputValue
         {
             set { _PluginPickerInputValue = value; notif(nameof(PluginPickerInputValue)); }
             get { return _PluginPickerInputValue; }
@@ -364,7 +364,7 @@ namespace scraper.ViewModel
             }
         }
 
-        public ObservableCollection<IPlugin> GlobalUserPlugins { get; set; } = new ObservableCollection<IPlugin>();
+        public ObservableCollection<Core.Plugin> GlobalUserPlugins { get; set; } = new ObservableCollection<Core.Plugin>();
 
         private async void onDirtyCSVResourceVMSelection()
         {

@@ -74,7 +74,7 @@ namespace scraper.Core.Workspace
         /// <summary>
         /// the main plugin instance, used t carry out most of business operations. loaded only once at startup
         /// </summary>
-        public IPlugin Plugin { get; set; }
+        public Plugin Plugin { get; set; }
         /// <summary>
         /// to be called only once, internaly startup
         /// 
@@ -88,7 +88,7 @@ namespace scraper.Core.Workspace
         }
         
         
-        public static Workspace CreateOne(string workspacePath,IPlugin plugin)
+        public static Workspace CreateOne(string workspacePath,Plugin plugin)
         {
             if (string.IsNullOrWhiteSpace(workspacePath)) throw new Exception("workspacePath cannot be null");
             if (Exists(workspacePath)) throw new Exception($"Workspace already exists at {workspacePath}");

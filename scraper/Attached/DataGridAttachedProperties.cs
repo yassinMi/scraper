@@ -15,9 +15,9 @@ namespace scraper.Attached
     {
 
 
-        public static IEnumerable<IField>  GetColumnsMi(DataGrid obj)
+        public static IEnumerable<Field>  GetColumnsMi(DataGrid obj)
         {
-            return (IEnumerable<IField>) obj.GetValue(ColumnsMiProperty);
+            return (IEnumerable<Field>) obj.GetValue(ColumnsMiProperty);
         }
 
         public static void SetColumnsMi(DataGrid obj, int value)
@@ -27,7 +27,7 @@ namespace scraper.Attached
 
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ColumnsMiProperty =
-            DependencyProperty.RegisterAttached("ColumnsMi", typeof(IEnumerable<IField>), typeof(DataGridAttachedProperties), new PropertyMetadata(null,hndlPropertyChangedCallback));
+            DependencyProperty.RegisterAttached("ColumnsMi", typeof(IEnumerable<Field>), typeof(DataGridAttachedProperties), new PropertyMetadata(null,hndlPropertyChangedCallback));
 
         private static void hndlPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -35,7 +35,7 @@ namespace scraper.Attached
             Debug.WriteLine($"new vaues is "+ e.NewValue.GetType());
 
             DataGrid dg = d as DataGrid;
-            IEnumerable<IField> fields = e.NewValue as IEnumerable<IField>;
+            IEnumerable<Field> fields = e.NewValue as IEnumerable<Field>;
             if (fields == null) {
                 dg.Columns.Clear();return;
             }

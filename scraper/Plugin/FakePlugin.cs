@@ -9,9 +9,9 @@ using System.Threading;
 
 namespace scraper.Plugin
 {
-    public class FakePlugin : IPlugin
+    public class FakePlugin : Core.Plugin
     {
-        public IElementDescription ElementDescription
+        public override ElementDescription ElementDescription
         {
             get
             {
@@ -19,7 +19,7 @@ namespace scraper.Plugin
             }
         }
 
-        public Type ElementModelType
+        public override Type ElementModelType
         {
             get
             {
@@ -27,7 +27,7 @@ namespace scraper.Plugin
             }
         }
 
-        public string ElementName
+        public override string ElementName
         {
             get
             {
@@ -35,7 +35,7 @@ namespace scraper.Plugin
             }
         }
 
-        public string ElementNamePlural
+        public override string ElementNamePlural
         {
             get
             {
@@ -43,7 +43,7 @@ namespace scraper.Plugin
             }
         }
 
-        public string Name
+        public override string Name
         {
             get
             {
@@ -51,7 +51,7 @@ namespace scraper.Plugin
             }
         }
 
-        public PluginUsageInfo UsageInfo
+        public override PluginUsageInfo UsageInfo
         {
             get
             {
@@ -59,7 +59,7 @@ namespace scraper.Plugin
             }
         }
 
-        public Version Version
+        public override Version Version
         {
             get
             {
@@ -67,12 +67,12 @@ namespace scraper.Plugin
             }
         }
 
-        public IPluginScrapingTask GetTask(TaskInfo taskInfo)
+        public override IPluginScrapingTask GetTask(TaskInfo taskInfo)
         {
             throw new NotImplementedException();
         }
 
-        public IPluginScrapingTask GetTask(string targetPage)
+        public override IPluginScrapingTask GetTask(string targetPage)
         {
             return new FakePluginScrapingTask() { TargetPage = targetPage };
         }
