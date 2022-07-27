@@ -42,10 +42,11 @@ namespace scraper
             }
             else
             {
-                Workspace.MakeCurrent(ws_dir);
+                Workspace.Load(ws_dir);
                 var ws = Workspace.Current;
-                IPlugin plugin = PluginsManager.GetFirstOrDefaultPluginUnderWorkspace(ws);
-                
+                IPlugin plugin = ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == ws.PluginsNames.FirstOrDefault());
+
+
                 Trace.Assert(plugin != null, "failed to load any plugins into the workspace, make sure to have a .scraper/plugins file pointing to existing global plugins");
                  //new BLScraper() { WorkspaceDirectory = ws.Directory };
                 DataContext = new MainViewModel(plugin,ws);

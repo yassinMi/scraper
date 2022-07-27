@@ -14,10 +14,23 @@ namespace scraper.Services
 {
     public class PluginsManager
     {
+
+        private static IPlugin[] _CachedGlobalPlugins;
+        /// <summary>
+        /// using this is safer than GetGlobalPlugins, by means of preventing insatiating duplicate plugin instance by pre-loading all plugins into a static array
+        /// </summary>
+        public static IPlugin[] CachedGlobalPlugins { get
+            {
+                if (_CachedGlobalPlugins ==null) _CachedGlobalPlugins = GetGlobalPlugins().ToArray();
+                return _CachedGlobalPlugins;
+            } }
+        
+
         /// <summary>
         /// returns set of IPlugin instances that correspond to the dll files under MyDocmuments objects to be used by the rest of the app
         /// </summary>
         /// <returns></returns>
+        /// 
         public static IEnumerable<IPlugin> GetGlobalPlugins()
         {
             var GlobalFoldder = ApplicationInfo.PLUGINS_GLOBAL_FOLDER;
@@ -54,16 +67,6 @@ namespace scraper.Services
             }
         }
 
-        internal static IPlugin GetFirstOrDefaultPluginUnderWorkspace(Workspace ws)
-        {
-            IPlugin res = null;
-            try
-            {
-                string[] pluginsNames = File.ReadAllLines(ws.PluginsPtrFilePath);
-                res = PluginsManager.GetGlobalPlugins().FirstOrDefault(p => p.Name == pluginsNames.FirstOrDefault());
-            }
-            catch (Exception) { }
-            return res;
-        }
+       
     }
 }

@@ -55,7 +55,7 @@ namespace scraper.ViewModel
             Trace.Assert(MainPlugin != null, "Cannot init mainViewModel with MainPlugin=null");
 
             Debug.WriteLine("GetScrapingTasksFromFiles");
-            foreach (var p in PluginsManager.GetGlobalPlugins())
+            foreach (var p in PluginsManager.CachedGlobalPlugins)
             {
                 GlobalUserPlugins.Add(p);
             }
@@ -136,6 +136,14 @@ namespace scraper.ViewModel
                 return ConfigService.Instance.RecentWorkspaces.Select(p => new RecentWorkspaceVM(p));
             } }
 
+        public IEnumerable<IPlugin> AllInstalledPlugins
+        {
+            get
+            {
+                return PluginsManager.CachedGlobalPlugins;
+            }
+        }
+
         private FilteringRuleType _CurrentFilteringRuleTypeInput;
         public string CurrentFilteringRuleTypeInput
         {
@@ -187,13 +195,67 @@ namespace scraper.ViewModel
             get { return _IsWorkspaceSetupMode; }
         }
 
+        /// <summary>
+        /// when IsWorkspaceSetupMode, this siply indicates whether the current directory points to an existing workspace (false), based the plugin pointer file existence
+        /// </summary>
+        public bool IsCreateModeOrOpenMode
+        {
+            get {
+                bool existentWorkspace = false;
+                try
+                {
+                    existentWorkspace = Workspace.Exists(WorkingDirectoryInputValue);
+                }
+                catch (Exception)
+                {
+
+                }
+                return !existentWorkspace;
+            }
+        }
+
+
+
 
         public string  _WorkingDirectoryInputValue;
         public string WorkingDirectoryInputValue
         {
-            set { _WorkingDirectoryInputValue = value; notif(nameof(WorkingDirectoryInputValue)); }
+            set
+            {   _WorkingDirectoryInputValue = value;
+                notif(nameof(WorkingDirectoryInputValue));
+                onWorkingDirectoryInputValueChange();
+            }
             get { return _WorkingDirectoryInputValue; }
         }
+
+        private void onWorkingDirectoryInputValueChange()
+        {
+            notif(nameof(IsCreateModeOrOpenMode));
+            if (IsCreateModeOrOpenMode==false)
+            {
+                var ws= Workspace.Load(WorkingDirectoryInputValue);
+                ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == ws.PluginsNames.FirstOrDefault());
+                PluginPickerInputValue = ws.Plugin;
+            }
+            else
+            {
+                PluginPickerInputValue = PluginsManager.CachedGlobalPlugins.FirstOrDefault();
+            }
+        }
+
+
+        
+
+
+
+        private IPlugin _PluginPickerInputValue = PluginsManager.CachedGlobalPlugins.FirstOrDefault();
+        public IPlugin PluginPickerInputValue
+        {
+            set { _PluginPickerInputValue = value; notif(nameof(PluginPickerInputValue)); }
+            get { return _PluginPickerInputValue; }
+        }
+
+
 
         private ObservableCollection<FilteringRuleViewModel> _FilterRulesVMS = null;
         public ObservableCollection<FilteringRuleViewModel> FilterRulesVMS { get
@@ -595,28 +657,34 @@ namespace scraper.ViewModel
             {
                 return new MICommand<string>(hndlOpenWorkspaceCommand);
             } }
-
+        /// <summary>
+        /// todo: should be renamed as OpenOrCreate or be split into two separate commands
+        /// </summary>
+        /// <param name="ws_dir"></param>
         private void hndlOpenWorkspaceCommand(string ws_dir)
         {
-            if (!Directory.Exists(ws_dir))
+            Workspace ws;
+            if (IsCreateModeOrOpenMode)
             {
-                try
-                {
-                    Directory.CreateDirectory(ws_dir);
-                }
-                catch (Exception)
-                {
-                    
-                    return;
-                }
-                
+                //create mode
+                ws = Workspace.CreateOne(ws_dir, PluginPickerInputValue);
+                Workspace.MakeCurrent(ws);
+
             }
-            Workspace.MakeCurrent(ws_dir);
-            var ws = Workspace.Current;
-            IPlugin p = PluginsManager.GetFirstOrDefaultPluginUnderWorkspace(ws);
-            Trace.Assert(p != null, "failed to load any plugins, make sure to have a .scraper/plugins file pointing to existing global plugins");
+            else
+            {
+                //open mode
+                ws = Workspace.Load(ws_dir);
+                ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(pl => pl.Name == ws.PluginsNames.FirstOrDefault());
+
+                Workspace.MakeCurrent(ws);
+            }
+            
+            
+            
+            Trace.Assert(ws.Plugin != null, "failed to load any plugins, make sure to have a .scraper/plugins file pointing to existing global plugins or chose a plugin before creating workspace");
             MainWorkspace = ws;
-            MainPlugin = p;
+            MainPlugin = ws.Plugin;
             Init();
             if (IsWorkspaceSetupMode == true)
             {

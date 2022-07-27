@@ -81,16 +81,50 @@ namespace scraper.Core.Workspace
         /// taking a workspacePath argument is for unit test purposes
         /// if workspacePath is ommited it isobtained from the current path in config
         /// </summary>
+        [Obsolete("use createWorkspaceor LOadWorkspace",true)]
         public static Workspace GetWorkspace(string workspacePath )
         {
-            if (workspacePath == null) throw new Exception("workspacePath cannot be null"); // workspacePath = ConfigService.Instance.WorkspaceDirectory;
+            return null; //deleted code
+        }
+        
+        
+        public static Workspace CreateOne(string workspacePath,IPlugin plugin)
+        {
+            if (workspacePath == null) throw new Exception("workspacePath cannot be null");
+            if (Workspace.Exists(workspacePath)) throw new Exception($"Workspace already exists at {workspacePath}");
             //creating the sub directories
-            Workspace res = new Workspace() { Directory = workspacePath};
+            Workspace res = new Workspace() { Directory = workspacePath };
             res.CSVResources = new List<CSVResource>();
-            if (!System.IO.Directory.Exists(res.Directory))
+            
+            SetUpWorkspaceFolders(res);
+            var all_file_in_csv = System.IO.Directory.GetFiles(res.CSVOutputFolder);
+            //we're still populating the CSVResources from files because data being there does'nt prevent creation of the workspace (aka the plugin ptr file)
+            foreach (var item in all_file_in_csv)
             {
-                throw new Exception("workspace directory doesn't exist");
+                if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")
+                {
+                    var o = new CSVResource() { Path = new Uri(item) };
+                    o.Check();
+                    res.CSVResources.Add(o);
+                }
             }
+            //creating the plugin file
+            File.WriteAllText(Path.Combine(workspacePath, Workspace.PLUGINS_PTR_FILE_RELATIVE_PATH), plugin.Name);
+            res.Plugin = plugin;
+            return res;
+        }
+        /// <summary>
+        /// incomplete: doesnt loead the Plugin property (utils refactoring needed)
+        /// </summary>
+        /// <param name="workspacePath"></param>
+        /// <returns></returns>
+        public static Workspace Load(string workspacePath)
+        {
+            if (workspacePath == null) throw new Exception("workspacePath cannot be null"); // workspacePath = ConfigService.Instance.WorkspaceDirectory;
+            if (!Exists(workspacePath)) throw new Exception($"cannot load workspace at '{workspacePath}' because the're is no folder and/or plugin ptr file");
+            Workspace res = new Workspace() { Directory = workspacePath };
+            res.CSVResources = new List<CSVResource>();
+            
             SetUpWorkspaceFolders(res);
             var all_file_in_csv = System.IO.Directory.GetFiles(res.CSVOutputFolder);
             foreach (var item in all_file_in_csv)
@@ -102,9 +136,12 @@ namespace scraper.Core.Workspace
                     res.CSVResources.Add(o);
                 }
             }
+            
             return res;
         }
+
         /// <summary>
+        /// Loads and makes current 
         /// currently this only usfull in testing
         /// calling this assigns the Current property a value with the workspace path specified, 
         /// </summary>
@@ -113,7 +150,12 @@ namespace scraper.Core.Workspace
         public static void MakeCurrent(string workspacePath )
         {
             Debug.WriteLine("updating Workspace.current: " + workspacePath);
-            _current = GetWorkspace(workspacePath);
+            _current = Load(workspacePath);
+        }
+
+        public static void MakeCurrent(Workspace ws)
+        {
+            _current = ws;
         }
 
         private static void SetUpWorkspaceFolders(Workspace workspace)
@@ -194,13 +236,39 @@ namespace scraper.Core.Workspace
                 }
             }
         }
+        /// <summary>
+        /// exceptions: File.Exists()'s
+        /// based on PLUGINS_PTR_FILE existance
+        /// </summary>
+        /// <param name="workingDirectoryInputValue"></param>
+        /// <returns></returns>
+        public static bool Exists(string ws_path)
+        {
+            return File.Exists(Path.Combine(ws_path, PLUGINS_PTR_FILE_RELATIVE_PATH));
+        }
+
+        internal static string[] GetPluginsNamesUnderWorkspace(Workspace ws)
+        {
+            string[] res = null;
+            try
+            {
+                string[] pluginsNames = File.ReadAllLines(ws.PluginsPtrFilePath);
+                return pluginsNames;
+            }
+            catch (Exception) { }
+            return res;
+        }
 
 
+        public static string PLUGINS_PTR_FILE_RELATIVE_PATH = @".scraper\plugins";
         /// <summary>
         /// text file under .scraper/ that lists the Names of the plugins used in the workdpace (separated by envrements.newLine)
         /// </summary>
-        public string PluginsPtrFilePath { get { return Path.Combine(this.Directory, ".scraper/plugins"); } }
+        public string PluginsPtrFilePath { get { return Path.Combine(this.Directory,Workspace.PLUGINS_PTR_FILE_RELATIVE_PATH ); } }
         public string ElementsImagesFolder { get { return Path.Combine(this.Directory, Options.ElementsImagesRelativeLocation); } }
+        public string[] PluginsNames { get { return GetPluginsNamesUnderWorkspace(this); } }
+
+        
 
         public string HtmlObjectsFolder { get { return Path.Combine(this.Directory, Options.ElementsHTMLRelativeLocation); } }
         public string CSVOutputFolder { get { return Path.Combine(this.Directory, Options.CSVOutputRelativeLocation);} }

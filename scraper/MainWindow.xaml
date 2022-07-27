@@ -304,6 +304,11 @@
         <ItemsPanelTemplate x:Key="RecentsWorkspacesItemsPanelTemplate">
             <StackPanel IsItemsHost="True"/>
         </ItemsPanelTemplate>
+        <DataTemplate x:Key="PluginsPickerComboBoxItemTemplate">
+            <Grid>
+                <TextBlock  ><Run Text="{Binding Name, Mode=OneWay}"/> <Run Foreground="{StaticResource MaterialDesignBodyLight}"  Text="{Binding Version, Mode=OneWay, StringFormat=(\{0\})}"/></TextBlock>
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
     <TextElement.Foreground>
         <StaticResource ResourceKey="MaterialDesignBody"/>
@@ -333,7 +338,7 @@
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
 			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
-			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2"  >
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" d:IsHidden="True"  >
             <TabItem x:Name="overview"  
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
@@ -927,22 +932,50 @@
             </TabItem>
             <Grid/>
         </TabControl>
-        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" Grid.RowSpan="2" d:IsHidden="True" >
+        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" Grid.RowSpan="2" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="214*"/>
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,12,0,24">
+            <StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
+                <Grid x:Name="pickFolder" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,12,0,10">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="key" />
                         <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="22"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Select the working directory" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="1" Margin="8,0" MinWidth="250" VerticalAlignment="Center" Text="{Binding WorkingDirectoryInputValue}"/>
+                    <TextBlock   Text="Select the working directory" VerticalAlignment="Center"/>
+                    <TextBox materialDesign:HintAssist.Hint="Select the working directory" 
+                             Grid.Column="1" Margin="8,0" MinWidth="250" VerticalAlignment="Center" Text="{Binding WorkingDirectoryInputValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="13.333"/>
                     <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickWorkspaceFolderCommand}"
 						ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
+                        <custom:PackIconMaterial Kind="FolderOpen"/>
+                    </Button>
+
+                </Grid>
+                <Grid x:Name="pickPlugin" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,8,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="key" />
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="22"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock   Text="Select the plugin" VerticalAlignment="Center"/>
+
+                    <ComboBox IsEnabled="{Binding IsCreateModeOrOpenMode}"
+  materialDesign:HintAssist.Hint="Plugin"
+  MinWidth="140"
+  ItemsSource="{Binding AllInstalledPlugins}" 
+                        ItemTemplate="{DynamicResource PluginsPickerComboBoxItemTemplate}" 
+                        Grid.Column="1" VerticalAlignment="Center" Margin="8,0" SelectedItem="{Binding PluginPickerInputValue}">
+
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
+                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding PickWorkspaceFolderCommand}"
+                		ToolTip="Open working folder" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Width="22" Height="22">
                         <custom:PackIconMaterial Kind="FolderOpen"/>
                     </Button>
 
@@ -959,7 +992,7 @@
 
                 </StackPanel>
             </StackPanel>
-            <Grid Margin="254,33,193,61" Grid.Row="1" d:LayoutOverrides="Height">
+            <Grid Grid.Row="1" d:LayoutOverrides="Height" HorizontalAlignment="Center" MinWidth="330" Margin="0,0,0,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32"/>
                     <RowDefinition/>
