@@ -8,6 +8,7 @@
         xmlns:common="clr-namespace:Mi.Common"
         xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.MainWindow"
         
         mc:Ignorable="d"
@@ -288,17 +289,27 @@
             <WrapPanel IsItemsHost="True"/>
         </ItemsPanelTemplate>
         <DataTemplate x:Key="RecentWorkspaceItemTemlate">
-            <Grid d:DesignWidth="476" d:DesignHeight="135.5" VerticalAlignment="Top" Height="32">
-                <TextBlock  x:Name="textBlock" TextWrapping="Wrap" Cursor="Hand" Foreground="#FF50A3F5" HorizontalAlignment="Left" VerticalAlignment="Center"  >
-                    <TextBlock.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Open"  UseLayoutRounding="True" ></MenuItem>
-                            <MenuItem Command="Copy" Header="Pin to this list" ></MenuItem>
-                            <MenuItem Header="Remove from this list" ></MenuItem>
-                        </ContextMenu>
-                    </TextBlock.ContextMenu>
-                    <Run Text="{Binding Name}"></Run> <Run Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding TotalSize}"></Run>
-                </TextBlock>
+            <Grid x:Name="igrd" d:DesignWidth="476" d:DesignHeight="135.5" VerticalAlignment="Top" Height="32" Background="#00000000">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Command="{Binding OpenCommand}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,8,0" BorderThickness="0" Padding="2" Background="#00000000">
+                    <TextBlock  x:Name="textBlock" TextWrapping="Wrap"  Foreground="#FF50A3F5"   >
+
+                        <TextBlock.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Open" Command="{Binding OpenCommand}"  UseLayoutRounding="True" ></MenuItem>
+                                <MenuItem Command="{Binding PinToggleCommand}" Header="Pin to this list" ></MenuItem>
+                                <MenuItem Command="{Binding RemoveCommand}" Header="Remove from this list" ></MenuItem>
+                            </ContextMenu>
+                        </TextBlock.ContextMenu>
+                    <Run x:Name="r1" Text="{Binding Name}"></Run> <Run Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding TotalSize}"></Run>
+
+                    </TextBlock>
+
+                </Button>
+                <custom:PackIconMaterial Kind="Pin" Width="14" Height="14" Visibility="{Binding IsPinned, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </Grid>
         </DataTemplate>
         <ItemsPanelTemplate x:Key="RecentsWorkspacesItemsPanelTemplate">
@@ -338,7 +349,7 @@
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
 			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
-			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" d:IsHidden="True"  >
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" d:IsHidden="True" SelectedIndex="{Binding SelectedAppTabIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  >
             <TabItem x:Name="overview"  
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">

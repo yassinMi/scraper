@@ -145,6 +145,7 @@
     <Compile Include="CsvExport.cs" />
     <Compile Include="Model\Element.cs" />
     <Compile Include="Model\FilteringRule.cs" />
+    <Compile Include="Model\RecentWorkspace.cs" />
     <Compile Include="Model\ScrapingTaskModel.cs" />
     <Compile Include="Plugin\FakePlugin.cs" />
     <Compile Include="Services\FakeWebHelper.cs" />

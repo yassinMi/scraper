@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using scraper.ViewModel.HomeScreen;
+using scraper.Model;
 
 namespace Mi.Common
 {
@@ -96,8 +97,8 @@ namespace Mi.Common
             set { _CSVOutputRelativeLocation = value; notif(nameof(CSVOutputRelativeLocation)); }
         }
 
-        private ObservableCollection<string> _RecentWorkspaces;
-        public ObservableCollection<string> RecentWorkspaces
+        private ObservableCollection<RecentWorkspace> _RecentWorkspaces;
+        public ObservableCollection<RecentWorkspace> RecentWorkspaces
         {
             set { _RecentWorkspaces = value; notif(nameof(RecentWorkspaces)); }
             get { return _RecentWorkspaces; }
@@ -196,7 +197,7 @@ namespace Mi.Common
             var facto = new ConfigService();
             //facto.WorkspaceDirectory = @"E:\TOOLS\scraper\scraper\scripts"; DEV ONLY TO SAVE SETUP TIME
             facto.WorkspaceDirectory = null;
-            facto.RecentWorkspaces = new ObservableCollection<string>(new string[] { "kljl", "lkj" });
+            facto.RecentWorkspaces = new ObservableCollection<RecentWorkspace>(new RecentWorkspace[] { new RecentWorkspace() { Path = "lk" }, new RecentWorkspace() { Path = "lkj" } });
             return facto;
         }
 

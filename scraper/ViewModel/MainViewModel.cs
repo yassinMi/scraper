@@ -136,7 +136,7 @@ namespace scraper.ViewModel
 
 
         public IEnumerable<RecentWorkspaceVM> RecentlyOpenedWorkspaces { get {
-                return ConfigService.Instance.RecentWorkspaces.Select(p => new RecentWorkspaceVM(p));
+                return ConfigService.Instance.RecentWorkspaces.Select(p => new RecentWorkspaceVM(p) { mainViewModelRef=this});
             } }
 
         public IEnumerable<IPlugin> AllInstalledPlugins
@@ -464,6 +464,15 @@ namespace scraper.ViewModel
     );
 
 
+        private int _SelectedAppTabIndex=0;
+        public int SelectedAppTabIndex
+        {
+            set { _SelectedAppTabIndex = value; notif(nameof(SelectedAppTabIndex)); }
+            get { return _SelectedAppTabIndex; }
+        }
+
+
+
         public MainWindow mw { get; set; } = null;
 
 
@@ -666,6 +675,42 @@ namespace scraper.ViewModel
         }
 
 
+        
+
+
+        public ICommand OpenRecentWorkspaceCommand { get { return new MICommand<string>(hndlOpenRecentWorkspaceCommand, canExecuteOpenRecentWorkspaceCommand); } }
+
+        private bool canExecuteOpenRecentWorkspaceCommand(string arg)
+        {
+            return true;
+        }
+
+        private void hndlOpenRecentWorkspaceCommand(string ws_dir)
+        {
+            Workspace ws = Workspace.Load(ws_dir);
+            ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(pl => pl.Name == ws.PluginsNames.FirstOrDefault());
+
+            Workspace.MakeCurrent(ws);
+            Trace.Assert(ws.Plugin != null, "failed to load any plugins, make sure to have a .scraper/plugins file pointing to existing global plugins or chose a plugin before creating workspace");
+            MainWorkspace = ws;
+            MainPlugin = ws.Plugin;
+            Init();
+            SelectedAppTabIndex = 0;
+
+            if (IsWorkspaceSetupMode == true)
+            {
+                IsWorkspaceSetupMode = false;
+            }
+            ConfigService.Instance.WorkspaceDirectory = ws.Directory;
+            Utils.CollectionShift(5, ConfigService.Instance.RecentWorkspaces, new RecentWorkspace() { Path = ws.Directory });
+            ConfigService.Instance.RecentWorkspaces = new ObservableCollection<RecentWorkspace>(ConfigService.Instance.RecentWorkspaces.OrderByDescending(rw => rw.IsPinned));
+            notif(nameof(RecentlyOpenedWorkspaces));
+            ConfigService.Instance.Save();
+        }
+
+
+
+
         public ICommand OpenWorkspaceCommand { get
             {
                 return new MICommand<string>(hndlOpenWorkspaceCommand, canExecuteOpenWorkspaceCommand);
@@ -712,13 +757,38 @@ namespace scraper.ViewModel
             MainWorkspace = ws;
             MainPlugin = ws.Plugin;
             Init();
+            SelectedAppTabIndex = 0;
             if (IsWorkspaceSetupMode == true)
             {
                 IsWorkspaceSetupMode = false;
             }
             ConfigService.Instance.WorkspaceDirectory = ws.Directory;
+            Utils.CollectionShift<RecentWorkspace>(5, ConfigService.Instance.RecentWorkspaces, new RecentWorkspace() { Path = ws.Directory });
+            ConfigService.Instance.RecentWorkspaces = new ObservableCollection<RecentWorkspace>(ConfigService.Instance.RecentWorkspaces.OrderByDescending(rw => rw.IsPinned));
             ConfigService.Instance.Save();
+            notif(nameof(RecentlyOpenedWorkspaces));
+
         }
+
+
+        public ICommand RecentWorkspacePinToggleCommand { get { return new MICommand<RecentWorkspace>(hndlRecentWorkspacePinToggleCommand, canExecuteRecentWorkspacePinToggleCommand); } }
+
+        private bool canExecuteRecentWorkspacePinToggleCommand(RecentWorkspace arg)
+        {
+            return true;
+        }
+
+        private void hndlRecentWorkspacePinToggleCommand(RecentWorkspace arg)
+        {
+            int ix = ConfigService.Instance.RecentWorkspaces.IndexOf( arg);
+            if (ix == -1) return;
+            ConfigService.Instance.RecentWorkspaces[ix] = new RecentWorkspace() { Path = arg.Path, IsPinned = !arg.IsPinned };
+            ConfigService.Instance.RecentWorkspaces = new ObservableCollection<RecentWorkspace>(ConfigService.Instance.RecentWorkspaces.OrderByDescending(rw => rw.IsPinned));
+            ConfigService.Instance.Save();
+            notif(nameof(RecentlyOpenedWorkspaces));
+        }
+
+
 
         public ICommand OpenPluginOptionsCommand { get { return new MICommand(hndlOpenPluginOptionsCommand); } }
 

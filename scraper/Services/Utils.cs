@@ -11,6 +11,7 @@ using CsvHelper;
 using System.Collections;
 using System.IO;
 using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace scraper.Services
 {
@@ -18,6 +19,38 @@ namespace scraper.Services
 
     public static class Utils
     {
+
+
+        public static void CollectionShift<T>(int limit,  ObservableCollection<T> collection, T newObj)
+        {
+            if (collection.Contains(newObj))
+            {
+                collection.Remove(newObj);
+            }
+            collection.Insert(0, newObj);
+            while (collection.Count > limit)
+            {
+                collection.RemoveAt(collection.Count-1);
+            }
+            return;
+            T[] arr = new T[limit];
+            arr[0] = newObj;
+            for (int i = 0; i< collection.Count;  i++)
+            {
+                if((i)<limit-1)
+                arr[i + 1] = collection[i];
+            }
+            collection.Clear();
+            for (int i = 0; i < limit; i++)
+            {
+                if(arr[i]!=null)
+                collection.Add(arr[i]);
+            }
+            
+            
+        }
+
+
         //@deepee1
         public static String BytesToString(long byteCount)
         {
