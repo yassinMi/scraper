@@ -8,8 +8,8 @@ namespace FakePluginExternal.Model
 {
     public class FakePlugnExternalElementModel
     {
-        public string FakeProp1 { get; set; }
-        public string FakeProp2 { get; set; }
-        public string FakeProp3 { get; set; }
+        public string name { get; set; }
+        public string price { get; set; }
+        public string category { get; set; }
     }
 }

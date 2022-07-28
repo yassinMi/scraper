@@ -51,6 +51,14 @@ namespace scraper.Plugin
             }
         }
 
+        public override string TargetHost
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override PluginUsageInfo UsageInfo
         {
             get

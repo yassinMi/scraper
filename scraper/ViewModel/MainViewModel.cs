@@ -608,18 +608,7 @@ namespace scraper.ViewModel
         }
         private bool canExecuteStartScrapingCommand()
         {
-            /*if (CurrentScrapTaskStage == ScrapTaskStage.DownloadingData) return false;
-            if (CurrentScrapTaskStage == ScrapTaskStage.ParsingPage) return false;
-            if (CurrentScrapTaskStage == ScrapTaskStage.ConvertingData) return false;
-            */
-            Uri uri;
-            if (Uri.TryCreate(TargetPageQueryText, UriKind.Absolute, out uri) == false)
-            {
-                return false;
-            }
-            string website = uri.Host.ToLower();
-            if (!((website== "www.businesslist.ph") )) return false;
-            return true;
+            return MainPlugin != null && MainPlugin.ValidateTargetPageInputQuery(TargetPageQueryText);
         }
         private ICommand _StartScrapingCommand = null;
         private object ScrapingTasksVMS_lock = new object();

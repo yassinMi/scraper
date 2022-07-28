@@ -109,7 +109,13 @@ namespace BusinesslistPhPlugin
             }
         }
 
-        
+        public override string TargetHost
+        {
+            get
+            {
+                return "www.businesslist.ph";
+            }
+        }
 
         public override PluginScrapingTask GetTask(TaskInfo taskInfo)
         {

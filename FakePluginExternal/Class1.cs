@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using scraper.Core;
 using System.Threading;
+using FakePluginExternal.Model;
+using System.Text.RegularExpressions;
+using scraper.Core.Utils;
+using System.Collections;
 
 namespace FakePluginExternal
 {
@@ -19,8 +23,18 @@ namespace FakePluginExternal
                     Name = "Fake Product",
                     Fields = new Field[]
                 {
-                    new Field() {Name= "fakeName",  NativeType= typeof(string), IsRequired=true },
-                    new Field() {Name= "fakePrice", NativeType= typeof(double), IsRequired=true },
+                    new Field() {
+                        Name = nameof(FakePlugnExternalElementModel.name),
+                        NativeType = typeof(string), IsRequired=true
+                    },
+                    new Field() {
+                        Name = nameof(FakePlugnExternalElementModel.price),
+                        NativeType = typeof(double), IsRequired=true
+                    },
+                    new Field() {
+                        Name = nameof(FakePlugnExternalElementModel.category),
+                        NativeType = typeof(double), IsRequired=true
+                    },
                 },
                     ID = "Fake Product 1"
                 };
@@ -72,6 +86,34 @@ namespace FakePluginExternal
         {
             return new FakePluginExternalScrapingTask() { TargetPage = targetPage };
         }
+        public override PluginUsageInfo UsageInfo
+        {
+            get
+            {
+                return new PluginUsageInfo() {
+                     UsageInfoViewHeader="This is a fake plugin",
+                     UseCases= new TargetPageUrlUseCaseHelp[]
+                     {
+                         new TargetPageUrlUseCaseHelp()
+                         {
+                              Description="it will generate fake task & elements based on the url:",
+                              ExampleUrls = new string[]
+                              {
+                                  "fake.com/?title=All%20Monitors&pages=9&prodectsPerPage=45&delayms=5",
+                              }
+                         }
+                     }
+                };
+            }
+        }
+
+        public override string TargetHost
+        {
+            get
+            {
+                return "fake.com";
+            }
+        }
     }
 
     public class FakePluginExternalScrapingTask : PluginScrapingTask
@@ -88,27 +130,47 @@ namespace FakePluginExternal
         }
         public override async Task RunConverter()
         {
-            Stage = ScrapTaskStage.ConvertingData;
-            this.OnStageChanged(Stage);
-            await Task.Delay(130);
-            Stage = ScrapTaskStage.Success;
-            this.OnStageChanged(Stage);
+            
+            
         }
 
         public override async Task RunScraper(CancellationToken ct)
         {
             await Task.Delay(30);
-
-            ResolvedTitle = $"External DLL Test ({this.TargetPage.Substring(0,8)})";
-            OnResolved( ResolvedTitle);
+            Uri u = new Uri(TargetPage);
+            var coll = CoreUtils.parseQueryString(u.Query);
+            int pages = 1;
+            string title = "Fake Products Page";
+            int delayms = 200;
+            int productsPerPage = 100;
+            title = coll["title"] ?? title;
+            if (coll["pages"] != null) pages = int.Parse(coll["pages"]);
+            if (coll["delayms"] != null) delayms = int.Parse(coll["delayms"]);
+            if (coll["productsPerPage"] != null) productsPerPage = int.Parse(coll["productsPerPage"]);
+            ResolvedTitle = $"{title}";
+            OnResolved(ResolvedTitle);
             Stage = ScrapTaskStage.DownloadingData;
-            this.OnStageChanged( this.Stage);
-            for (int i = 0; i < 564; i++)
+            OnStageChanged(Stage);
+            foreach (var item in Enumerable.Range(0, pages))
             {
-                await Task.Delay(30);
-                OnProgress( new DownloadingProg() { Total = 564, Current = i });
-                OnTaskDetailChanged( $"fake download: file{i + 1}.zip");
+
+                for (int i = 0; i < productsPerPage; i++)
+                {
+                    await Task.Delay(delayms);
+                    OnProgress(new DownloadingProg() {  Total = productsPerPage, Current = i });
+                    OnTaskDetailChanged($"fake download: file{i + 1}.zip");
+                    this.TaskStatsInfo.incObject(2, 454257);
+                    TaskStatsInfo.incElem(1);
+                }
+                OnPageDone($"[page {item}/{pages}]");
             }
+
+            Stage = ScrapTaskStage.Success;
+            OnStageChanged(Stage);
+            
+            
+            
+            
 
         }
     }

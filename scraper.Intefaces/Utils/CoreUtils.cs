@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace scraper.Core.Utils
 {
+
+   
+
     //@configurator way
     public class Synchronizer<T>
     {
@@ -38,6 +43,13 @@ namespace scraper.Core.Utils
     }
     public static class CoreUtils
     {
+
+
+        public static NameValueCollection parseQueryString(string q)
+        {
+            return HttpUtility.ParseQueryString(q);
+        }
+
 
         private static readonly Regex InvalidFileRegex = new Regex(
     string.Format("[{0}]", Regex.Escape(@"<>:""/\|?*")));

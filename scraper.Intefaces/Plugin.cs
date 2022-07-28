@@ -89,6 +89,23 @@ namespace scraper.Core
         }
         public abstract Type ElementModelType { get; }
         public virtual PluginUsageInfo UsageInfo { get; } = null;
+        /// <summary>
+        /// example:  
+        /// if none null it will be part of the default targetPage input Validation function
+        /// </summary>
+        public abstract string TargetHost { get; }
+
+        public virtual bool ValidateTargetPageInputQuery(string input)
+        {
+            Uri uri;
+            if (Uri.TryCreate(input, UriKind.Absolute, out uri) == false)
+            {
+                return false;
+            }
+            string website = uri.Host.ToLower();
+            if ((TargetHost!=null)&& !((website == TargetHost))) return false;
+            return true;
+        }
     }
 
    
@@ -236,6 +253,10 @@ namespace scraper.Core
         /// <param name="pageUrl"></param>
         /// <returns></returns>
         public abstract Task RunScraper(CancellationToken ct);
+        /// <summary>
+        /// not used yet (not called from the scraper project), RunScraper must do all the task stages
+        /// </summary>
+        /// <returns></returns>
         public abstract Task RunConverter();
         /// <summary>
         /// the Title of the target page as in specification this is resolved before starting download

@@ -326,7 +326,6 @@
         <StaticResource ResourceKey="MaterialDesignBody"/>
     </TextElement.Foreground>
     <Window.InputBindings>
-        <KeyBinding Command="{Binding OpenWorkspaceCommand}" Key="O"/>
         <KeyBinding CommandParameter="9" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad9"/>
 
         <KeyBinding CommandParameter="4" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad4"/>
