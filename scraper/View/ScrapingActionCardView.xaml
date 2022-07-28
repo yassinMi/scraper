@@ -42,7 +42,7 @@
                         <TextBlock x:Name="stageTB"  Text="{Binding CurrentScrapTaskStage, Converter={StaticResource ScrapingTaskStageToUIString}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
                         <TextBlock x:Name="error" Text="{Binding FailingReason}"  VerticalAlignment="Center" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Failed, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontStyle="Italic" HorizontalAlignment="Left" Margin="6,0,0,0" ></TextBlock>
                     </StackPanel>
-                    <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="{Binding Info, FallbackValue=733 objects · 7.8 MB}" TextTrimming="CharacterEllipsis" Grid.Row="1" VerticalAlignment="Center" FontSize="10.667" HorizontalAlignment="Left"/>
+                    <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="{Binding Info, FallbackValue=733 objects · 7.8 MB}" TextTrimming="CharacterEllipsis" Grid.Row="1" VerticalAlignment="Center" FontSize="10.667" HorizontalAlignment="Left" MinWidth="190"/>
                 </Grid>
                 <materialDesign:Card
 					UniformCornerRadius="80"
