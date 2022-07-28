@@ -140,12 +140,13 @@ namespace scraper.ViewModel
         public string WindowTitle
         {
 
-            get {
-                return 
-                   ( MainPlugin?.TargetHost != null)? $"scraper v{ApplicationInfo.APP_VERSION} - {MainPlugin.TargetHost}"
+            get
+            {
+                return
+                   (MainPlugin?.TargetHost != null) ? $"scraper v{ApplicationInfo.APP_VERSION} - {MainPlugin.TargetHost}"
                   : (MainPlugin?.Name != null) ? $"scraper v{ApplicationInfo.APP_VERSION} - {MainPlugin.Name}"
                   : $"scraper v{ApplicationInfo.APP_VERSION}";
-                    }
+            }
         }
 
         //to be extended to more detailed PluginInfo struct
@@ -208,8 +209,8 @@ namespace scraper.ViewModel
 
 
 
-        private string _CurrentFilteringRuleFiedlInput;
-        public string CurrentFilteringRuleFiedlInput
+        private Field _CurrentFilteringRuleFiedlInput;
+        public Field CurrentFilteringRuleFiedlInput
         {
             set { _CurrentFilteringRuleFiedlInput = value;
                 notif(nameof(CurrentFilteringRuleFiedlInput)); }
@@ -310,6 +311,7 @@ namespace scraper.ViewModel
                 {
                     item.OnDeleteRequest += handelFilterRulesVMSDeleteRequest;
                 }
+                notif(nameof(FilterRulesVMS));
             }
         }
 
@@ -711,7 +713,7 @@ namespace scraper.ViewModel
             MainWorkspace = ws;
             MainPlugin = ws.Plugin;
             Init();
-            SelectedAppTabIndex = 0;
+            ClearUI();
 
             if (IsWorkspaceSetupMode == true)
             {
@@ -723,9 +725,20 @@ namespace scraper.ViewModel
             notif(nameof(RecentlyOpenedWorkspaces));
             ConfigService.Instance.Save();
         }
-
-
-
+        /// <summary>
+        /// must be called upon switching workspaces to clear dirty UI elemtns, (e,g the filter inputs, search query and the current selected tab )
+        /// </summary>
+        private void ClearUI()
+        {
+            Debug.WriteLine("clearing dirty UI");
+            SelectedAppTabIndex = 0;
+            FilterRulesVMS.Clear();
+            FilterRulesVMS = new ObservableCollection<FilteringRuleViewModel>();
+            CurrentFilteringRuleFiedlInput = ElementFields.FirstOrDefault();
+            CurrentFilteringRuleParamInput = null;
+            SearchQuery = null;
+            TargetPageQueryText = null;
+        }
 
         public ICommand OpenWorkspaceCommand { get
             {
@@ -773,7 +786,7 @@ namespace scraper.ViewModel
             MainWorkspace = ws;
             MainPlugin = ws.Plugin;
             Init();
-            SelectedAppTabIndex = 0;
+            ClearUI();
             if (IsWorkspaceSetupMode == true)
             {
                 IsWorkspaceSetupMode = false;
@@ -917,7 +930,7 @@ namespace scraper.ViewModel
         {
             var newFilteringRuleViewModel = new FilteringRuleViewModel(new FilteringRule()
             {
-                fieldName = CurrentFilteringRuleFiedlInput,
+                fieldName = CurrentFilteringRuleFiedlInput.Name,
                 RuleTtype = _CurrentFilteringRuleTypeInput,
                 RuleParam = CurrentFilteringRuleParamInput
             });

@@ -348,7 +348,7 @@
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
 			materialDesign:ColorZoneAssist.Foreground="#ffffffff"
-			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" d:IsHidden="True" SelectedIndex="{Binding SelectedAppTabIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  >
+			BorderThickness="0" Margin="0" Grid.ColumnSpan="2" FontFamily="Roboto" BorderBrush="#008C8E94" Grid.RowSpan="2" SelectedIndex="{Binding SelectedAppTabIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  >
             <TabItem x:Name="overview"  
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
@@ -433,7 +433,13 @@
                                                     <ColumnDefinition  Width="*"/>
                                                     <ColumnDefinition  Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <ComboBox SelectedItem="{Binding CurrentFilteringRuleFiedlInput}" ItemsSource="{Binding ElementFieldsNamesInFilterPanel}" MinWidth="80" Margin="6" SelectedIndex="0" />
+                                                <ComboBox SelectedItem="{Binding CurrentFilteringRuleFiedlInput}" ItemsSource="{Binding ElementFields}" MinWidth="80" Margin="6" SelectedIndex="0" >
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding UIName}"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
                                                 <ComboBox SelectedItem="{Binding CurrentFilteringRuleTypeInput}" Margin="10,0" Grid.Column="1" SelectedIndex="0" ItemsSource="{Binding FilterRuleTypesNames}"/>
 
                                             </Grid>
@@ -931,7 +937,7 @@
             </TabItem>
             <Grid/>
         </TabControl>
-        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" Grid.RowSpan="2" >
+        <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" Grid.RowSpan="2" d:IsHidden="True" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="255*"/>
                 <RowDefinition Height="214*"/>
