@@ -144,6 +144,12 @@ namespace scraper.ViewModel
             get { return MainPlugin?.Name; }
         }
 
+        public string CurrentPluginTargetHost
+        {
+
+            get { return MainPlugin?.TargetHost; }
+        }
+
 
         public IEnumerable<RecentWorkspaceVM> RecentlyOpenedWorkspaces { get {
                 return ConfigService.Instance.RecentWorkspaces.Select(p => new RecentWorkspaceVM(p) { mainViewModelRef=this});
