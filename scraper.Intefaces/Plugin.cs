@@ -238,7 +238,7 @@ namespace scraper.Core
             Resolved?.Invoke(this, e);
         }
 
-        protected void OnPageDone(string e)
+        protected void OnPageStarted(string e)
         {
             PageDone?.Invoke(this, e);
         }

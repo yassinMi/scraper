@@ -153,7 +153,7 @@ namespace FakePluginExternal
             OnStageChanged(Stage);
             foreach (var item in Enumerable.Range(0, pages))
             {
-
+                OnPageStarted($"[page {item+1}/{pages}]");
                 for (int i = 0; i < productsPerPage; i++)
                 {
                     await Task.Delay(delayms);
@@ -162,7 +162,7 @@ namespace FakePluginExternal
                     this.TaskStatsInfo.incObject(2, 454257);
                     TaskStatsInfo.incElem(1);
                 }
-                OnPageDone($"[page {item}/{pages}]");
+                
             }
 
             Stage = ScrapTaskStage.Success;

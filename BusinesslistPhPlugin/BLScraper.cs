@@ -583,7 +583,7 @@ Video
 
                     foreach (var page in EnumeratePages(TargetPage))
                 {
-                    OnPageDone($"[page {page.Item1}/{page.Item2}]");
+                    OnPageStarted($"[page {page.Item1}/{page.Item2}]");
                     var compactElements = getCompactElementsInPage(page.Item3).ToList();
                         List<Business> resolvedElements = new List<Business>(compactElements.Count);
                     int i = 0;
