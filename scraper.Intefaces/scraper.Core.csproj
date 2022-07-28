@@ -70,7 +70,6 @@
     <Reference Include="Microsoft.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="DownloadingProg.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Plugin.cs" />
@@ -78,6 +77,7 @@
     <Compile Include="Utils\CoreUtils.cs" />
     <Compile Include="Utils\CSVUtils.cs" />
     <Compile Include="Utils\WebHelper.cs" />
+    <Compile Include="Workspace\CSVResource.cs" />
     <Compile Include="Workspace\Workspace.cs" />
   </ItemGroup>
   <ItemGroup>

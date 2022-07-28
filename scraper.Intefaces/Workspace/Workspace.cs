@@ -10,28 +10,7 @@ using System.Threading.Tasks;
 
 namespace scraper.Core.Workspace
 {
-    public class CSVResource
-    {
-        public Uri Path { get; set; }
-        public int Rows { get; set; }
-        public bool isChecked { get; set; } = false;
-        public bool isRemoved { get; set; }
-        public bool isbadFormat { get; set; }
-        public void Check()
-        {
-            isChecked = true;
-            if (!File.Exists(Path.OriginalString)) { isRemoved = true; return; }
-            isRemoved = false;
-            int total_rows = 0;
-            int valid_rows = 0;
-            isbadFormat = ! CSVUtils.checkCSV(Path.OriginalString, out total_rows, out valid_rows);
-            Debug.WriteLine("cheking returned: cont " + total_rows);
-                   Debug.WriteLine("cheking returned: valid " + valid_rows);
-
-
-            Rows = valid_rows;
-        }
-    }
+    
     /// <summary>
     /// for customizing the folders structure, except anything under .scraper/ is hard coded and not customizable.
     /// </summary>
@@ -75,17 +54,7 @@ namespace scraper.Core.Workspace
         /// the main plugin instance, used t carry out most of business operations. loaded only once at startup
         /// </summary>
         public Plugin Plugin { get; set; }
-        /// <summary>
-        /// to be called only once, internaly startup
-        /// 
-        /// taking a workspacePath argument is for unit test purposes
-        /// if workspacePath is ommited it isobtained from the current path in config
-        /// </summary>
-        [Obsolete("use createWorkspaceor LOadWorkspace",true)]
-        public static Workspace GetWorkspace(string workspacePath )
-        {
-            return null; //deleted code
-        }
+        
         
         
         public static Workspace CreateOne(string workspacePath,Plugin plugin)
