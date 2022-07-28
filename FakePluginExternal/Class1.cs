@@ -63,72 +63,51 @@ namespace FakePluginExternal
 
        
 
-        public override IPluginScrapingTask GetTask(TaskInfo taskInfo)
+        public override PluginScrapingTask GetTask(TaskInfo taskInfo)
         {
             return new FakePluginExternalScrapingTask();
         }
 
-        public override IPluginScrapingTask GetTask(string targetPage)
+        public override PluginScrapingTask GetTask(string targetPage)
         {
             return new FakePluginExternalScrapingTask() { TargetPage = targetPage };
         }
     }
 
-    public class FakePluginExternalScrapingTask : IPluginScrapingTask
+    public class FakePluginExternalScrapingTask : PluginScrapingTask
     {
-        public DownloadingProg DownloadingProgress { get; set; }
-        public string ResolvedTitle { get; set; }
 
-        public ScrapTaskStage Stage { get; set; }
 
-        public string TargetPage { get; set; }
 
-        public TaskStatsInfo TaskStatsInfo
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
+      
+        
 
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public event EventHandler<string> OnError;
-        public event EventHandler<string> OnPage;
-        public event EventHandler<DownloadingProg> OnProgress;
-        public event EventHandler<string> OnResolved;
-        public event EventHandler<ScrapTaskStage> OnStageChanged;
-        public event EventHandler<string> OnTaskDetail;
-
-        public void Pause()
+        public override void Pause()
         {
 
         }
-        public async Task RunConverter()
+        public override async Task RunConverter()
         {
             Stage = ScrapTaskStage.ConvertingData;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            this.OnStageChanged(Stage);
             await Task.Delay(130);
             Stage = ScrapTaskStage.Success;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            this.OnStageChanged(Stage);
         }
 
-        public async Task RunScraper(CancellationToken ct)
+        public override async Task RunScraper(CancellationToken ct)
         {
             await Task.Delay(30);
 
             ResolvedTitle = $"External DLL Test ({this.TargetPage.Substring(0,8)})";
-            OnResolved?.Invoke(this, ResolvedTitle);
+            OnResolved( ResolvedTitle);
             Stage = ScrapTaskStage.DownloadingData;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            this.OnStageChanged( this.Stage);
             for (int i = 0; i < 564; i++)
             {
                 await Task.Delay(30);
-                OnProgress?.Invoke(this, new DownloadingProg() { Total = 564, Current = i });
-                OnTaskDetail?.Invoke(this, $"fake download: file{i + 1}.zip");
+                OnProgress( new DownloadingProg() { Total = 564, Current = i });
+                OnTaskDetailChanged( $"fake download: file{i + 1}.zip");
             }
 
         }

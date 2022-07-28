@@ -199,7 +199,7 @@ namespace scraper.Core.Workspace
 
         }
 
-        public IEnumerable<IPluginScrapingTask> GetScrapingTasksFromFiles()
+        public IEnumerable<PluginScrapingTask> GetScrapingTasksFromFiles()
         {
             Console.WriteLine("mlkml");
             string[] all_file_in_csv;

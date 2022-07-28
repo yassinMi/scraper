@@ -67,17 +67,17 @@ namespace scraper.Plugin
             }
         }
 
-        public override IPluginScrapingTask GetTask(TaskInfo taskInfo)
+        public override PluginScrapingTask GetTask(TaskInfo taskInfo)
         {
             throw new NotImplementedException();
         }
 
-        public override IPluginScrapingTask GetTask(string targetPage)
+        public override PluginScrapingTask GetTask(string targetPage)
         {
             return new FakePluginScrapingTask() { TargetPage = targetPage };
         }
     }
-    public class FakePluginScrapingTask : IPluginScrapingTask
+    public class FakePluginScrapingTask : PluginScrapingTask
     {
         /// <summary>
         /// only to be instantiated through the IPlugin instance (using IPlugin.getScrapingTask)
@@ -85,67 +85,38 @@ namespace scraper.Plugin
         public FakePluginScrapingTask()
         {
 
-        }
+        }       
 
-        public DownloadingProg DownloadingProgress { get; set; }
-
-
-        public string ResolvedTitle { get; set; } = null;
-
-        public ScrapTaskStage Stage { get; set; }
-
-        public string TargetPage { get; set; } = null;
-
-        public TaskStatsInfo TaskStatsInfo
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public event EventHandler<string> OnError;
-        public event EventHandler<string> OnPage;
-        public event EventHandler<DownloadingProg> OnProgress;
-        public event EventHandler<string> OnResolved;
-        public event EventHandler<ScrapTaskStage> OnStageChanged;
-        public event EventHandler<string> OnTaskDetail;
-
-        public void Pause()
+        public override void Pause()
         {
             throw new NotImplementedException();
         }
 
-        async public Task RunConverter()
+        async override public Task RunConverter()
         {
             Stage = ScrapTaskStage.ConvertingData;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            OnStageChanged(Stage);
             await Task.Delay(130);
             Stage = ScrapTaskStage.Success;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            OnStageChanged(Stage);
 
         }
 
-        async public Task RunScraper(CancellationToken ct)
+        async override public Task RunScraper(CancellationToken ct)
         {
            
 
             await Task.Delay(30);
             
             ResolvedTitle = "Fake Books Page (1/3)";
-            OnResolved?.Invoke(this, ResolvedTitle);
+            OnResolved(ResolvedTitle);
             Stage = ScrapTaskStage.DownloadingData;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            OnStageChanged(Stage);
             for (int i = 0; i < 50; i++)
             {
                 await Task.Delay(30);
-                OnProgress?.Invoke(this, new DownloadingProg() { Total = 50, Current = i });
-                OnTaskDetail?.Invoke(this, $"fake download: file{i + 1}.zip");
+                OnProgress(new DownloadingProg() { Total = 50, Current = i });
+                OnTaskDetailChanged( $"fake download: file{i + 1}.zip");
             }
 
            

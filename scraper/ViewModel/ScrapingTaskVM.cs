@@ -13,31 +13,31 @@ namespace scraper.ViewModel
 {
     public class ScrapingTaskVM : BaseViewModel
     {
-        public ScrapingTaskVM(IPluginScrapingTask m)
+        public ScrapingTaskVM(PluginScrapingTask m)
         {
             Model = m;
             DownloadProgress = m.DownloadingProgress;
-            m.OnResolved += (s, t) =>
+            m.Resolved += (s, t) =>
             {
                 Title = t;
             };
             
             notif(nameof(CurrentScrapTaskStage));
-            m.OnProgress += (s, p) => {
+            m.Progress += (s, p) => {
                 this.DownloadProgress = p;
                 notif(nameof(StatsInfo));
                 notif(nameof(Info));
             };
-            m.OnTaskDetail += (s, td) => {
+            m.TaskDetailChanged += (s, td) => {
                 notif(nameof(CurrentScrapTaskStage));
                 this.CurrentTaskDetail = td;
             };
-            m.OnError += (s, err) => {
+            m.Error += (s, err) => {
                 this.CurrentTaskDetail = err;
                 this.FailingReason = err;
             };
-            m.OnStageChanged += (s, newStage) => { notif(nameof(CurrentScrapTaskStage)); };
-            m.OnPage+=(s,p)=> {
+            m.StageChanged += (s, newStage) => { notif(nameof(CurrentScrapTaskStage)); };
+            m.PageDone+=(s,p)=> {
                 CurrentPage = p;
                 notif(nameof(CurrentPage)); };
 
@@ -98,9 +98,9 @@ namespace scraper.ViewModel
             get { return _DownloadProgress; }
         }
 
-        private IPluginScrapingTask _Model;
+        private PluginScrapingTask _Model;
 
-        public IPluginScrapingTask Model
+        public PluginScrapingTask Model
         {
             set { _Model = value; notif(nameof(Model)); }
             get { return _Model; }

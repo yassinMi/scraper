@@ -111,18 +111,18 @@ namespace BusinesslistPhPlugin
 
         
 
-        public override IPluginScrapingTask GetTask(TaskInfo taskInfo)
+        public override PluginScrapingTask GetTask(TaskInfo taskInfo)
         {
             throw new NotImplementedException();
         }
 
-        public override IPluginScrapingTask GetTask(string targetPage)
+        public override PluginScrapingTask GetTask(string targetPage)
         {
             return new BLScrapingTask() { TargetPage = targetPage, WorkspaceDirectory = this.WorkspaceDirectory };
         }
     }
 
-    public class BLScrapingTask : IPluginScrapingTask
+    public class BLScrapingTask : PluginScrapingTask
     {
         /// <summary>
         /// only to be instantiated through the IPlugin instance (using IPlugin.getScrapingTask)
@@ -134,25 +134,10 @@ namespace BusinesslistPhPlugin
 
         public string WorkspaceDirectory { get; set; }
 
-        public DownloadingProg DownloadingProgress { get; set; }
+        
+        
 
-        public TaskStatsInfo TaskStatsInfo { get; set; } = new TaskStatsInfo();
-
-
-        public string ResolvedTitle { get; set; } = null;
-
-        public ScrapTaskStage Stage { get; set; }
-
-        public string TargetPage { get; set; } = null;
-
-        public event EventHandler<string> OnError;
-        public event EventHandler<DownloadingProg> OnProgress;
-        public event EventHandler<string> OnResolved;
-        public event EventHandler<string> OnPage;
-        public event EventHandler<ScrapTaskStage> OnStageChanged;
-        public event EventHandler<string> OnTaskDetail;
-
-        public void Pause()
+        public override void Pause()
         {
             throw new NotImplementedException();
         }
@@ -160,13 +145,13 @@ namespace BusinesslistPhPlugin
         
 
         //not used
-        async public Task RunConverter()
+        async override public Task RunConverter()
         {
             Stage = ScrapTaskStage.ConvertingData;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            OnStageChanged(Stage);
             await Task.Delay(130);
             Stage = ScrapTaskStage.Success;
-            this.OnStageChanged?.Invoke(this, this.Stage);
+            OnStageChanged(Stage);
 
         }
 
@@ -555,14 +540,14 @@ Video
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
-        async public Task RunScraper(CancellationToken ct)
+        async override public Task RunScraper(CancellationToken ct)
         {
             lock (targetPageBasedLock[TargetPage])
             {
                 Debug.WriteLine("RunScraper entered");
                 TaskStatsInfo.Reset();
                 Stage = ScrapTaskStage.DownloadingData;
-                this.OnStageChanged?.Invoke(this, this.Stage);
+                OnStageChanged(Stage);
                 string raw;
                 try
                 {
@@ -572,8 +557,8 @@ Video
                 catch(HttpRequestException )
                 {
                     Stage = ScrapTaskStage.Failed;
-                    this.OnStageChanged?.Invoke(this, this.Stage);
-                    OnError?.Invoke(this, "Network error");
+                    OnStageChanged(Stage);
+                    OnError("Network error");
                     return;
                 }
                 HtmlDocument doc = new HtmlDocument();
@@ -583,7 +568,7 @@ Video
                     return;
                 }
                 ResolvedTitle = getPageTitle(doc.DocumentNode); ///+ ;
-                OnResolved?.Invoke(this, ResolvedTitle);
+                OnResolved(ResolvedTitle);
                 try
                 {
 
@@ -592,7 +577,7 @@ Video
 
                     foreach (var page in EnumeratePages(TargetPage))
                 {
-                    OnPage?.Invoke(this, $"[page {page.Item1}/{page.Item2}]");
+                    OnPageDone($"[page {page.Item1}/{page.Item2}]");
                     var compactElements = getCompactElementsInPage(page.Item3).ToList();
                         List<Business> resolvedElements = new List<Business>(compactElements.Count);
                     int i = 0;
@@ -604,7 +589,7 @@ Video
                                 CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
                                 Debug.WriteLine("saved current page conent:" + outputPath);
                                 Stage = ScrapTaskStage.Success;
-                                this.OnStageChanged?.Invoke(this, this.Stage);
+                                OnStageChanged(Stage);
                                 return;
                             }
                         int objs, bytes = 0;
@@ -614,8 +599,8 @@ Video
                             TaskStatsInfo.incSize(bytes);
                             TaskStatsInfo.incElem(1);
                         i++;
-                        OnProgress?.Invoke(this, new DownloadingProg() { Total = compactElements.Count, Current = i });
-                        OnTaskDetail?.Invoke(this, $"Collecting business info: {item.company}");
+                        OnProgress(new DownloadingProg() { Total = compactElements.Count, Current = i });
+                        OnTaskDetailChanged($"Collecting business info: {item.company}");
                     }
                     Debug.WriteLine("saving csv");
                     CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
@@ -623,7 +608,7 @@ Video
                 }
 
                     Stage = ScrapTaskStage.Success;
-                    this.OnStageChanged?.Invoke(this, this.Stage);
+                    OnStageChanged(Stage);
                     return;
 
                 }
@@ -631,15 +616,15 @@ Video
                 {
                     Debug.WriteLine("catched");
                     Stage = ScrapTaskStage.Failed;
-                    this.OnStageChanged?.Invoke(this, this.Stage);
-                    OnError?.Invoke(this, "Network Error");
+                    OnStageChanged(Stage);
+                    OnError("Network Error");
                     return;
                 }
 
                 return;
 
                 Stage = ScrapTaskStage.DownloadingData;
-                this.OnStageChanged?.Invoke(this, this.Stage);
+                OnStageChanged(Stage);
 
             }
 
