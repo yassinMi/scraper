@@ -171,10 +171,10 @@ namespace scraper.Core.Workspace
         public IEnumerable<PluginScrapingTask> GetScrapingTasksFromFiles()
         {
             Console.WriteLine("mlkml");
-            string[] all_file_in_csv;
+            string[] all_file_in_TasksDirectory;
             try
             {
-                all_file_in_csv = System.IO.Directory.GetFiles(GetTasksDirectory());
+                all_file_in_TasksDirectory = System.IO.Directory.GetFiles(GetTasksDirectory());
             }
             catch (DirectoryNotFoundException )
             {
@@ -182,7 +182,7 @@ namespace scraper.Core.Workspace
                 yield break;
             }
             
-            foreach (var item in all_file_in_csv)
+            foreach (var item in all_file_in_TasksDirectory)
             {
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "json")
                 {
