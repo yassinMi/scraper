@@ -133,9 +133,20 @@ namespace scraper.ViewModel
 
 
         public IEnumerable<string> FilterRuleTypesNames { get; set; } = Enum.GetNames(typeof(FilteringRuleType));
-        
 
 
+
+
+        public string WindowTitle
+        {
+
+            get {
+                return 
+                   ( MainPlugin?.TargetHost != null)? $"scraper v{ApplicationInfo.APP_VERSION} - {MainPlugin.TargetHost}"
+                  : (MainPlugin?.Name != null) ? $"scraper v{ApplicationInfo.APP_VERSION} - {MainPlugin.Name}"
+                  : $"scraper v{ApplicationInfo.APP_VERSION}";
+                    }
+        }
 
         //to be extended to more detailed PluginInfo struct
         public string CurrentPluginName

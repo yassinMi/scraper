@@ -17,9 +17,8 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Display" 
         TextOptions.TextRenderingMode="Auto"
-        FontFamily="Roboto"
-        Title="scraper v0.1.1 (businesslist.ph)" Height="499" Width="795.55" UseLayoutRounding="True" ResizeMode="CanResizeWithGrip" Background="{x:Null}"
-    d:DataContext="{d:DesignData /SampleData/MainViewModelSampleData.xaml}" Icon="scraper.ico"
+        FontFamily="Roboto" Height="499" Width="795.55" UseLayoutRounding="True" ResizeMode="CanResizeWithGrip" Background="{x:Null}"
+    d:DataContext="{d:DesignData /SampleData/MainViewModelSampleData.xaml}" Icon="scraper.ico" Title="{Binding WindowTitle}"
         
         
         
