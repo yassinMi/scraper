@@ -328,7 +328,7 @@
     </Window.InputBindings>
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" 
-            UseAeroCaptionButtons="False" ResizeBorderThickness="6" />
+            UseAeroCaptionButtons="False" ResizeBorderThickness="4" />
     </WindowChrome.WindowChrome>
     <Grid MouseDown="Grid_MouseDown" Background="{StaticResource MaterialDesignPaper}">
         <Grid.ColumnDefinitions>
