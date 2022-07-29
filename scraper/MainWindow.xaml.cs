@@ -60,7 +60,7 @@ namespace scraper
             
      
 
-            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight-8;
+            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight-(SystemParameters.WindowResizeBorderThickness.Top+ SystemParameters.WindowResizeBorderThickness.Bottom);
             this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
             ((MainViewModel)DataContext).mw = this;
             Debug.WriteLine("endof mw ctor");
@@ -154,8 +154,7 @@ namespace scraper
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-             var process = new Process();
-
+            var process = new Process();
             var processInfo = new ProcessStartInfo("ping.exe", "localHost");
             processInfo.UseShellExecute = false;
             processInfo.CreateNoWindow = true;

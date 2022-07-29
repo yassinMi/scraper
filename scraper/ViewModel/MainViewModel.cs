@@ -983,7 +983,7 @@ namespace scraper.ViewModel
             
             this.MainWorkspace = null;
             this.IsWorkspaceSetupMode = true;
-            WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
+            //WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
 
         }
     }

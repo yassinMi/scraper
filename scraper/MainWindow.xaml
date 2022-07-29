@@ -327,7 +327,7 @@
         <KeyBinding CommandParameter="4" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad4"/>
     </Window.InputBindings>
     <WindowChrome.WindowChrome>
-        <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" 
+        <WindowChrome   GlassFrameThickness="0"  CornerRadius="0" CaptionHeight="0" 
             UseAeroCaptionButtons="False" ResizeBorderThickness="4" />
     </WindowChrome.WindowChrome>
     <Grid MouseDown="Grid_MouseDown" Background="{StaticResource MaterialDesignPaper}">
