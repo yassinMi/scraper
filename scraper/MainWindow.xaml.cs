@@ -63,6 +63,7 @@ namespace scraper
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
             ((MainViewModel)DataContext).mw = this;
+            Debug.WriteLine("endof mw ctor");
         }
 
         /// <summary>

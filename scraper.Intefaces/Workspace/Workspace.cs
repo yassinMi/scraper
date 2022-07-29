@@ -170,7 +170,8 @@ namespace scraper.Core.Workspace
 
         public IEnumerable<PluginScrapingTask> GetScrapingTasksFromFiles()
         {
-            Console.WriteLine("mlkml");
+            yield break;
+            Console.WriteLine("GetScrapingTasksFromFiles");
             string[] all_file_in_TasksDirectory;
             try
             {

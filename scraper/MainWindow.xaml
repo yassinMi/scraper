@@ -24,6 +24,7 @@
         
         >
     <Window.Resources>
+        <Converters:VisibleIfNonNullOrEmptyString x:Key="VisibleIfNonNullOrEmptyString"/>
         <materialDesign:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Converters:VisibleIfEnumValueMatchesStringParam x:Key="VisibleIfEnumValueMatchesStringParam"/>
         <Converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
@@ -296,17 +297,13 @@
                 </Grid.ColumnDefinitions>
                 <Button Command="{Binding OpenCommand}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,8,0" BorderThickness="0" Padding="2" Background="#00000000">
                     <TextBlock  x:Name="textBlock" TextWrapping="Wrap"  Foreground="#FF50A3F5"   >
-
                         <TextBlock.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Open" Command="{Binding OpenCommand}"  UseLayoutRounding="True" ></MenuItem>
-                                <MenuItem Command="{Binding PinToggleCommand}" Header="Pin to this list" ></MenuItem>
-                                <MenuItem Command="{Binding RemoveCommand}" Header="Remove from this list" ></MenuItem>
+                                <MenuItem Header="Open" Command="{Binding OpenCommand}"  UseLayoutRounding="True" />
+                                <MenuItem Command="{Binding PinToggleCommand}" Header="Pin to this list" />
+                                <MenuItem Command="{Binding RemoveCommand}" Header="Remove from this list" />
                             </ContextMenu>
-                        </TextBlock.ContextMenu>
-                    <Run x:Name="r1" Text="{Binding Name}"></Run> <Run Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding TotalSize}"></Run>
-
-                    </TextBlock>
+                        </TextBlock.ContextMenu><Run x:Name="r1" Text="{Binding Name}"/><Run Text=" "/><Run Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding TotalSize}"/></TextBlock>
 
                 </Button>
                 <custom:PackIconMaterial Kind="Pin" Width="14" Height="14" Visibility="{Binding IsPinned, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
@@ -317,7 +314,7 @@
         </ItemsPanelTemplate>
         <DataTemplate x:Key="PluginsPickerComboBoxItemTemplate">
             <Grid>
-                <TextBlock  ><Run Text="{Binding Name, Mode=OneWay}"/> <Run Foreground="{StaticResource MaterialDesignBodyLight}"  Text="{Binding Version, Mode=OneWay, StringFormat=(\{0\})}"/></TextBlock>
+                <TextBlock  ><Run Text="{Binding Name, Mode=OneWay}"/><Run Text=" "/><Run Foreground="{StaticResource MaterialDesignBodyLight}"  Text="{Binding Version, Mode=OneWay, StringFormat=(\{0\})}"/></TextBlock>
             </Grid>
         </DataTemplate>
     </Window.Resources>
@@ -343,7 +340,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}" 
-			Visibility="{Binding IsWorkspaceSetupModern, Converter={StaticResource BooleanToVisibilityInverted}}"
+			Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityInverted}}"
 			materialDesign:NavigationRailAssist.CornerRadius="8" 
 			materialDesign:ColorZoneAssist.Mode="Custom"
 			materialDesign:ColorZoneAssist.Background="#FF1c1c1c"
@@ -548,7 +545,7 @@
                                 </StackPanel>
                                 <Button x:Name="saveResultsButt" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  Height="Auto" Margin="10,0" Grid.Row="1" VerticalAlignment="Center" Padding="10,8" ToolTip="Save the elements of the grid into a new file" Command="{Binding SaveResultsCommand, Mode=OneWay}">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock VerticalAlignment="Center" Text="{Binding BusinessesViewModels.Count, FallbackValue=SAVE RESULTS, Mode=OneWay, StringFormat=SAVE RESULTS (\{0\})}" />
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding ElementsViewModels.Count, FallbackValue=SAVE RESULTS, Mode=OneWay, StringFormat=SAVE RESULTS (\{0\})}" />
                                         <Image Source="media/img/svg-22-white-regular.png" Width="22" Height="22" VerticalAlignment="Center" Margin="4,0,0,0" Visibility="Collapsed" />
                                     </StackPanel>
                                 </Button>
@@ -598,7 +595,7 @@
 								ToolTip="save results to a svc ile" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28" Visibility="Collapsed">
                                 <Image Source="media/img/save-16-white.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="16" Height="16"/>
                             </Button>
-                            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding ProductViewModels.Count, Mode=OneWay, StringFormat=\{0\} Items}" VerticalAlignment="Center" Visibility="{Binding ProductViewModels.Count, Converter={StaticResource IntToVisibilityConverter}, Mode=OneWay}"/>
+                            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding ElementsViewModels.Count, Mode=OneWay, StringFormat=\{0\} Items}" VerticalAlignment="Center" Visibility="{Binding ElementsViewModels.Count, Converter={StaticResource IntToVisibilityConverter}, Mode=OneWay}"/>
                             <Button Command="{Binding SwitchElementsViewType}"
 								Style="{StaticResource MaterialDesignIconForegroundButton}"
 								ToolTip="Grid view/List view" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28" Grid.Column="2">
@@ -606,7 +603,7 @@
                             </Button>
                         </Grid>
                         <Grid x:Name="contentSection" Grid.Row="1" Margin="0,6,0,0" >
-                            <DataGrid x:Name="elementsDatagrid" A:DataGridAttachedProperties.ColumnsMi="{Binding ElementFields}"  IsReadOnly="True" AutoGenerateColumns="False"  ItemsSource="{Binding BusinessesViewModels}" Visibility="{Binding ElementsViewType, ConverterParameter=Grid, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}" AlternationCount="2" CanUserDeleteRows="False" CopyingRowClipboardContent="DataGrid_CopyingRowClipboardContent" SelectionChanged="elementsDatagrid_SelectionChanged">
+                            <DataGrid x:Name="elementsDatagrid" A:DataGridAttachedProperties.ColumnsMi="{Binding ElementFields}"  IsReadOnly="True" AutoGenerateColumns="False"  ItemsSource="{Binding ElementsViewModels}" Visibility="{Binding ElementsViewType, ConverterParameter=Grid, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}" AlternationCount="2" CanUserDeleteRows="False" CopyingRowClipboardContent="DataGrid_CopyingRowClipboardContent" SelectionChanged="elementsDatagrid_SelectionChanged">
                                 <DataGrid.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Command="Copy" />
@@ -614,7 +611,7 @@
                                 </DataGrid.ContextMenu>
                                 
                             </DataGrid>
-                            <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" ItemsSource="{Binding BusinessesViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
+                            <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" ItemsSource="{Binding ElementsViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <View:ProductCardView HorizontalAlignment="Stretch" DataContext="{Binding}" />
@@ -778,7 +775,7 @@
                                 </materialDesign:Card>
 
                             </Grid>
-                            <ListBox materialDesign:RippleAssist.IsDisabled="True" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="4" ItemsPanel="{DynamicResource ScrapingTaskListBoxItemsPanelStyle}" ItemTemplate="{DynamicResource ScrapingTasksListBoxItemTemplate}" ItemsSource="{Binding ScrapingTasksVMS}" ItemContainerStyle="{DynamicResource ListBoxItemStyle2}" />
+                            <ListBox materialDesign:RippleAssist.IsDisabled="True" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="4" ItemsPanel="{DynamicResource ScrapingTaskListBoxItemsPanelStyle}" ItemTemplate="{DynamicResource ScrapingTasksListBoxItemTemplate}" ItemsSource="{Binding ScrapingTasksVMS}" ItemContainerStyle="{DynamicResource ListBoxItemStyle2}" Padding="0,0,0,10" />
                             <Border Grid.ColumnSpan="3" Grid.Column="1" Margin="4,2" Grid.Row="3" Background="#FF232323" CornerRadius="10" Padding="2,8" VerticalAlignment="Center" Visibility="Collapsed">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -861,7 +858,7 @@
                                     </Grid>
                                 </Grid>
                             </Border>
-                            <TextBlock x:Name="textBlock10" Grid.ColumnSpan="3" Grid.Column="1" Margin="10,10,10,2" Grid.Row="2" TextWrapping="Wrap" Text="{Binding CurrentTaskDetail}" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="textBlock10" Grid.ColumnSpan="3" Grid.Column="1" Margin="0,10,10,0" Grid.Row="3" TextWrapping="Wrap" Text="{Binding CurrentTaskDetail}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="#FF131313" Padding="2" FontSize="10.667" Visibility="{Binding CurrentTaskDetail, Converter={StaticResource VisibleIfNonNullOrEmptyString}}"/>
                             <Grid x:Name="dragging_area_right_Copy" Margin="0" Background="#00E41F1F" Height="48" VerticalAlignment="Top" MouseLeftButtonDown="dragging_area_right_MouseLeftButtonDown"/>
 
                         </Grid>
