@@ -229,6 +229,27 @@ namespace scraper.Core.Workspace
             return res;
         }
 
+        //
+        /// <summary>
+        /// exception safe
+        /// a light version that doesnt load the workspace
+        /// returns null if directory is bad, non existent, or workspace is mssing the pluginPtrFile,
+        /// otherwise it returns the lineBreak separated list of plugins names
+        /// </summary>
+        /// <param name="ws_path"></param>
+        /// <returns></returns>
+        public static string[] GetPluginsNamesUnderWorkspace(string ws_path)
+        {
+            string[] res = null;
+            string pluginPtrFile_path = Path.Combine(ws_path, Workspace.PLUGINS_PTR_FILE_RELATIVE_PATH);
+            try
+            {
+                string[] pluginsNames = File.ReadAllLines(pluginPtrFile_path);
+                return pluginsNames;
+            }
+            catch (Exception) { }
+            return res;
+        }
 
         public static string PLUGINS_PTR_FILE_RELATIVE_PATH = @".scraper\plugins";
         /// <summary>

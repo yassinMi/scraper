@@ -276,9 +276,11 @@ namespace scraper.ViewModel
             notif(nameof(IsCreateModeOrOpenMode));
             if (IsCreateModeOrOpenMode==false)
             {
-                var ws= Workspace.Load(WorkingDirectoryInputValue);
-                ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == ws.PluginsNames.FirstOrDefault());
-                PluginPickerInputValue = ws.Plugin;
+                var firstPluginName = Workspace.GetPluginsNamesUnderWorkspace(WorkingDirectoryInputValue)?.FirstOrDefault();
+                if (firstPluginName == null) return;
+                var Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == firstPluginName);
+                if (Plugin == null) return;
+                PluginPickerInputValue = Plugin;
             }
             else
             {
@@ -983,7 +985,7 @@ namespace scraper.ViewModel
             
             this.MainWorkspace = null;
             this.IsWorkspaceSetupMode = true;
-            //WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
+            WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
 
         }
     }
