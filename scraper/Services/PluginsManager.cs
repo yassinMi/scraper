@@ -33,38 +33,45 @@ namespace scraper.Services
         /// 
         public static IEnumerable<Core.Plugin> GetGlobalPlugins()
         {
-            var GlobalFoldder = ApplicationInfo.PLUGINS_GLOBAL_FOLDER;
+            var GlobalFoldders = new string[] {
+                ApplicationInfo.PLUGINS_GLOBAL_FOLDER_AT_MY_DOCUMENTS,
+                ApplicationInfo.PLUGINS_GLOBAL_FOLDER_AT_INSTLLATION,
+            };
             //
-            Debug.WriteLine($"docs folder '{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}'");
-            Debug.WriteLine($"checking global folder '{GlobalFoldder}'");
-            if (!Directory.Exists(GlobalFoldder)){
-                Directory.CreateDirectory(GlobalFoldder);
-                Debug.WriteLine($"Created global folder '{GlobalFoldder}'");
-                yield break;
-            }
-
-            foreach(var f in Directory.GetFiles(GlobalFoldder))
+            foreach (var GlobalFoldder in GlobalFoldders)
             {
-                if (Path.GetExtension(f).ToLower().Replace(".", "") == "dll")
+                Debug.WriteLine($"checking global folder '{GlobalFoldder}'");
+                if (!Directory.Exists(GlobalFoldder))
                 {
-                    object pluginInstance = null;
-                    try
-                    {
-                        var asm = Assembly.LoadFrom(f);
-                        var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(Core.Plugin).IsAssignableFrom(t));
-                        if (first_IPluginType == null) continue;
-                        pluginInstance = Activator.CreateInstance(first_IPluginType);
-                    }
-                    catch (Exception e)
-                    {
-
-                        Debug.WriteLine("error loding assembly: " + f + ": " + e.Message);
-                    }
-                    if(pluginInstance!=null)
-                    yield return (Core.Plugin)pluginInstance;
+                    Directory.CreateDirectory(GlobalFoldder);
+                    Debug.WriteLine($"Created global folder '{GlobalFoldder}'");
                 }
-                    
+                foreach (var f in Directory.GetFiles(GlobalFoldder))
+                {
+                    if (Path.GetExtension(f).ToLower().Replace(".", "") == "dll")
+                    {
+                        object pluginInstance = null;
+                        try
+                        {
+                            var asm = Assembly.LoadFrom(f);
+                            var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(Core.Plugin).IsAssignableFrom(t));
+                            if (first_IPluginType == null) continue;
+                            pluginInstance = Activator.CreateInstance(first_IPluginType);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine("error loding assembly: " + f + ": " + e.Message);
+                        }
+                        if (pluginInstance != null)
+                            yield return (Core.Plugin)pluginInstance;
+                    }
+
+                }
+
             }
+            
+
+            
         }
 
         public  static Core.Plugin TryLoadFromFile(string f)
