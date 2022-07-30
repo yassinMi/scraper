@@ -25,6 +25,8 @@ using System.Collections;
 using scraper.Core.Workspace;
 using scraper.Core.Utils;
 using scraper.ViewModel.HomeScreen;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace scraper.ViewModel
 {
@@ -398,9 +400,9 @@ namespace scraper.ViewModel
 
         public ObservableCollection<Core.Plugin> GlobalUserPlugins { get; set; } = new ObservableCollection<Core.Plugin>();
 
-        private async void onDirtyCSVResourceVMSelection()
+        private void onDirtyCSVResourceVMSelection()
         {
-
+            Debug.WriteLine("onDirtyCSVResourceVMSelection");
             cleanCheckCSVResorces();
             
             //logic that need to be performed when some items changest's IsActive
@@ -411,18 +413,25 @@ namespace scraper.ViewModel
                 if (enumerated == null) return i;
                 return i.Concat(enumerated.Select(p => new ElementViewModel(p)));
             });
-            if (ElementsViewModels != null)
-            {
-                //freeing memoryE
-                ElementsViewModels = null;
-                
-                //GC.Collect(4, GCCollectionMode.Forced);
-            }
-            ElementsViewModels = new ObservableCollection<ElementViewModel>(ElementsViewModels_arr);
-            notif(nameof(ElementsViewModels));
-            await Task.Delay(0);
-            Debug.WriteLine("CG collect");
-            GC.Collect(4, GCCollectionMode.Forced);
+            Debug.WriteLine("ienumerable");
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+                            new Action(() =>
+                            {
+                                ElementsViewModels = new ObservableCollection<ElementViewModel>(ElementsViewModels_arr);
+                                Debug.WriteLine("list");
+
+                                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+                                    new Action(() =>
+                                    {
+                                        notif(nameof(ElementsViewModels));
+                                        Debug.WriteLine("CG collect");
+                                        GC.Collect(4, GCCollectionMode.Forced);
+                                    }));
+
+                            }));
+            
+
+            
 
 
         }
@@ -430,7 +439,11 @@ namespace scraper.ViewModel
         {
             if (e.PropertyName == "IsActive")
             {
-                onDirtyCSVResourceVMSelection();
+                Dispatcher.CurrentDispatcher.BeginInvoke(
+                     DispatcherPriority.ApplicationIdle,
+                    new Action(onDirtyCSVResourceVMSelection)
+                   )
+                ;
             }
         }
 
@@ -997,5 +1010,31 @@ namespace scraper.ViewModel
             WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
 
         }
+        object reff;
+
+        public ICommand DevGPCommand { get { return new MICommand(hndlDevGPCommand); } }
+
+        private void hndlDevGPCommand()
+        {
+            Debug.WriteLine($"creating element item 10000 times into a list");
+            List<object> lst = new List<object>();
+            foreach (var item in Enumerable.Range(0,1000000))
+            {
+                dynamic obj = Activator.CreateInstance(MainPlugin.ElementModelType);
+                obj.company = $"a long {item} company name";
+               
+                
+                lst.Add (obj);
+            }
+            dynamic m = lst[0];
+
+            int totlaTextBytes = m.company.Length;
+                //+ m.employees.Length + m.address.Length 
+                //+ m.contactPerson.Length + m.phonenumber.Length + m.link.Length + m.email.Length;
+            MessageBox.Show($"the total text length is {totlaTextBytes}");
+            reff = lst;
+        }
+
+
     }
 }

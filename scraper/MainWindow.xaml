@@ -323,6 +323,7 @@
     </TextElement.Foreground>
     <Window.InputBindings>
         <KeyBinding CommandParameter="9" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad9"/>
+        <KeyBinding CommandParameter="d" Command="{Binding DevGPCommand}" Modifiers="Ctrl" Key="D"/>
 
         <KeyBinding CommandParameter="4" Command="{Binding DevFillAndStartCommand}" Modifiers="Ctrl" Key="NumPad4"/>
     </Window.InputBindings>
