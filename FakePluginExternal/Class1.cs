@@ -164,7 +164,7 @@ namespace FakePluginExternal
                 }
                 
             }
-
+            OnTaskDetailChanged(null);
             Stage = ScrapTaskStage.Success;
             OnStageChanged(Stage);
             

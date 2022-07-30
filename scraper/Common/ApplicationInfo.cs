@@ -58,8 +58,8 @@ namespace Mi.Common
         /// <summary>
         /// under MyDocuments/MiScraper/Plugins
         /// </summary>
-        public static string PLUGINS_GLOBAL_FOLDER = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)+ @"\MiScraper\Plugins");
-
+        public static string PLUGINS_GLOBAL_FOLDER_AT_MY_DOCUMENTS = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)+ @"\MiScraper\Plugins");
+        public static string PLUGINS_GLOBAL_FOLDER_AT_INSTLLATION = MAIN_PATH + @"\Plugins";
 
         internal static void OnAppStartup()
         {

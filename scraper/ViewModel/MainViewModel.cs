@@ -25,6 +25,8 @@ using System.Collections;
 using scraper.Core.Workspace;
 using scraper.Core.Utils;
 using scraper.ViewModel.HomeScreen;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace scraper.ViewModel
 {
@@ -57,13 +59,13 @@ namespace scraper.ViewModel
             Trace.Assert(MainWorkspace != null, "Cannot init mainViewModel with MainWorkspace=null");
             Trace.Assert(MainPlugin != null, "Cannot init mainViewModel with MainPlugin=null");
 
-            Debug.WriteLine("GetScrapingTasksFromFiles");
             foreach (var p in PluginsManager.CachedGlobalPlugins)
             {
                 GlobalUserPlugins.Add(p);
             }
             foreach (var i in MainWorkspace.GetScrapingTasksFromFiles())
             {
+                Debug.WriteLine("adding ScrapingTasksVMS");
                 Debug.WriteLine(i);
                 ScrapingTasksVMS.Add(new ScrapingTaskVM(i));
             }
@@ -82,6 +84,8 @@ namespace scraper.ViewModel
             FilterRulesVMS = new ObservableCollection<FilteringRuleViewModel>();
             ElementFields = MainPlugin.ElementDescription.Fields.Select(f => f).ToArray();
             ElementFieldsNames = MainPlugin.ElementDescription.Fields.Select(f => f.UIName).ToArray();
+
+            Debug.WriteLine("endof init");
 
         }
 
@@ -113,7 +117,7 @@ namespace scraper.ViewModel
 
             }
         }
-        IEnumerable<ElementViewModel> BusinessViewModels_arr = new List<ElementViewModel>();
+        IEnumerable<ElementViewModel> ElementsViewModels_arr = new List<ElementViewModel>();
 
         
 
@@ -274,9 +278,11 @@ namespace scraper.ViewModel
             notif(nameof(IsCreateModeOrOpenMode));
             if (IsCreateModeOrOpenMode==false)
             {
-                var ws= Workspace.Load(WorkingDirectoryInputValue);
-                ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == ws.PluginsNames.FirstOrDefault());
-                PluginPickerInputValue = ws.Plugin;
+                var firstPluginName = Workspace.GetPluginsNamesUnderWorkspace(WorkingDirectoryInputValue)?.FirstOrDefault();
+                if (firstPluginName == null) return;
+                var Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == firstPluginName);
+                if (Plugin == null) return;
+                PluginPickerInputValue = Plugin;
             }
             else
             {
@@ -349,7 +355,7 @@ namespace scraper.ViewModel
                     }
                 }
 
-            notif(nameof(BusinessesViewModels));
+            notif(nameof(ElementsViewModels));
 
         }
 
@@ -369,6 +375,15 @@ namespace scraper.ViewModel
         }
 
 
+        private string _CurrentTaskDetail;
+        public string CurrentTaskDetail
+        {
+            set { _CurrentTaskDetail = value; notif(nameof(CurrentTaskDetail)); }
+            get { return _CurrentTaskDetail; }
+        }
+
+
+
         public void cleanCheckCSVResorces()
         {
             
@@ -385,22 +400,38 @@ namespace scraper.ViewModel
 
         public ObservableCollection<Core.Plugin> GlobalUserPlugins { get; set; } = new ObservableCollection<Core.Plugin>();
 
-        private async void onDirtyCSVResourceVMSelection()
+        private void onDirtyCSVResourceVMSelection()
         {
-
+            Debug.WriteLine("onDirtyCSVResourceVMSelection");
             cleanCheckCSVResorces();
             
             //logic that need to be performed when some items changest's IsActive
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
 
-            BusinessViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ElementViewModel>>(new List<ElementViewModel>(), (i, csvVM) => {
+            ElementsViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ElementViewModel>>(new List<ElementViewModel>(), (i, csvVM) => {
                 var enumerated = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, csvVM.FullPath) .Cast<dynamic>();//ufr
                 if (enumerated == null) return i;
                 return i.Concat(enumerated.Select(p => new ElementViewModel(p)));
             });
-            BusinessesViewModels = new ObservableCollection<ElementViewModel>(BusinessViewModels_arr);
-            notif(nameof(BusinessesViewModels));
-            await Task.Delay(0);
+            Debug.WriteLine("ienumerable");
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+                            new Action(() =>
+                            {
+                                ElementsViewModels = new ObservableCollection<ElementViewModel>(ElementsViewModels_arr);
+                                Debug.WriteLine("list");
+
+                                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+                                    new Action(() =>
+                                    {
+                                        notif(nameof(ElementsViewModels));
+                                        Debug.WriteLine("CG collect");
+                                        GC.Collect(4, GCCollectionMode.Forced);
+                                    }));
+
+                            }));
+            
+
+            
 
 
         }
@@ -408,7 +439,11 @@ namespace scraper.ViewModel
         {
             if (e.PropertyName == "IsActive")
             {
-                onDirtyCSVResourceVMSelection();
+                Dispatcher.CurrentDispatcher.BeginInvoke(
+                     DispatcherPriority.ApplicationIdle,
+                    new Action(onDirtyCSVResourceVMSelection)
+                   )
+                ;
             }
         }
 
@@ -452,21 +487,21 @@ namespace scraper.ViewModel
 
 
 
-        public IEnumerable<ElementViewModel> BusinessesViewModels { get {
+        public IEnumerable<ElementViewModel> ElementsViewModels { get {
                 if(string.IsNullOrWhiteSpace(SearchQuery)) return
-                    BusinessViewModels_arr
+                    ElementsViewModels_arr
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
                 ;
                 string lowertrim = SearchQuery.ToLower().Trim();
                 return 
-                    BusinessViewModels_arr
+                    ElementsViewModels_arr
                     .Where(p => p.Name.ToLower().Contains(lowertrim))
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
 
                     ;
                 }
             set {
-                notif(nameof(BusinessesViewModels));
+                notif(nameof(ElementsViewModels));
             } }
 
         private ObservableCollection<CSVResourceVM> _CSVResourcesVMS = new ObservableCollection<CSVResourceVM>();
@@ -527,7 +562,7 @@ namespace scraper.ViewModel
         public string SearchQuery
         {
             set { _SearchQuery = value; notif(nameof(SearchQuery));
-                notif(nameof(BusinessesViewModels));
+                notif(nameof(ElementsViewModels));
             }
             get { return _SearchQuery; }
         }
@@ -592,6 +627,10 @@ namespace scraper.ViewModel
             Debug.WriteLine("handleStartScrapingCommand");
 
             var newScrapTask = MainPlugin.GetTask(TargetPageQueryText);
+            newScrapTask.TaskDetailChanged += (s, d) =>
+            {
+                CurrentTaskDetail = d;
+            };
             Debug.WriteLine("new ScrapingTaskVM");
 
             var tvm = new ScrapingTaskVM(newScrapTask);
@@ -652,8 +691,8 @@ namespace scraper.ViewModel
                 {
                     return new ElementViewModel(p);
                 }).ToList();
-                BusinessViewModels_arr = new ObservableCollection<ElementViewModel> (lst);
-                notif(nameof( BusinessesViewModels));
+                ElementsViewModels_arr = new ObservableCollection<ElementViewModel> (lst);
+                notif(nameof( ElementsViewModels));
                 
 
             });
@@ -848,7 +887,7 @@ namespace scraper.ViewModel
 
         private bool canExecuteSaveResultsCommand()
         {
-            return BusinessesViewModels.Count() > 0;
+            return ElementsViewModels.Count() > 0;
         }
 
         private void hndlSaveResultsCommand()
@@ -858,7 +897,7 @@ namespace scraper.ViewModel
             {
                 if (!canceled)
                 {
-                    CSVUtils.CSVOverwriteRecords(s, BusinessesViewModels.Select(vm => vm.Model));
+                    CSVUtils.CSVOverwriteRecords(s, ElementsViewModels.Select(vm => vm.Model));
                     MessageBox.Show($"Saved to s{s}","Saved", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 
@@ -971,5 +1010,31 @@ namespace scraper.ViewModel
             WorkingDirectoryInputValue = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\MyWorkspace1");
 
         }
+        object reff;
+
+        public ICommand DevGPCommand { get { return new MICommand(hndlDevGPCommand); } }
+
+        private void hndlDevGPCommand()
+        {
+            Debug.WriteLine($"creating element item 10000 times into a list");
+            List<object> lst = new List<object>();
+            foreach (var item in Enumerable.Range(0,1000000))
+            {
+                dynamic obj = Activator.CreateInstance(MainPlugin.ElementModelType);
+                obj.company = $"a long {item} company name";
+               
+                
+                lst.Add (obj);
+            }
+            dynamic m = lst[0];
+
+            int totlaTextBytes = m.company.Length;
+                //+ m.employees.Length + m.address.Length 
+                //+ m.contactPerson.Length + m.phonenumber.Length + m.link.Length + m.email.Length;
+            MessageBox.Show($"the total text length is {totlaTextBytes}");
+            reff = lst;
+        }
+
+
     }
 }
