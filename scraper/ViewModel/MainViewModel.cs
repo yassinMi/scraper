@@ -411,9 +411,18 @@ namespace scraper.ViewModel
                 if (enumerated == null) return i;
                 return i.Concat(enumerated.Select(p => new ElementViewModel(p)));
             });
+            if (ElementsViewModels != null)
+            {
+                //freeing memoryE
+                ElementsViewModels = null;
+                
+                //GC.Collect(4, GCCollectionMode.Forced);
+            }
             ElementsViewModels = new ObservableCollection<ElementViewModel>(ElementsViewModels_arr);
             notif(nameof(ElementsViewModels));
             await Task.Delay(0);
+            Debug.WriteLine("CG collect");
+            GC.Collect(4, GCCollectionMode.Forced);
 
 
         }

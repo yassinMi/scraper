@@ -611,7 +611,7 @@
                                 </DataGrid.ContextMenu>
                                 
                             </DataGrid>
-                            <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" ItemsSource="{Binding ElementsViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
+                            <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" VirtualizingPanel.VirtualizationMode="Recycling" ItemsSource="{Binding ElementsViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <View:ProductCardView HorizontalAlignment="Stretch" DataContext="{Binding}" />
