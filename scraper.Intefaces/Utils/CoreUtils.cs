@@ -1,6 +1,9 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +13,7 @@ using System.Web;
 namespace scraper.Core.Utils
 {
 
+    
    
 
     //@configurator way
@@ -44,6 +48,18 @@ namespace scraper.Core.Utils
     public static class CoreUtils
     {
 
+        public static void se()
+        {
+            WebDriver wd = new ChromeDriver(new ChromeOptions() { });
+            wd.Url = @"https://google.com";
+            Debug.WriteLine("ok");
+            wd.Navigate();
+            Debug.WriteLine("navigated");
+
+            wd.GetScreenshot().SaveAsFile("se-screenshot.png", ScreenshotImageFormat.Png);
+            Debug.WriteLine("saved");
+
+        }
 
         public static NameValueCollection parseQueryString(string q)
         {

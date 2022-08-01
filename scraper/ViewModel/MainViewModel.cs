@@ -62,6 +62,7 @@ namespace scraper.ViewModel
             foreach (var p in PluginsManager.CachedGlobalPlugins)
             {
                 GlobalUserPlugins.Add(p);
+                
             }
             foreach (var i in MainWorkspace.GetScrapingTasksFromFiles())
             {
@@ -1016,6 +1017,8 @@ namespace scraper.ViewModel
 
         private void hndlDevGPCommand()
         {
+            CoreUtils.se();
+            return;
             Debug.WriteLine($"creating element item 10000 times into a list");
             List<object> lst = new List<object>();
             foreach (var item in Enumerable.Range(0,1000000))
