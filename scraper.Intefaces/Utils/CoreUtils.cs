@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -50,14 +51,28 @@ namespace scraper.Core.Utils
 
         public static void se()
         {
-            WebDriver wd = new ChromeDriver(new ChromeOptions() { });
-            wd.Url = @"https://google.com";
+            var opts = new ChromeOptions() { };
+            //opts.AddArguments("headless","disable-gpu","no-sandbox");
+            
+            WebDriver wd = new ChromeDriver(opts);
+            wd.Url = @"https://www.google.com/search?q=best+software+testing+tools&rlz=1C1CHWL_enMA1011MA1011&oq=best+software+testing+tools&aqs=chrome..69i57.56629j0j7&sourceid=chrome&ie=UTF-8";
             Debug.WriteLine("ok");
             wd.Navigate();
             Debug.WriteLine("navigated");
 
             wd.GetScreenshot().SaveAsFile("se-screenshot.png", ScreenshotImageFormat.Png);
+            StringBuilder sb = new StringBuilder();
+            
+            Debug.WriteLine(sb.ToString());
             Debug.WriteLine("saved");
+            var w = new OpenQA.Selenium.Support.UI.WebDriverWait(wd, TimeSpan.FromSeconds(50));
+              
+            //Thread.Sleep(5000);
+            //wd.Close();
+            //wd.Dispose();
+            
+            
+            
 
         }
 
