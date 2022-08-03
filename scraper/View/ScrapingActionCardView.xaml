@@ -45,6 +45,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="stageTB"  Text="{Binding CurrentScrapTaskStage, Converter={StaticResource ScrapingTaskStageToUIString}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         <TextBlock x:Name="error"  ToolTip="{Binding FailingReason}" Text="{Binding FailingReason}"  VerticalAlignment="Center" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Failed, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontStyle="Italic" HorizontalAlignment="Left" Margin="6,0,0,0" TextTrimming="CharacterEllipsis" Grid.Column="1" MaxHeight="18"  />
+                        <TextBlock x:Name="detail"  ToolTip="{Binding CurrentTaskDetail}" Text="{Binding CurrentTaskDetail}"  VerticalAlignment="Center" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=Setup, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontStyle="Italic" HorizontalAlignment="Left" Margin="6,0,0,0" TextTrimming="CharacterEllipsis" Grid.Column="1" MaxHeight="18"  />
                     </Grid>
                     <TextBlock x:Name="sizeTB" Foreground="{DynamicResource MaterialDesignBodyLight}" Text="{Binding Info, FallbackValue=733 objects · 7.8 MB}" TextTrimming="CharacterEllipsis" Grid.Row="1" VerticalAlignment="Center" FontSize="10.667" HorizontalAlignment="Left" MinWidth="220"/>
                 </Grid>

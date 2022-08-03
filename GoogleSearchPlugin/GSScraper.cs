@@ -181,8 +181,11 @@ namespace GoogleSearchPlugin
         {
             lock (_lock)
             {
+                Stage = ScrapTaskStage.Setup;
+                OnStageChanged(Stage);
+                TaskDetail = "Starting chrome..";
+                OnTaskDetailChanged(TaskDetail);
 
-            
             if (!tryInitWebDriver())
             {
                 Stage = ScrapTaskStage.Failed;
@@ -193,6 +196,8 @@ namespace GoogleSearchPlugin
 
             try
             {
+                TaskDetail = "Resolving target page..";
+                OnTaskDetailChanged(TaskDetail);
                 Uri u = new Uri(TargetPage);
                 int pages = 1;
                 string title = "unknown title";
