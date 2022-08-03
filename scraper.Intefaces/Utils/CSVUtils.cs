@@ -15,6 +15,7 @@ namespace scraper.Core.Utils
     public static class CSVUtils
     {
         /// <summary>
+        /// [non generic]
         /// used to both count and check data validity
         /// </summary>
         /// <param name="path">must exist</param>
@@ -40,9 +41,9 @@ namespace scraper.Core.Utils
                         string[] fields = csvParser.ReadFields();
                         isCurrentRowValid &= (fields.Count() == 11);
                         if (isCurrentRowValid == false) continue;
-                        string name = fields[0];
-                        string contactPerson = fields[1];
-                        string address = fields[2];
+                        string title = fields[0];
+                        string url = fields[1];
+                        /*string address = fields[2];
                         string phonenumber = fields[3];
                         string email = fields[4];
                         string employees = fields[5];
@@ -50,8 +51,8 @@ namespace scraper.Core.Utils
                         string year = fields[7];
                         string imageUrl = fields[8];
                         string link = fields[9];
-                        string desc = fields[10];
-                        isCurrentRowValid &= name.Length > 0 && address.Length > 0 && name.Length > 0 && link.Length > 0 && link.Length > 0 && link.Length > 0;
+                        string desc = fields[10];*/
+                        isCurrentRowValid &= title.Length > 0 && url.Length > 0 ;
 
 
                         if (isCurrentRowValid)

@@ -21,19 +21,22 @@ namespace scraper.ViewModel
         {
             Model = p;
             //Name, address,Phonenumber,MobilePhonenumberEmail, Employees,deligation, etc.
-            Name = p.company;
-            Description = p.description;
-            PhoneNumber = p.phonenumber;
-            Email = p.email;
-            Link = p.link;
-            ImgUrl = p.imageUrl;
-            Employees = p.employees;
-            Address = p.address;
-            Website = p.website;
-            ContactPerson = p.contactPerson;
-            Year = p.year;
-            
-            
+            // Name = p.company;
+            // Description = p.description;
+            /* PhoneNumber = p.phonenumber;
+             Email = p.email;
+             Link = p.link;
+             ImgUrl = p.imageUrl;
+             Employees = p.employees;
+             Address = p.address;
+             Website = p.website;
+             ContactPerson = p.contactPerson;
+             Year = p.year;*/
+            Name = p.title;
+            Link = p.url;
+            Website = p.url;
+
+
         }
 
         public dynamic Model { get; set; }
