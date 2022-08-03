@@ -38,7 +38,7 @@ namespace Converters
                 case ScrapTaskStage.Success: return "Completed";
                 case ScrapTaskStage.Failed: return "Failed";
                 case ScrapTaskStage.Delaying: return "Delaying";
-                case ScrapTaskStage.Setup: return "";
+                case ScrapTaskStage.Setup: return "Init";
                 default: return "";
             }
 
