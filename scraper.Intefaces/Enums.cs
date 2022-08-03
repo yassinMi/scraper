@@ -2,7 +2,7 @@
 
 namespace scraper.Core
 {
-    public enum ScrapTaskStage { Ready, DownloadingData, Paused, ConvertingData, Success, Failed }
+    public enum ScrapTaskStage {Setup, Delaying, Ready, DownloadingData, Paused, ConvertingData, Success, Failed }
 
 
     public enum FieldRole
