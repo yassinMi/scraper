@@ -86,6 +86,10 @@ namespace scraper.Core
         public TaskStatsInfo TaskStatsInfo { get; set; } = new TaskStatsInfo();
         public ScrapTaskStage Stage { get; set; }
         /// <summary>
+        /// used for all stages, to indicate the current process, e,g in setup stage it can be "starting chrome driver"
+        /// </summary>
+        public string TaskDetail { get; set; }
+        /// <summary>
         /// pause the task
         /// only supported or downloading data stage
         /// </summary>
