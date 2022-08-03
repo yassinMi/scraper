@@ -39,7 +39,7 @@ namespace scraper.Core.Utils
                     {
                         //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
                         string[] fields = csvParser.ReadFields();
-                        isCurrentRowValid &= (fields.Count() == 11);
+                        isCurrentRowValid &= (fields.Count() == 2);
                         if (isCurrentRowValid == false) continue;
                         string title = fields[0];
                         string url = fields[1];

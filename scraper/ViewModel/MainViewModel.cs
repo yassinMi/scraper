@@ -878,8 +878,10 @@ namespace scraper.ViewModel
 
         private void hndlDevFillAndStartCommand(string variant)
         {
-            TargetPageQueryText = variant == "4" ? @"https://www.businesslist.ph/category/industrial-premises" 
-            : variant == "9" ? @"https://www.businesslist.ph/location/santa-rosa-city"
+            //TargetPageQueryText = variant == "4" ? @"https://www.businesslist.ph/category/industrial-premises" 
+            //: variant == "9" ? @"https://www.businesslist.ph/location/santa-rosa-city"
+            TargetPageQueryText = variant == "4" ? @"https://www.google.com/search?q=best+software+testing+tools&rlz=1C1CHWL_enMA1011MA1011&oq=bes&aqs=chrome.0.69i59j69i57j46i67i199i465j0i512l4j69i65.2534j0j7&sourceid=chrome&ie=UTF-8"
+            : variant == "9" ? @"file:///F:/epicMyth-tmp-6-2022/freelancing/projects/google-results-scraping/best%20software%20testing%20tools2%20-%20Google%20Search.html"
             : "";
             StartScrapingCommand.Execute(null);
         }

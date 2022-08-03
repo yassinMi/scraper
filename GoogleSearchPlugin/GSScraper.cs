@@ -154,8 +154,9 @@ namespace GoogleSearchPlugin
             {
                 if (mainWebDriver != null)
                 {
-                    mainWebDriver.Quit();
-                    mainWebDriver.Dispose();
+                    //mainWebDriver.Close();
+                    mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
+                    return true;
                 }
                 var opts = new ChromeOptions() { };
                 //opts.AddArguments("headless","disable-gpu","no-sandbox");
@@ -173,11 +174,15 @@ namespace GoogleSearchPlugin
             }
             
         }
-
+        object _lock = new object();
         static WebDriver mainWebDriver { get; set; } = null;
 
         public override async Task RunScraper(CancellationToken ct)
         {
+            lock (_lock)
+            {
+
+            
             if (!tryInitWebDriver())
             {
                 Stage = ScrapTaskStage.Failed;
@@ -188,11 +193,11 @@ namespace GoogleSearchPlugin
 
             try
             {
-                await Task.Delay(30);
                 Uri u = new Uri(TargetPage);
                 int pages = 1;
                 string title = "unknown title";
                 int delayms = 200;
+                //mainWebDriver.SwitchTo().
                 mainWebDriver.Navigate().GoToUrl(TargetPage);
                 var basicWrapers = mainWebDriver.FindElements(By.XPath("//div[@class='jtfYYd UK95Uc']"));
 
@@ -219,7 +224,7 @@ namespace GoogleSearchPlugin
                         string result_title = firt_h3.Text;
                         Model.GoogleResult r = new Model.GoogleResult() { title = result_title, url = result_url };
                         elements_in_page.Add(r);
-                        await Task.Delay(delayms);
+                        Task.Delay(delayms).GetAwaiter().GetResult();
                         OnProgress(new DownloadingProg() { Total = basicWrapers.Count, Current = i });
                         OnTaskDetailChanged($"Result: {result_title}");
                         this.TaskStatsInfo.incObject(0, 0);
@@ -243,10 +248,10 @@ namespace GoogleSearchPlugin
                 Debug.WriteLine(err.ToString());
                 return;
             }
-            
 
 
 
+            }
         }
     }
 }
