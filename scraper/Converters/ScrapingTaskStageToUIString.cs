@@ -37,6 +37,8 @@ namespace Converters
                 case ScrapTaskStage.ConvertingData: return "Converting";
                 case ScrapTaskStage.Success: return "Completed";
                 case ScrapTaskStage.Failed: return "Failed";
+                case ScrapTaskStage.Delaying: return "Delaying";
+                case ScrapTaskStage.Setup: return "";
                 default: return "";
             }
 
