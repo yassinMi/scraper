@@ -160,7 +160,9 @@ namespace GoogleSearchPlugin
                 }
                 var opts = new ChromeOptions() { };
                 //opts.AddArguments("headless","disable-gpu","no-sandbox");
-                WebDriver wd = new ChromeDriver(opts);
+                var chromdriverservice = ChromeDriverService.CreateDefaultService();
+                chromdriverservice.HideCommandPromptWindow = true;
+                WebDriver wd = new ChromeDriver(chromdriverservice,opts);
                 //wd.Url = @"https://www.google.com/search?q=best+software+testing+tools&rlz=1C1CHWL_enMA1011MA1011&oq=best+software+testing+tools&aqs=chrome..69i57.56629j0j7&sourceid=chrome&ie=UTF-8";
                 Debug.WriteLine("initialized wd");
 
