@@ -13,7 +13,7 @@ namespace scraper.ViewModel
 {
     public class ScrapingTaskVM : BaseViewModel
     {
-        public ScrapingTaskVM(PluginScrapingTask m)
+        public ScrapingTaskVM(ScrapingTaskBase m)
         {
             Model = m;
             DownloadProgress = m.DownloadingProgress;
@@ -98,9 +98,9 @@ namespace scraper.ViewModel
             get { return _DownloadProgress; }
         }
 
-        private PluginScrapingTask _Model;
+        private ScrapingTaskBase _Model;
 
-        public PluginScrapingTask Model
+        public ScrapingTaskBase Model
         {
             set { _Model = value; notif(nameof(Model)); }
             get { return _Model; }

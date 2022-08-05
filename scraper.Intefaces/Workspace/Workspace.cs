@@ -168,7 +168,7 @@ namespace scraper.Core.Workspace
 
         }
 
-        public IEnumerable<PluginScrapingTask> GetScrapingTasksFromFiles()
+        public IEnumerable<ScrapingTaskBase> GetScrapingTasksFromFiles()
         {
             yield break;
             Console.WriteLine("GetScrapingTasksFromFiles");

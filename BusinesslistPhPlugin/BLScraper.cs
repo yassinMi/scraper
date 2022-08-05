@@ -117,18 +117,18 @@ namespace BusinesslistPhPlugin
             }
         }
 
-        public override PluginScrapingTask GetTask(TaskInfo taskInfo)
+        public override ScrapingTaskBase GetTask(TaskInfo taskInfo)
         {
             throw new NotImplementedException();
         }
 
-        public override PluginScrapingTask GetTask(string targetPage)
+        public override ScrapingTaskBase GetTask(string targetPage)
         {
             return new BLScrapingTask() { TargetPage = targetPage, WorkspaceDirectory = this.WorkspaceDirectory };
         }
     }
 
-    public class BLScrapingTask : PluginScrapingTask
+    public class BLScrapingTask : ScrapingTaskBase
     {
         /// <summary>
         /// only to be instantiated through the IPlugin instance (using IPlugin.getScrapingTask)

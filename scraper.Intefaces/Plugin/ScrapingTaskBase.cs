@@ -27,7 +27,7 @@ namespace scraper.Core
     /// <summary>
     /// represents a scraping task, wraping the main plugin functionality: downloading, parsing and saving results and objects.
     /// </summary>
-    public abstract class PluginScrapingTask
+    public abstract class ScrapingTaskBase
     {
         public event EventHandler<DownloadingProg> Progress;
         public event EventHandler<string> TaskDetailChanged; //stdout prints something like T: downloading image.jpg
@@ -96,6 +96,8 @@ namespace scraper.Core
         /// only supported or downloading data stage
         /// </summary>
         public abstract void Pause();
+        public abstract bool IsSinglePage { get; set; }
+
     }
 
 }

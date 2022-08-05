@@ -19,8 +19,8 @@ namespace scraper.Core
     /// </summary>
     public abstract class Plugin
     {
-        public abstract PluginScrapingTask GetTask(string targetPage);
-        public abstract PluginScrapingTask GetTask(TaskInfo taskInfo);
+        public abstract ScrapingTaskBase GetTask(string targetPage);
+        public abstract ScrapingTaskBase GetTask(TaskInfo taskInfo);
         public abstract string Name { get; }
         public virtual Version Version { get; } = new Version(0, 0);
         public virtual string ElementName { get; } = "Element";

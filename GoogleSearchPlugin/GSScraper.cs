@@ -82,12 +82,12 @@ namespace GoogleSearchPlugin
 
 
 
-        public override PluginScrapingTask GetTask(TaskInfo taskInfo)
+        public override ScrapingTaskBase GetTask(TaskInfo taskInfo)
         {
             return new GSScraperScrapingTask();
         }
 
-        public override PluginScrapingTask GetTask(string targetPage)
+        public override ScrapingTaskBase GetTask(string targetPage)
         {
             return new GSScraperScrapingTask() { TargetPage = targetPage };
         }
@@ -132,7 +132,7 @@ namespace GoogleSearchPlugin
 
 
 
-    public class GSScraperScrapingTask : PluginScrapingTask
+    public class GSScraperScrapingTask : ScrapingTaskBase
     {
 
 
