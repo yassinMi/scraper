@@ -44,6 +44,7 @@ namespace scraper.Core
 
         protected void OnTaskDetailChanged(string e)
         {
+            TaskDetail = e;
             TaskDetailChanged?.Invoke(this, e);
         }
 
@@ -64,6 +65,7 @@ namespace scraper.Core
 
         protected void OnStageChanged(ScrapTaskStage e)
         {
+            Stage = e;
             StageChanged?.Invoke(this, e);
         }
         /// <summary>

@@ -1,5 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
 using scraper.Core;
 using scraper.Core.Utils;
 using scraper.Core.Workspace;
@@ -162,6 +164,7 @@ namespace GoogleSearchPlugin
                 //opts.AddArguments("headless","disable-gpu","no-sandbox");
                 var chromdriverservice = ChromeDriverService.CreateDefaultService();
                 chromdriverservice.HideCommandPromptWindow = true;
+                
                 WebDriver wd = new ChromeDriver(chromdriverservice,opts);
                 //wd.Url = @"https://www.google.com/search?q=best+software+testing+tools&rlz=1C1CHWL_enMA1011MA1011&oq=best+software+testing+tools&aqs=chrome..69i57.56629j0j7&sourceid=chrome&ie=UTF-8";
                 Debug.WriteLine("initialized wd");
@@ -183,14 +186,11 @@ namespace GoogleSearchPlugin
         {
             lock (_lock)
             {
-                Stage = ScrapTaskStage.Setup;
-                OnStageChanged(Stage);
-                TaskDetail = "Starting chrome..";
-                OnTaskDetailChanged(TaskDetail);
+                OnStageChanged(ScrapTaskStage.Setup);
+                OnTaskDetailChanged("Starting chrome..");
 
             if (!tryInitWebDriver())
             {
-                Stage = ScrapTaskStage.Failed;
                 OnStageChanged(ScrapTaskStage.Failed);
                 OnError("failed to start WebDriver");
                 return;
@@ -198,16 +198,34 @@ namespace GoogleSearchPlugin
 
             try
             {
-                TaskDetail = "Resolving target page..";
-                OnTaskDetailChanged(TaskDetail);
+                OnTaskDetailChanged("Resolving target page..");
                 Uri u = new Uri(TargetPage);
                 int pages = 1;
                 string title = "unknown title";
                 int delayms = 200;
                 //mainWebDriver.SwitchTo().
                 mainWebDriver.Navigate().GoToUrl(TargetPage);
-                var basicWrapers = mainWebDriver.FindElements(By.XPath("//div[@class='jtfYYd UK95Uc']"));
+                    var w = new WebDriverWait(mainWebDriver,TimeSpan.FromSeconds(50));
 
+                    w.Until((driver) => {
+                        try
+                        {
+                            var elems = driver.FindElement(By.XPath("//div[@class='jtfYYd UK95Uc']"));
+                            return elems.Displayed;
+                        }
+                        catch (NoSuchElementException)
+                        {
+
+                            return false;
+                        }
+                        catch (StaleElementReferenceException)
+                        {
+                            return false;
+                        }
+                       
+                    });
+                var basicWrapers = mainWebDriver.FindElements(By.XPath("//div[@class='jtfYYd UK95Uc']"));
+                
                 ResolvedTitle = $"{mainWebDriver.Title}";
                 OnResolved(ResolvedTitle);
                 Stage = ScrapTaskStage.DownloadingData;
