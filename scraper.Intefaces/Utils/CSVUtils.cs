@@ -20,7 +20,7 @@ namespace scraper.Core.Utils
         /// </summary>
         /// <param name="path">must exist</param>
         /// <returns></returns>
-        public static bool checkCSV(string path, out int rowsCount, out int validRowsCount)
+        public static bool checkCSV(string path,ElementDescription elementDescriptor, out int rowsCount, out int validRowsCount)
         {
             Debug.WriteLine("parsing csv: " + path);
             using (TextFieldParser csvParser = new TextFieldParser(path))
@@ -39,10 +39,29 @@ namespace scraper.Core.Utils
                     {
                         //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
                         string[] fields = csvParser.ReadFields();
-                        isCurrentRowValid &= (fields.Count() == 2);
-                        if (isCurrentRowValid == false) continue;
-                        string title = fields[0];
-                        string url = fields[1];
+                        int ed_fields_cc = elementDescriptor.Fields.Count();
+                        isCurrentRowValid &= (fields.Count() == ed_fields_cc);
+                        if (isCurrentRowValid == false) {
+                            Debug.WriteLine($"bad csv format: {fields.Count()} fields exist while {ed_fields_cc} are expected in csv resource '{path}'");
+                            continue;
+                        };
+
+                        byte f_ix = 0;
+                        //company,contactPerson,address,phonenumber,email,employees,website,year,imageUrl,link,description
+                        foreach (var f in elementDescriptor.Fields)
+                        {
+                            if (f.IsRequired)
+                            {
+                                if(string.IsNullOrWhiteSpace(fields[f_ix]))
+                                {
+                                    isCurrentRowValid = false;
+                                    Debug.WriteLine($"required field '{f.Name}' has empty valuein csv resource '{path}'");
+                                    continue;
+                                }
+                            }
+                            f_ix++;
+                        }
+                        
                         /*string address = fields[2];
                         string phonenumber = fields[3];
                         string email = fields[4];
@@ -52,7 +71,6 @@ namespace scraper.Core.Utils
                         string imageUrl = fields[8];
                         string link = fields[9];
                         string desc = fields[10];*/
-                        isCurrentRowValid &= title.Length > 0 && url.Length > 0 ;
 
 
                         if (isCurrentRowValid)

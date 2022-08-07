@@ -16,14 +16,14 @@ namespace scraper.Core.Workspace
         public bool isChecked { get; set; } = false;
         public bool isRemoved { get; set; }
         public bool isbadFormat { get; set; }
-        public void Check()
+        public void Check(Plugin plugin)
         {
             isChecked = true;
             if (!File.Exists(Path.OriginalString)) { isRemoved = true; return; }
             isRemoved = false;
             int total_rows = 0;
             int valid_rows = 0;
-            isbadFormat = !CSVUtils.checkCSV(Path.OriginalString, out total_rows, out valid_rows);
+            isbadFormat = !CSVUtils.checkCSV(Path.OriginalString, plugin.ElementDescription,  out total_rows, out valid_rows);
             Debug.WriteLine("cheking returned: cont " + total_rows);
             Debug.WriteLine("cheking returned: valid " + valid_rows);
 

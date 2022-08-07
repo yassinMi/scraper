@@ -74,7 +74,7 @@ namespace scraper.ViewModel
             CSVResourcesVMS = new ObservableCollection<CSVResourceVM>(MainWorkspace.CSVResources.Select((sr) =>
             {
                 
-                return new CSVResourceVM(sr);
+                return new CSVResourceVM(sr, MainPlugin);
             }));
             notif(nameof(CurrentPluginName));
 
@@ -412,7 +412,7 @@ namespace scraper.ViewModel
             ElementsViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ElementViewModel>>(new List<ElementViewModel>(), (i, csvVM) => {
                 var enumerated = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, csvVM.FullPath) .Cast<dynamic>();//ufr
                 if (enumerated == null) return i;
-                return i.Concat(enumerated.Select(p => new ElementViewModel(p)));
+                return i.Concat(enumerated.Select(p => new ElementViewModel(p,MainPlugin.ElementDescription)));
             });
             Debug.WriteLine("ienumerable");
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
@@ -690,7 +690,7 @@ namespace scraper.ViewModel
                     return;
             var lst = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, maybeFile).Cast<dynamic>().Select((p) => //ufr
                 {
-                    return new ElementViewModel(p);
+                    return new ElementViewModel(p,MainPlugin.ElementDescription);
                 }).ToList();
                 ElementsViewModels_arr = new ObservableCollection<ElementViewModel> (lst);
                 notif(nameof( ElementsViewModels));
@@ -717,7 +717,7 @@ namespace scraper.ViewModel
             foreach (var sr in MainWorkspace.CSVResources)
             {
                 Debug.WriteLine("adding resource");
-                CSVResourcesVMS.Add(new CSVResourceVM(sr));
+                CSVResourcesVMS.Add(new CSVResourceVM(sr, MainPlugin));
             }
 
         }

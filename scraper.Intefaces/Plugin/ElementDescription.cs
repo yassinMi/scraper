@@ -54,6 +54,10 @@ namespace scraper.Core
         /// the starting column width, (recommended width about 70), the user can always resize columns
         /// </summary>
         public int UIHeaderWidth { get; set; } = 70;
+        /// <summary>
+        /// fields disabled are not shown on the data grid while still saved and read from/into csv files (can also be used by the listView viewModel if role is matched
+        /// </summary>
+        public bool IsDataGridDisabled { get; set; }
     }
 
 

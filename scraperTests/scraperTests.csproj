@@ -83,6 +83,10 @@
     <Compile Include="ViewModel\TestUrls.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BusinesslistPhPlugin\BusinesslistPhPlugin.csproj">
+      <Project>{e05164d0-465b-47c9-b54e-fb667041d743}</Project>
+      <Name>BusinesslistPhPlugin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\scraper.Intefaces\scraper.Core.csproj">
       <Project>{f9513d8f-3b5b-45a5-96f4-9cfecd4d219f}</Project>
       <Name>scraper.Core</Name>

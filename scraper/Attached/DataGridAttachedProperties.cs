@@ -44,6 +44,7 @@ namespace scraper.Attached
 
             foreach (var f in fields)
             {
+                if (f.IsDataGridDisabled) continue;
                 Debug.WriteLine($"Adding columns: {f.UIName}");
                 DataGridTextColumn c = new DataGridTextColumn();
                 TextBlock htb = new TextBlock();

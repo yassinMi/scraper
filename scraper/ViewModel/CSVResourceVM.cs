@@ -11,9 +11,9 @@ namespace scraper.ViewModel
 {
     public class CSVResourceVM : BaseViewModel
     {
-        public CSVResourceVM(CSVResource cr)
+        public CSVResourceVM(CSVResource cr, scraper.Core.Plugin plugin)
         {
-            if (cr.isChecked == false) cr.Check();
+            if (cr.isChecked == false) cr.Check(plugin);
             RowsCount = cr.Rows;
             FilenameOnly = System.IO.Path.GetFileName(cr.Path.OriginalString);
             IsBadFormat = cr.isbadFormat;

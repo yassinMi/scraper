@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using scraper.Core;
-using Mi.Common;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 using scraper.Core.Workspace;
 
-namespace scraper.Services
+namespace scraper.Core.Utils
 {
     public class PluginsManager
     {
@@ -24,8 +22,9 @@ namespace scraper.Services
                 if (_CachedGlobalPlugins ==null) _CachedGlobalPlugins = GetGlobalPlugins().ToArray();
                 return _CachedGlobalPlugins;
             } }
-        
 
+
+        public static string[] GlobalFolders { get; set; } = null;
         /// <summary>
         /// returns set of IPlugin instances that correspond to the dll files under MyDocmuments objects to be used by the rest of the app
         /// </summary>
@@ -33,12 +32,10 @@ namespace scraper.Services
         /// 
         public static IEnumerable<Core.Plugin> GetGlobalPlugins()
         {
-            var GlobalFoldders = new string[] {
-                ApplicationInfo.PLUGINS_GLOBAL_FOLDER_AT_MY_DOCUMENTS,
-                ApplicationInfo.PLUGINS_GLOBAL_FOLDER_AT_INSTLLATION,
-            };
+            if (GlobalFolders == null) throw new Exception("PluginsManager: attempting to GetGlobalPlugins() with GlobalFolders static property not set");
+            
             //
-            foreach (var GlobalFoldder in GlobalFoldders)
+            foreach (var GlobalFoldder in GlobalFolders)
             {
                 Debug.WriteLine($"checking global folder '{GlobalFoldder}'");
                 if (!Directory.Exists(GlobalFoldder))

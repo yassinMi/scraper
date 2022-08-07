@@ -12,12 +12,20 @@ using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows;
 using scraper.Core.Workspace;
+using scraper.Core;
 
 namespace scraper.ViewModel
 {
     public class ElementViewModel : BaseViewModel
     {
-        public ElementViewModel(dynamic p)
+
+        /// <summary>
+        /// NOTE: datagrid view cells are bound to the Model. while listVew UI fields are bound to the properties exposed directly by this ViewModel
+        /// the listView props are mapped based on the elementDescriptor roles information (the only reason why it's required)
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="elementDescriptor"></param>
+        public ElementViewModel(dynamic p,ElementDescription elementDescriptor)
         {
             Model = p;
             //Name, address,Phonenumber,MobilePhonenumberEmail, Employees,deligation, etc.
@@ -32,13 +40,26 @@ namespace scraper.ViewModel
              Website = p.website;
              ContactPerson = p.contactPerson;
              Year = p.year;*/
-            Name = p.title;
-            Link = p.url;
-            Website = p.url;
+
+
+
+
+            Name = tryGetValueByRole(Model, elementDescriptor, FieldRole.Title);
+            ImgUrl = tryGetValueByRole(Model, elementDescriptor, FieldRole.Thumbnail);
+            
 
 
         }
-
+        /// <summary>
+        /// returns the value of the field of which the role matches the specified role, using the property name - role mapping provided by the elementDescriptor
+        /// </summary>
+        /// <returns>null if no property matches the role.</returns>
+        object tryGetValueByRole(object model, ElementDescription elementDescriptor, FieldRole role)
+        {
+            var targetField = elementDescriptor.Fields.FirstOrDefault(f => f.Role == FieldRole.Title);
+            if (targetField != null) return model.GetType().GetProperty(targetField.Name)?.GetValue(model);
+            return null;
+        }
         public dynamic Model { get; set; }
 
         private string _Name;
@@ -139,6 +160,7 @@ namespace scraper.ViewModel
         {
             
             get {
+                if (string.IsNullOrWhiteSpace(ImgUrl)) return null;
                 if(File.Exists(Path.Combine(Workspace.Current.Directory, ImgUrl))){
                     return new BitmapImage(new Uri(Path.Combine(Workspace.Current.Directory, ImgUrl)));
                 }

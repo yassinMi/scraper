@@ -42,7 +42,7 @@ namespace BusinesslistPhPlugin
                         new Field() {Name="employees", UIName="Employees", UIHeaderWidth=70 },
                         new Field() {Name="website", UIName="Website", UIHeaderWidth=70 },
                         new Field() {Name="year", UIName="Year", UIHeaderWidth=65 },
-                        //new Field() {Name="imageUrl", UIName="Image Url", UIHeaderWidth=70 },
+                        new Field() {Name="imageUrl", IsDataGridDisabled=true },
                         new Field() {Name="link", UIName="Link", UIHeaderWidth=70 },
                         new Field() {Name="description", UIName="Description", UIHeaderWidth=70 },
 

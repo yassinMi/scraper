@@ -73,7 +73,7 @@ namespace scraper.Core.Workspace
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")
                 {
                     var o = new CSVResource() { Path = new Uri(item) };
-                    o.Check();
+                    o.Check(plugin);
                     res.CSVResources.Add(o);
                 }
             }
@@ -95,13 +95,15 @@ namespace scraper.Core.Workspace
             res.CSVResources = new List<CSVResource>();
             
             SetUpWorkspaceFolders(res);
+            //assign plugin
+            res.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == res.PluginsNames.FirstOrDefault());
             var all_file_in_csv = System.IO.Directory.GetFiles(res.CSVOutputFolder);
             foreach (var item in all_file_in_csv)
             {
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")
                 {
                     var o = new CSVResource() { Path = new Uri(item) };
-                    o.Check();
+                    o.Check(res.Plugin); //todo when plugin loading is handled
                     res.CSVResources.Add(o);
                 }
             }
@@ -156,7 +158,7 @@ namespace scraper.Core.Workspace
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")
                 {
                     var o = new CSVResource() { Path = new Uri(item) };
-                    o.Check();
+                    o.Check(Plugin);
                     CSVResources.Add(o);
                 }
             }

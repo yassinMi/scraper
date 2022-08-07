@@ -1,4 +1,6 @@
 ﻿using Mi.Common;
+using scraper.Core.Utils;
+using scraper.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -32,6 +34,10 @@ namespace scraper
             {
                 CommandLineArgsDict[e.Args[i]] = e.Args[i + 1];
             }
+            PluginsManager.GlobalFolders = new string[] {
+                ApplicationInfo.PLUGINS_GLOBAL_FOLDER_AT_MY_DOCUMENTS,
+                ApplicationInfo.PLUGINS_GLOBAL_FOLDER_AT_INSTLLATION,
+            };
         }
 
         private void HandleException(object sender, DispatcherUnhandledExceptionEventArgs e)
