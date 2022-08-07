@@ -34,7 +34,7 @@ namespace scraper.Core
         /// used as part of the UI displayed task details while resolving the element, this should siimply return a suitable property e,g name or url
         /// </summary>
         /// <returns></returns>
-        public abstract bool GetElementTaskDetailHint(object elem);
+        public abstract string GetElementTaskDetailHint(object elem);
         /// <summary>
         /// used in task details ,nd 
         /// </summary>
@@ -103,7 +103,7 @@ namespace scraper.Core
 
                     string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle) + ".csv";
                     var outputPath = Path.Combine(Workspace.Workspace.Current.CSVOutputFolder, uniqueOutputFileName);
-
+                    ActualOutputFile = DesiredOutputFile ?? outputPath;
                     foreach (var page in EnumeratePages(TargetPage))
                     {
                         OnPageStarted($"[page {page.Item1}/{page.Item2}]");
