@@ -33,9 +33,6 @@ namespace scraperTests.PluginsTests
                 bool correct = result_count == known_page.pagesCount;
                 Assert.IsTrue(correct, $"test failed on targetpage: {known_page.targetPageUrl}, expected {known_page.pagesCount}, got {result_count}");
             }
-          
-            
-            
         }
     }
    
