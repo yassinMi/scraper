@@ -43,7 +43,7 @@ namespace scraper.ViewModel
 
 
 
-
+            
             Name = tryGetValueByRole(Model, elementDescriptor, FieldRole.Title);
             ImgUrl = tryGetValueByRole(Model, elementDescriptor, FieldRole.Thumbnail);
             

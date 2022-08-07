@@ -30,7 +30,7 @@
                 </Grid.ColumnDefinitions>
                 <Image x:Name="image2" Margin="4" Grid.RowSpan="3" Source="{Binding ImgSrc}"/>
 
-                <TextBlock x:Name="textBlock1" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="{Binding Name}" FontFamily="Roboto" FontSize="10.667" ToolTip="{Binding Title}" TextTrimming="CharacterEllipsis"/>
+                <TextBlock x:Name="textBlock1" Grid.ColumnSpan="3" Grid.Column="1" Margin="2,6,2,0" TextWrapping="Wrap" Text="{Binding Name}" FontFamily="Roboto" FontSize="10.667" ToolTip="{Binding Name}" TextTrimming="CharacterEllipsis"/>
                 <TextBlock x:Name="textBlock_Copy2" Grid.Column="1" Margin="6,0" TextWrapping="Wrap" Text="{Binding Employees}" FontFamily="Roboto" FontSize="10.667" TextTrimming="CharacterEllipsis" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
                 <TextBlock x:Name="upc_val2" Grid.Column="2" Margin="6,0" TextWrapping="Wrap" Text="{Binding PhoneNumber}" FontFamily="Roboto" FontSize="10.667" ToolTip="Click to copy UPC" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" />
                 <TextBlock x:Name="sku_val2" Grid.Column="3" Margin="6,0" TextWrapping="Wrap" Text="{Binding Email}" FontFamily="Roboto" FontSize="10.667" ToolTip="Click to copy SKU" TextTrimming="CharacterEllipsis" Grid.Row="2" VerticalAlignment="Center" MouseDown="sku_val2_MouseDown" />
