@@ -31,7 +31,7 @@ namespace scraperTests.PluginsTests
             PluginTestsUtils.loadOrCreateTestsWorkspace(BLScraperTestsData.bl_tests_ws_path,BLScraperTestsData.pluginName);
             foreach (var known_page in BLScraperTestsData.KnownPages())
             {
-                int result_count = BLScrapingTask.EnumeratePages(known_page.targetPageUrl).Count();
+                int result_count = BLScrapingTask.EnumeratePagesSTBF(known_page.targetPageUrl).Count();
                 bool correct = result_count == known_page.pagesCount;
                 Assert.IsTrue(correct, $"test failed on targetpage: {known_page.targetPageUrl}, expected {known_page.pagesCount}, got {result_count}");
             }

@@ -128,7 +128,7 @@ namespace BusinesslistPhPlugin
         }
     }
 
-    public class BLScrapingTask : ScrapingTaskBase
+    public class BLScrapingTask : StaticScrapingTask
     {
         /// <summary>
         /// only to be instantiated through the IPlugin instance (using IPlugin.getScrapingTask)
@@ -140,8 +140,13 @@ namespace BusinesslistPhPlugin
 
         public string WorkspaceDirectory { get; set; }
 
-        
-        
+        public override string TaskLockValue
+        {
+            get
+            {
+                return TargetPage;
+            }
+        }
 
         public override void Pause()
         {
@@ -462,7 +467,7 @@ Video
         /// </summary>
         /// <param name="targetRootPage">ignores page numbers it always start from root </param>
         /// <returns></returns>
-        public static IEnumerable<Tuple<int,int,HtmlNode>> EnumeratePages(string targetRootPage)
+        public static IEnumerable<Tuple<int,int,HtmlNode>> EnumeratePagesSTBF(string targetRootPage)
         {
             string pageRaw= downloadOrRead(targetRootPage, Workspace.Current.TPFolder);
             HtmlDocument doc = new HtmlDocument();
@@ -528,7 +533,7 @@ Video
                            }
         }
 
-        public static string getPageTitle(HtmlNode targetpagenode)
+        public override string GetPageUniqueUserTitle(HtmlNode targetpagenode)
         {
             var h1 = targetpagenode.SelectSingleNode("//main//section//h1");
             return h1?.InnerHtml;
@@ -539,105 +544,63 @@ Video
             return "3";
         }
 
+        public override IEnumerable<Tuple<int, int, HtmlNode>> EnumeratePages(string rootPageUrl)
+        {
+            return EnumeratePagesSTBF(rootPageUrl);
+        }
+
+        public override IEnumerable<T> EnumerateCompactElements<T>(HtmlNode pageNode)
+        {
+            return getCompactElementsInPage(pageNode).Cast<T>();
+        }
+
+        public override void ResolveElement(object compactElement, out int bytes, out int obj_cc)
+        {
+            resolveFullElement(compactElement as Business, out bytes, out obj_cc);
+        }
+
+        public override string GetElementUniqueID(HtmlNode elementRootNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetElementUserID(HtmlNode elementRootNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetElementUserUniqueID(HtmlNode elementRootNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetPageUserTitle(HtmlNode pageNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetPageUniqueID(HtmlNode pageNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool HasElementsTBF(HtmlNode pageNode)
+        {
+            return isBusinessesListings(pageNode) && isNoneEmptyBusinessesListings(pageNode);
+        }
+
+        public override string GetElementTaskDetailHint(object elem)
+        {
+            return (elem as Business).company;
+        }
+
+        public override string GetElementHint(object compactElement)
+        {
+            return (compactElement as Business).company;
+        }
+
         static Synchronizer<string> targetPageBasedLock = new Synchronizer<string>();
 
-        /// <summary>
-        /// static deps: Workspace.current,
-        /// </summary>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        async override public Task RunScraper(CancellationToken ct)
-        {
-            lock (targetPageBasedLock[TargetPage])
-            {
-                Debug.WriteLine("RunScraper entered");
-                TaskStatsInfo.Reset();
-                Stage = ScrapTaskStage.DownloadingData;
-                OnStageChanged(Stage);
-                string raw;
-                try
-                {
-                    raw = downloadOrRead(TargetPage, Workspace.Current.TPFolder);
-                    TaskStatsInfo.incSize(raw.Length);
-                }
-                catch(HttpRequestException )
-                {
-                    Stage = ScrapTaskStage.Failed;
-                    OnStageChanged(Stage);
-                    OnError("Network error");
-                    return;
-                }
-                HtmlDocument doc = new HtmlDocument();
-                doc.LoadHtml(raw);
-                if ((isBusinessesListings(doc.DocumentNode)) == false || (isNoneEmptyBusinessesListings(doc.DocumentNode) == false))
-                {
-                    return;
-                }
-                ResolvedTitle = getPageTitle(doc.DocumentNode); ///+ ;
-                OnResolved(ResolvedTitle);
-                try
-                {
-
-                    string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle) + ".csv";
-                    var outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName);
-                    ActualOutputFile = DesiredOutputFile ?? outputPath;
-
-                    foreach (var page in EnumeratePages(TargetPage))
-                {
-                    OnPageStarted($"[page {page.Item1}/{page.Item2}]");
-                    var compactElements = getCompactElementsInPage(page.Item3).ToList();
-                        List<Business> resolvedElements = new List<Business>(compactElements.Count);
-                    int i = 0;
-                    foreach (var item in compactElements)
-                    {
-                            if (ct.IsCancellationRequested)
-                            {
-                                Debug.WriteLine("saving csv");
-                                CSVUtils.CSVWriteRecords(ActualOutputFile, resolvedElements, page.Item1 > 1);
-                                Debug.WriteLine("saved current page conent:" + ActualOutputFile);
-                                Stage = ScrapTaskStage.Success;
-                                OnStageChanged(Stage);
-                                return;
-                            }
-                        int objs, bytes = 0;
-                        resolveFullElement(item, out bytes, out objs);
-                            resolvedElements.Add(item);
-                            TaskStatsInfo.incObject(objs);
-                            TaskStatsInfo.incSize(bytes);
-                            TaskStatsInfo.incElem(1);
-                        i++;
-                        OnProgress(new DownloadingProg() { Total = compactElements.Count, Current = i });
-                        OnTaskDetailChanged($"Collecting business info: {item.company}");
-                    }
-                    Debug.WriteLine("saving csv");
-                    CSVUtils.CSVWriteRecords(ActualOutputFile, resolvedElements, page.Item1 > 1);
-                    Debug.WriteLine("saved current page conent:" + ActualOutputFile);
-                }
-
-                    Stage = ScrapTaskStage.Success;
-                    OnStageChanged(Stage);
-                    return;
-
-                }
-                catch 
-                {
-                    Debug.WriteLine("catched");
-                    Stage = ScrapTaskStage.Failed;
-                    OnStageChanged(Stage);
-                    OnError("Network Error");
-                    return;
-                }
-
-                return;
-
-                Stage = ScrapTaskStage.DownloadingData;
-                OnStageChanged(Stage);
-
-            }
-
-
-
-
-        }
+        
     }
 }
