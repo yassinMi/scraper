@@ -22,6 +22,7 @@ namespace scraperTests.PluginsTests
             res.Add(new TargetPageBLScraperTestData() {
                 targetPageUrl = @"https://www.businesslist.ph/category/industrial-premises",
                 elementsCount = -1,
+                csvRef = @"E:\TOOLS\scraper\tests.yass\blWorkspace\cs.ref\Top Industrial Premises in Philippines.csv",
                 pagesCount = 4
             });
 
