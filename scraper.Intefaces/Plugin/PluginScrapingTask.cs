@@ -84,6 +84,14 @@ namespace scraper.Core
         /// </summary>
         public string ResolvedTitle { get; set; }
         public string TargetPage { get; set; }
+        /// <summary>
+        /// consumers can specify output file (full path) , otherwise it's automatically determined from the page title or else (plugin implementation)
+        /// </summary>
+        public string DesiredOutputFile { get; set; }
+        /// <summary>
+        /// files to whch the csv results are written
+        /// </summary>
+        public string ActualOutputFile { get; protected set; }
         public DownloadingProg DownloadingProgress { get; set; }
         public TaskStatsInfo TaskStatsInfo { get; set; } = new TaskStatsInfo();
         public ScrapTaskStage Stage { get; set; }

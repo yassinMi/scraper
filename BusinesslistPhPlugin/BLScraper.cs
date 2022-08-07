@@ -580,6 +580,7 @@ Video
 
                     string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle) + ".csv";
                     var outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName);
+                    ActualOutputFile = DesiredOutputFile ?? outputPath;
 
                     foreach (var page in EnumeratePages(TargetPage))
                 {
@@ -592,8 +593,8 @@ Video
                             if (ct.IsCancellationRequested)
                             {
                                 Debug.WriteLine("saving csv");
-                                CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
-                                Debug.WriteLine("saved current page conent:" + outputPath);
+                                CSVUtils.CSVWriteRecords(ActualOutputFile, resolvedElements, page.Item1 > 1);
+                                Debug.WriteLine("saved current page conent:" + ActualOutputFile);
                                 Stage = ScrapTaskStage.Success;
                                 OnStageChanged(Stage);
                                 return;
@@ -609,8 +610,8 @@ Video
                         OnTaskDetailChanged($"Collecting business info: {item.company}");
                     }
                     Debug.WriteLine("saving csv");
-                    CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
-                    Debug.WriteLine("saved current page conent:" + outputPath);
+                    CSVUtils.CSVWriteRecords(ActualOutputFile, resolvedElements, page.Item1 > 1);
+                    Debug.WriteLine("saved current page conent:" + ActualOutputFile);
                 }
 
                     Stage = ScrapTaskStage.Success;
