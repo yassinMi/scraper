@@ -78,6 +78,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="PluginsTests\BLScraperTests.cs" />
+    <Compile Include="PluginsTests\BLScraperTestsData.cs" />
+    <Compile Include="PluginsTests\PluginTestsUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\MainViewModelTests.cs" />
     <Compile Include="ViewModel\TestUrls.cs" />
@@ -96,9 +99,7 @@
       <Name>scraper</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Plugin\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

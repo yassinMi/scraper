@@ -59,6 +59,7 @@ namespace scraper.Core.Workspace
         
         public static Workspace CreateOne(string workspacePath,Plugin plugin)
         {
+            if (plugin == null) throw new ArgumentNullException(nameof(plugin),"Workspace.CreateOne(): null plugin reference");
             if (string.IsNullOrWhiteSpace(workspacePath)) throw new Exception("workspacePath cannot be null");
             if (Exists(workspacePath)) throw new Exception($"Workspace already exists at {workspacePath}");
             //creating the sub directories
@@ -67,7 +68,7 @@ namespace scraper.Core.Workspace
             
             SetUpWorkspaceFolders(res);
             var all_file_in_csv = System.IO.Directory.GetFiles(res.CSVOutputFolder);
-            //we're still populating the CSVResources from files because data being there does'nt prevent creation of the workspace (aka the plugin ptr file)
+            //data presence (csv resources) doesn't prevent the creation of the workspace and is loaded into the newly created workspace. 
             foreach (var item in all_file_in_csv)
             {
                 if (Path.GetExtension(item).ToLower().Replace(".", "") == "csv")

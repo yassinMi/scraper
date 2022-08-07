@@ -3,6 +3,7 @@ using CsvHelper;
 using HtmlAgilityPack;
 using Mi.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using scraper.Core.Utils;
 using scraper.Core.Workspace;
 using scraper.Model;
 using scraper.Plugin;
@@ -122,7 +123,7 @@ namespace scraper.ViewModel.Tests
 
 
 
-
+       
 
 
 
@@ -132,9 +133,7 @@ namespace scraper.ViewModel.Tests
         [TestMethod()]
         public void testEnnumeratePages()
         {
-            string urlwith4pg = @"https://www.businesslist.ph/category/industrial-premises"; //pc=4
-            bool v =BLScrapingTask.EnumeratePages(urlwith4pg).Count() == 4;
-            Assert.IsTrue(v, "nope");
+           
         }
 
 
