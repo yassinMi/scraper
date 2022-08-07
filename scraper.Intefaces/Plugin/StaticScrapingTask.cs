@@ -15,7 +15,19 @@ namespace scraper.Core
     public abstract class StaticScrapingTask : ScrapingTaskBase
     {
         public abstract IEnumerable<Tuple<int, int, HtmlNode>> EnumeratePages(string rootPageUrl);
+        /// <summary>
+        /// the first resolving stage: only the pieces of information that are visible at the target page itself are parsed, further heavy resolving that requires element-wise navigations should be carried out at the ResolveElement method
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="pageNode">the target page document node</param>
+        /// <returns>collection of elements at their compact phase</returns>
         public abstract IEnumerable<T> EnumerateCompactElements<T>(HtmlNode pageNode);
+        /// <summary>
+        /// the second (and last) resolving phase, this may involve performing one or more web requests, it may also not be required at all in this case it should simply return without affecting the element
+        /// </summary>
+        /// <param name="compactElement">the compact elements: same object as the final element when not all fields are populated yet and / or not all objects are downloded locally, it must contain the minimum information required for full resolving e,g an element-specific url</param>
+        /// <param name="bytes">estimation of number of bytes written to disk during the resolving process, this is used for user infomation</param>
+        /// <param name="obj_cc">number of files added under the workspace's objects directory and sub directories (html files, images etc) this is used for user infomation</param>
         public abstract void ResolveElement(object compactElement, out int bytes, out int obj_cc);
 
         /// <summary>
@@ -24,10 +36,26 @@ namespace scraper.Core
         /// <returns></returns>
         /// 
         public abstract string GetElementUniqueID(HtmlNode elementRootNode);//from targetpage and only,(compact elem enumerating phase)
+        /// <summary>
+        /// not used yet
+        /// </summary>
         public abstract string GetElementUserID(HtmlNode elementRootNode);
+        /// <summary>
+        /// not used yet
+        /// </summary>
         public abstract string GetElementUserUniqueID(HtmlNode elementRootNode);
+        /// <summary>
+        /// not used yet
+        /// </summary>
+        /// <returns></returns>
         public abstract string GetPageUserTitle(HtmlNode pageNode);
+        /// <summary>
+        /// not used yet
+        /// </summary>
         public abstract string GetPageUniqueUserTitle(HtmlNode pageNode);
+        /// <summary>
+        /// not used yet
+        /// </summary>
         public abstract string GetPageUniqueID(HtmlNode pageNode);
         public abstract bool HasElementsTBF(HtmlNode pageNode);
         /// <summary>
