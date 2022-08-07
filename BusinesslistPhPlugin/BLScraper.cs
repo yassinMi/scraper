@@ -34,7 +34,7 @@ namespace BusinesslistPhPlugin
                     Name = "Business",
                     Fields = new Field[]
                     {
-                        new Field() {Name="company", UIName="Company Name", UIHeaderWidth=85 },
+                        new Field() {Name="company", UIName="Company Name", Role= FieldRole.Title, UIHeaderWidth=85 },
                         new Field() {Name="contactPerson", UIName="Contact Person", UIHeaderWidth=80 , UserDescription="Contact person or company manager"},
                         new Field() {Name="address", UIName="Address", UIHeaderWidth=70 },
                         new Field() {Name="phonenumber", UIName="Phone", UIHeaderWidth=80 },
