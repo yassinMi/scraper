@@ -47,7 +47,7 @@ namespace scraperTests.PluginsTests
                 var ttask = tws.Plugin.GetTask(known_page.targetPageUrl);
                 
                  ttask.RunScraper(new System.Threading.CancellationToken()).GetAwaiter().GetResult();
-                Assert.IsTrue(File.Exists(ttask.ActualOutputFile),$"task didn't generate the file excpected at '{ttask.ActualOutputFile}'");
+                Assert.IsTrue(File.Exists(ttask.ActualOutputFile),$"task didn't generate the file expected at '{ttask.ActualOutputFile}'");
                 Assert.IsTrue(File.ReadAllText(ttask.ActualOutputFile) == File.ReadAllText(known_page.csvRef), $"generated file content at '{ttask.ActualOutputFile}' diffres from the csv.ref counterpart at '{known_page.csvRef}'");
                                 
 
