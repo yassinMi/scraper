@@ -147,7 +147,10 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="CsvExport.cs" />
     <Compile Include="Model\Element.cs" />
+    <Compile Include="Model\FilterComponentBase.cs" />
     <Compile Include="Model\FilteringRule.cs" />
+    <Compile Include="Model\GroupsFilterComponentModel.cs" />
+    <Compile Include="Model\RangeFilterComponentModel.cs" />
     <Compile Include="Model\RecentWorkspace.cs" />
     <Compile Include="Model\ScrapingTaskModel.cs" />
     <Compile Include="Plugin\FakePlugin.cs" />
@@ -156,6 +159,7 @@
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\CSVResourceVM.cs" />
     <Compile Include="ViewModel\FilteringRuleViewModel.cs" />
+    <Compile Include="ViewModel\GroupsFilterComponentViewModel.cs" />
     <Compile Include="ViewModel\HelpVM.cs" />
     <Compile Include="ViewModel\HomeScreen\RecentWorkspaceVM.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

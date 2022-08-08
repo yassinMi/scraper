@@ -619,6 +619,22 @@ namespace scraper.ViewModel
         }
 
 
+        private IEnumerable<FilterComponentBase> _FilterComponenetsModels;
+        public IEnumerable<FilterComponentBase> FilterComponenetsModels
+        {
+            set { _FilterComponenetsModels = value; notif(nameof(FilterComponenetsModels)); }
+            get { return _FilterComponenetsModels; }
+        }
+
+
+        private GroupsFilterComponentViewModel _DevGroupsFilterVM = new GroupsFilterComponentViewModel(null);
+        public GroupsFilterComponentViewModel DevGroupsFilterVM
+        {
+            set { _DevGroupsFilterVM = value; notif(nameof(DevGroupsFilterVM)); }
+            get { return _DevGroupsFilterVM; }
+        }
+
+
 
 
         private async void handleStartScrapingCommand()

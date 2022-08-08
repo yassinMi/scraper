@@ -398,9 +398,22 @@
                         <Grid x:Name="filtersSection" Grid.Row="2" Margin="4,0,0,0" VerticalAlignment="Top"/>
 
                         <StackPanel Grid.Row="2">
-                            <Expander HorizontalAlignment="Stretch" Header="Categories" Background="#00571919">
+                            <Expander HorizontalAlignment="Stretch" Header="Categories" Background="#00571919" DataContext="{Binding DevGroupsFilterVM}">
                                 <Grid Margin="4,0,4,4">
                                     <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center"><Run Text="None"/></TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Groups}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel IsItemsHost="True" VerticalAlignment="Top" >
+                                                </WrapPanel>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"  Content="{Binding Name}"  IsChecked="{Binding IsSelected}" ></CheckBox>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                     <WrapPanel VerticalAlignment="Top" Visibility="Collapsed">
                                         <CheckBox
 											Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
