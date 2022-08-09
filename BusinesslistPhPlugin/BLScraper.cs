@@ -59,7 +59,7 @@ namespace BusinesslistPhPlugin
             {
                 return new FilterComponenetDescription[]
                 {
-                    new FilterComponenetDescription() {Header = "Employees", PropertyName="employees", Type= FilterComponenetType.GroupFilter },
+                    new FilterComponenetDescription() {Header = "Filter by employees", PropertyName="employees", Type= FilterComponenetType.GroupFilter },
 
                 };
             }
