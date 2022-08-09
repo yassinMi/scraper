@@ -46,10 +46,10 @@ namespace scraper.Model
         string GroupByPropertyName;
         
     
-        public GroupsFilterComponentModel(Type modelType, string groupByPropertyName)
+        public GroupsFilterComponentModel(Type modelType, string groupByPropertyName,string header=null)
         {
             ModelType = modelType; GroupByPropertyName = groupByPropertyName;
-            Header = Core.Utils.CoreUtils.CamelCaseToUIText(groupByPropertyName + " filter");
+            Header = header??Core.Utils.CoreUtils.CamelCaseToUIText(groupByPropertyName + " filter");
         }
 
         public GroupsFilterComponentModel(List<SelectableGroup> groups)

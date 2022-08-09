@@ -94,8 +94,9 @@ namespace scraper.ViewModel
                 {
                     if(desc.Type== FilterComponenetType.GroupFilter)
                     {
-                        GroupsFilterComponentModel gfc_model = new GroupsFilterComponentModel(MainPlugin.ElementModelType,
-                desc.PropertyName);
+                        GroupsFilterComponentModel gfc_model = 
+                            new GroupsFilterComponentModel(MainPlugin.ElementModelType,
+                desc.PropertyName,desc.Header);
 
                         var vm = new GroupsFilterComponentViewModel(gfc_model);
                         gfc_model.GroupsSelectionGotDirty += (s, e) =>

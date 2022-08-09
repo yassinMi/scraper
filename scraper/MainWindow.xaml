@@ -396,16 +396,8 @@
 								FontSize="16" FontFamily="Roboto" Foreground="White" VerticalAlignment="Center" Margin="0,0,4,0" IsTabStop="False" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                         <Grid x:Name="filtersSection" Grid.Row="2" Margin="4,0,0,0" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="2">
 
-                        <ItemsControl ItemsSource="{Binding FilterComponenetsVMS}" Grid.Row="2">
-                            <ItemsControl.Resources>
-                                <DataTemplate DataType="{x:Type ViewModel:GroupsFilterComponentViewModel}">
-                                    <View:GroupFilterComponentView DataContext="{Binding}" ></View:GroupFilterComponentView>
-                                </DataTemplate>
-                            </ItemsControl.Resources>
-                        </ItemsControl>
-                        <StackPanel Grid.Row="2" Visibility="Collapsed">
-                            
                             <Expander HorizontalAlignment="Stretch" Header="Categories" Background="#00571919" Visibility="Collapsed">
                                 <Grid Margin="4,0,4,4">
                                     <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center"><Run Text="None"/></TextBlock>
@@ -476,6 +468,13 @@
 
                             </Expander>
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
+                            <ItemsControl ItemsSource="{Binding FilterComponenetsVMS}" d:LayoutOverrides="LeftPosition, RightPosition">
+                                <ItemsControl.Resources>
+                                    <DataTemplate DataType="{x:Type ViewModel:GroupsFilterComponentViewModel}">
+                                        <View:GroupFilterComponentView DataContext="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.Resources>
+                            </ItemsControl>
                             <Expander
 								HorizontalAlignment="Stretch"
 								Header="Year" Background="#00763838">
@@ -618,7 +617,7 @@
                                         <MenuItem Command="Copy" />
                                     </ContextMenu>
                                 </DataGrid.ContextMenu>
-                                
+
                             </DataGrid>
                             <ListBox  x:Name="listBox" VirtualizingPanel.IsVirtualizing="True" Margin="2,0" VirtualizingPanel.VirtualizationMode="Recycling" ItemsSource="{Binding ElementsViewModels}" HorizontalContentAlignment="Stretch" Visibility="{Binding ElementsViewType, ConverterParameter=List, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}}">
                                 <ListBox.ItemTemplate>
