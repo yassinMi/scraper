@@ -1,0 +1,36 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:scraper.View"
+              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.View.GroupFilterComponentView"
+             mc:Ignorable="d" 
+             TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" SnapsToDevicePixels="True"
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance {x:Type ViewModel:GroupsFilterComponentViewModel}, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+    </UserControl.Resources>
+    <Grid>
+        <Expander HorizontalAlignment="Stretch" Header="{Binding Model.Header, Mode=OneWay}" Background="#00571919">
+            <Grid Margin="4,0,4,4">
+                <TextBlock Foreground="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Model.Groups.Count, Converter={StaticResource BooleanToVisibilityInverted}, Mode=OneWay}"><Run Text="None"/></TextBlock>
+                <ItemsControl ItemsSource="{Binding Groups}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True" VerticalAlignment="Top" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Style="{DynamicResource MaterialDesignFilterChipOutlineCheckBox}"  Content="{Binding Name}"  IsChecked="{Binding IsSelected}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Expander>
+
+    </Grid>
+</UserControl>

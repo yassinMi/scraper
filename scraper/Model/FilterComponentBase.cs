@@ -15,6 +15,7 @@ namespace scraper.Model
         /// </summary>
         /// <param name="input">the complete input collection (for better performance and UX the complete collection should be used that is the initial list on which the filters are applied)</param>
         public abstract void Update(IEnumerable<object> input);
+        public abstract bool Passes(object element);
     }
 
    

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace scraper.Model
 {
@@ -15,6 +17,7 @@ namespace scraper.Model
         {
             ContainerComponent = containerComponent;
         }
+        
         private bool _IsSelected;
         public bool IsSelected
         {
@@ -41,11 +44,22 @@ namespace scraper.Model
     {
         Type ModelType;
         string GroupByPropertyName;
+        
+    
         public GroupsFilterComponentModel(Type modelType, string groupByPropertyName)
         {
             ModelType = modelType; GroupByPropertyName = groupByPropertyName;
             Header = Core.Utils.CoreUtils.CamelCaseToUIText(groupByPropertyName + " filter");
         }
+
+        public GroupsFilterComponentModel(List<SelectableGroup> groups)
+        {
+            
+            Groups = groups;
+            Header = "design time filter";
+            
+        }
+
         /// <summary>
         /// this is populated with the values from the property specified by the groupByPropertyName ctor param. the ToString method is used to convert these values in case thei're not strings.
         /// </summary>
@@ -62,11 +76,8 @@ namespace scraper.Model
             }
 
             var grps = input.GroupBy(o => ModelType.GetProperty(GroupByPropertyName).GetValue(o));
-            Groups = grps.Select(g => new SelectableGroup(this) { Name = g.Key.ToString(), IsSelected = false }).ToList();
-            foreach (var grp in Groups)
-            {
-
-            }
+            Groups = grps.Select(g => new SelectableGroup(this) { Name = g.Key.ToString(), IsSelected = true }).ToList();
+           
             GroupsCollectionUpdated?.Invoke(this, Groups);
         }
 
@@ -75,7 +86,7 @@ namespace scraper.Model
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
-        public bool Passes(object element)
+        public override bool Passes(object element)
         {
             if (Groups == null || !Groups.Any()) return true;
             if (element == null)

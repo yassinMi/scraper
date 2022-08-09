@@ -13,6 +13,11 @@ namespace scraper.Model
             throw new NotImplementedException();
         }
 
+        public override bool Passes(object element)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Update(IEnumerable<object> input)
         {
             throw new NotImplementedException();

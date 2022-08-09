@@ -86,20 +86,30 @@ namespace scraper.ViewModel
             ElementFields = MainPlugin.ElementDescription.Fields.Select(f => f).ToArray();
             ElementFieldsNames = MainPlugin.ElementDescription.Fields.Select(f => f.UIName).ToArray();
 
-            var firstFilterComponent = MainPlugin.FiltersDescription?.FirstOrDefault();
-            if (firstFilterComponent != null)
+            FilterComponenetsVMS = new ObservableCollection<BaseFilterComponentViewModel>();
+            var FilterComponentDescriptors = MainPlugin.FiltersDescription;
+            if (FilterComponentDescriptors != null)
             {
-                GroupsFilterComponentModel gfc_model = new GroupsFilterComponentModel(MainPlugin.ElementModelType,
-                firstFilterComponent.PropertyName);
-
-                DevGroupsFilterVM = new GroupsFilterComponentViewModel(gfc_model);
-                gfc_model.GroupsSelectionGotDirty += (s, e) =>
+                foreach (var desc in FilterComponentDescriptors)
                 {
-                    Debug.WriteLine("GroupsSelectionGotDirty");
-                    notif(nameof(ElementsViewModels));
-                };
-                DevGroupsFilterVM.Model.Update(ElementsViewModels_arr.Select(m=>m.Model));
-            }
+                    if(desc.Type== FilterComponenetType.GroupFilter)
+                    {
+                        GroupsFilterComponentModel gfc_model = new GroupsFilterComponentModel(MainPlugin.ElementModelType,
+                desc.PropertyName);
+
+                        var vm = new GroupsFilterComponentViewModel(gfc_model);
+                        gfc_model.GroupsSelectionGotDirty += (s, e) =>
+                        {
+                            Debug.WriteLine("GroupsSelectionGotDirty");
+                            notif(nameof(ElementsViewModels));
+                        };
+                        vm.Model.Update(ElementsViewModels_arr.Select(m => m.Model));
+                        FilterComponenetsVMS.Add(vm);
+                        Debug.WriteLine("added  FilterComponenetsVMS item");
+
+                    }
+                }
+                 }
            
             
             Debug.WriteLine("endof init");
@@ -146,7 +156,11 @@ namespace scraper.ViewModel
 
         private void onElementsViewModels_arrChanged()
         {
-            DevGroupsFilterVM?.Model?.Update(ElementsViewModels_arr.Select(m=>m.Model));
+            if(FilterComponenetsVMS!=null)
+            foreach (var C in FilterComponenetsVMS)
+            {
+                C.Model.Update(ElementsViewModels_arr.Select(m => m.Model)); //todo improve by removing select 
+            }
         }
 
         private IEnumerable<string> _ElementFieldsNames;
@@ -519,14 +533,14 @@ namespace scraper.ViewModel
                 if(string.IsNullOrWhiteSpace(SearchQuery)) return
                     ElementsViewModels_arr
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
-                    .Where(p=> DevGroupsFilterVM==null||DevGroupsFilterVM.Model.Passes(p.Model))
+                    .Where(p => FilterComponenetsVMS.All(c => (c == null || c.Model.Passes(p.Model))))
                 ;
                 string lowertrim = SearchQuery.ToLower().Trim();
                 return 
                     ElementsViewModels_arr
                     .Where(p => p.Name.ToLower().Contains(lowertrim))
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
-                    .Where(p => DevGroupsFilterVM == null || DevGroupsFilterVM.Model.Passes(p.Model))
+                    .Where(p => FilterComponenetsVMS.All(c=>(c == null || c.Model.Passes(p.Model))))
                     ;
                 }
             set {
@@ -647,15 +661,15 @@ namespace scraper.ViewModel
         }
 
 
-        private IEnumerable<FilterComponentBase> _FilterComponenetsModels;
-        public IEnumerable<FilterComponentBase> FilterComponenetsModels
+        private ObservableCollection<BaseFilterComponentViewModel> _FilterComponenetsVMS;
+        public ObservableCollection<BaseFilterComponentViewModel> FilterComponenetsVMS
         {
-            set { _FilterComponenetsModels = value; notif(nameof(FilterComponenetsModels)); }
-            get { return _FilterComponenetsModels; }
+            set { _FilterComponenetsVMS = value; notif(nameof(FilterComponenetsVMS)); }
+            get { return _FilterComponenetsVMS; }
         }
 
 
-        private GroupsFilterComponentViewModel _DevGroupsFilterVM = null;
+        private  GroupsFilterComponentViewModel _DevGroupsFilterVM = null;
         public GroupsFilterComponentViewModel DevGroupsFilterVM
         {
             set { _DevGroupsFilterVM = value; notif(nameof(DevGroupsFilterVM)); }
