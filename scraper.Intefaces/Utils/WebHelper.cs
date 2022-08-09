@@ -23,18 +23,60 @@ namespace scraper.Core.Utils
         public string GetPageTextSync(string pageUrl)
         {
             var t = this.GetStringAsync(pageUrl);
-
-            t.ContinueWith(te => {
+            Exception erorr = null;
+            string result = null;
+            var res =t.ContinueWith(te => {
                 AggregateException exception = t.Exception;
-                Debug.WriteLine("ContinueWith faulted");
-                throw exception.InnerException;
+                Debug.WriteLine($"ContinueWith faulted: {exception}, inner: {exception?.InnerException}");
+                erorr= exception.InnerException;
             }, TaskContinuationOptions.OnlyOnFaulted) ;
-
-            return t.ContinueWith<string>( tt=> {
+            
+            var f =t.ContinueWith( tt=> {
                 Debug.WriteLine("ContinueWith true");
-                return tt.Result;
-            }, TaskContinuationOptions.OnlyOnRanToCompletion).GetAwaiter().GetResult();
+                result= tt.Result;
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
+            //t.Start();
+            try
+            {
+                Task.WaitAll(res,f);
+            }
+            catch (Exception)
+            {
+
+                
+            }
+            
+            if (erorr != null)
+            {
+                throw erorr;
+            }
+            else {
+                if (result == null)
+                {
+                    throw new Exception("unknown result and error");
+                }
+                else
+                {
+                    return result;
+                }
+            }
+           /*
+            catch (AggregateException er)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("the folowing errors happened:");
+                foreach (var item in er.Flatten().InnerExceptions)
+                {
+                    sb.AppendLine($"{ item.GetType()}:{item.Message}");
+                }
+                Debug.WriteLine(sb.ToString());
+                if(er.Flatten().InnerExceptions.Any(e=>e is HttpRequestException){
+                    throw new Exception(sb.ToString());
+                }
+                else { throw new Exception("unknow error happened"); };
+                
+            }*/
             
         }
 

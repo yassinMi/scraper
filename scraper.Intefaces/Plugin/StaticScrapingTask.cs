@@ -83,9 +83,9 @@ namespace scraper.Core
                     File.WriteAllText(uniqueFilename, rawElementPage);
                     return rawElementPage;
                 }
-                catch (Exception)
+                catch (Exception err)
                 {
-                    Debug.WriteLine("downloadOrRead trwoing");
+                    Debug.WriteLine($"downloadOrRead throw {err.Message}");
                     throw;
                 }
 
@@ -116,6 +116,13 @@ namespace scraper.Core
                     Stage = ScrapTaskStage.Failed;
                     OnStageChanged(Stage);
                     OnError("Network error");
+                    return;
+                }
+                catch (Exception err)
+                {
+                    Stage = ScrapTaskStage.Failed;
+                    OnStageChanged(Stage);
+                    OnError($"Error:{err.GetType().Name}:{err.Message}");
                     return;
                 }
                 HtmlDocument doc = new HtmlDocument();
