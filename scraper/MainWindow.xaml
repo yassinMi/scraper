@@ -398,21 +398,21 @@
                         <Grid x:Name="filtersSection" Grid.Row="2" Margin="4,0,0,0" VerticalAlignment="Top"/>
                         <StackPanel Grid.Row="2">
 
-                            <Expander HorizontalAlignment="Stretch" Header="Categories" Background="#00571919" Visibility="Collapsed">
-                                <Grid Margin="4,0,4,4">
-                                    <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center"><Run Text="None"/></TextBlock>
-                                    <WrapPanel VerticalAlignment="Top" Visibility="Collapsed">
-                                        <CheckBox
-											Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
-											IsChecked="True"
-											Content="targetwebsite.com" Margin="2,4" Visibility="Collapsed" />
-                                        <CheckBox
-											Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}"
-											IsChecked="True"
-											Content="secondwebsite.com" Margin="2,4" Visibility="Collapsed" />
-                                    </WrapPanel>
-                                </Grid>
-                            </Expander>
+                            <ItemsControl ItemsSource="{Binding FilterComponenetsVMS}" d:LayoutOverrides="LeftPosition, RightPosition" AlternationCount="{Binding Items.Count, RelativeSource={RelativeSource Self}}">
+                                <ItemsControl.Resources>
+                                    <DataTemplate DataType="{x:Type ViewModel:GroupsFilterComponentViewModel}">
+                                        <StackPanel>
+                                            <Grid Height="1" x:Name="sepGrd" Background="{StaticResource MaterialDesignDivider}" />
+                                            <View:GroupFilterComponentView DataContext="{Binding}" />
+                                        </StackPanel>
+                                        <DataTemplate.Triggers>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                                <Setter TargetName="sepGrd" Property="Visibility" Value="Collapsed"/>
+                                            </Trigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ItemsControl.Resources>
+                            </ItemsControl>
                             <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
 
                             <Expander HorizontalAlignment="Stretch" Header="Filter" Background="#00571919" IsExpanded="True">
@@ -467,17 +467,10 @@
                                 </materialDesign:DialogHost>
 
                             </Expander>
-                            <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
-                            <ItemsControl ItemsSource="{Binding FilterComponenetsVMS}" d:LayoutOverrides="LeftPosition, RightPosition">
-                                <ItemsControl.Resources>
-                                    <DataTemplate DataType="{x:Type ViewModel:GroupsFilterComponentViewModel}">
-                                        <View:GroupFilterComponentView DataContext="{Binding}" />
-                                    </DataTemplate>
-                                </ItemsControl.Resources>
-                            </ItemsControl>
+                            <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" Visibility="Collapsed" />
                             <Expander
 								HorizontalAlignment="Stretch"
-								Header="Year" Background="#00763838">
+								Header="Year" Background="#00763838" Visibility="Collapsed">
                                 <StackPanel
 									Orientation="Vertical"
 									Margin="24,8,24,16">
