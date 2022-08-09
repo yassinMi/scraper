@@ -103,7 +103,7 @@ namespace scraper.ViewModel
                             Debug.WriteLine("GroupsSelectionGotDirty");
                             notif(nameof(ElementsViewModels));
                         };
-                        vm.Model.Update(ElementsViewModels_arr.Select(m => m.Model));
+                        vm.Model.Update(ElemenetsVMSLoaded.Select(m => m.Model));
                         FilterComponenetsVMS.Add(vm);
                         Debug.WriteLine("added  FilterComponenetsVMS item");
 
@@ -145,21 +145,24 @@ namespace scraper.ViewModel
             }
         }
 
-        private IEnumerable<ElementViewModel> _ElementsViewModels_arr = new List<ElementViewModel>();
-        IEnumerable<ElementViewModel> ElementsViewModels_arr { get {
-                return _ElementsViewModels_arr;
+        private List<ElementViewModel> _ElemenetsVMSLoaded = new List<ElementViewModel>();
+        /// <summary>
+        /// the loaded data unfiltered, this contains all elements from the currently enabled csv resources.
+        /// </summary>
+        List<ElementViewModel> ElemenetsVMSLoaded { get {
+                return _ElemenetsVMSLoaded;
             } set
             {
-                _ElementsViewModels_arr = value;
-                onElementsViewModels_arrChanged();
+                _ElemenetsVMSLoaded = value;
+                onElemenetsVMSLoadedChanged();
             } }
 
-        private void onElementsViewModels_arrChanged()
+        private void onElemenetsVMSLoadedChanged()
         {
             if(FilterComponenetsVMS!=null)
             foreach (var C in FilterComponenetsVMS)
             {
-                C.Model.Update(ElementsViewModels_arr.Select(m => m.Model)); //todo improve by removing select 
+                C.Model.Update(ElemenetsVMSLoaded.Select(m => m.Model)); //todo improve by removing select 
             }
         }
 
@@ -450,16 +453,16 @@ namespace scraper.ViewModel
             //logic that need to be performed when some items changest's IsActive
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
 
-            ElementsViewModels_arr = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ElementViewModel>>(new List<ElementViewModel>(), (i, csvVM) => {
+            ElemenetsVMSLoaded = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ElementViewModel>>(new List<ElementViewModel>(), (i, csvVM) => {
                 var enumerated = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, csvVM.FullPath) .Cast<dynamic>();//ufr
                 if (enumerated == null) return i;
                 return i.Concat(enumerated.Select(p => new ElementViewModel(p,MainPlugin.ElementDescription)));
-            });
+            }).ToList();
             Debug.WriteLine("ienumerable");
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
                             new Action(() =>
                             {
-                                ElementsViewModels = new ObservableCollection<ElementViewModel>(ElementsViewModels_arr);
+                                ElementsViewModels = new ObservableCollection<ElementViewModel>(ElemenetsVMSLoaded);
                                 Debug.WriteLine("list");
 
                                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
@@ -528,16 +531,18 @@ namespace scraper.ViewModel
         }
 
 
-
+        /// <summary>
+        /// the final filtered collection that is rendered on the UI, this used both for the List View and Grid View itemsSource, in GridView the Model property is used to access the fields, while in List View the properties exposed through the ElementViewModel class are used instead
+        /// </summary>
         public IEnumerable<ElementViewModel> ElementsViewModels { get {
                 if(string.IsNullOrWhiteSpace(SearchQuery)) return
-                    ElementsViewModels_arr
+                    ElemenetsVMSLoaded
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
                     .Where(p => FilterComponenetsVMS.All(c => (c == null || c.Model.Passes(p.Model))))
                 ;
                 string lowertrim = SearchQuery.ToLower().Trim();
                 return 
-                    ElementsViewModels_arr
+                    ElemenetsVMSLoaded
                     .Where(p => p.Name.ToLower().Contains(lowertrim))
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
                     .Where(p => FilterComponenetsVMS.All(c=>(c == null || c.Model.Passes(p.Model))))
@@ -750,7 +755,7 @@ namespace scraper.ViewModel
                 {
                     return new ElementViewModel(p,MainPlugin.ElementDescription);
                 }).ToList();
-                ElementsViewModels_arr = new ObservableCollection<ElementViewModel> (lst);
+                ElemenetsVMSLoaded = new List<ElementViewModel> (lst);
                 notif(nameof( ElementsViewModels));
                 
 
@@ -1077,6 +1082,9 @@ namespace scraper.ViewModel
 
         private void hndlDevGPCommand()
         {
+
+
+            return;
             CoreUtils.se();
             return;
             Debug.WriteLine($"creating element item 10000 times into a list");
