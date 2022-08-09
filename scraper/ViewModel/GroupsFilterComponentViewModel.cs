@@ -9,17 +9,21 @@ namespace scraper.ViewModel
 {
     public class GroupsFilterComponentViewModel : BaseViewModel
     {
+        public GroupsFilterComponentModel Model { get;  private set; }
         public GroupsFilterComponentViewModel(GroupsFilterComponentModel model)
         {
-            Groups = new string[] { "group 1", "group 2", "group 3", "group 4 long name to test ui", }.Select(s=>new SelectableGroup() {Name = s, IsSelected = true });
+            Model = model;
+            model.GroupsCollectionUpdated += (s, e) =>
+            {
+                notif(nameof(Groups));
+            };
+            
         }
 
 
-        private IEnumerable<SelectableGroup> _Groups;
         public IEnumerable<SelectableGroup> Groups
         {
-            set { _Groups = value; notif(nameof(Groups)); }
-            get { return _Groups; }
+            get { return Model.Groups; }
         }
 
 

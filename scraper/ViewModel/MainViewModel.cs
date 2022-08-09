@@ -62,7 +62,7 @@ namespace scraper.ViewModel
             foreach (var p in PluginsManager.CachedGlobalPlugins)
             {
                 GlobalUserPlugins.Add(p);
-                
+
             }
             foreach (var i in MainWorkspace.GetScrapingTasksFromFiles())
             {
@@ -73,7 +73,7 @@ namespace scraper.ViewModel
 
             CSVResourcesVMS = new ObservableCollection<CSVResourceVM>(MainWorkspace.CSVResources.Select((sr) =>
             {
-                
+
                 return new CSVResourceVM(sr, MainPlugin);
             }));
             notif(nameof(CurrentPluginName));
@@ -86,6 +86,22 @@ namespace scraper.ViewModel
             ElementFields = MainPlugin.ElementDescription.Fields.Select(f => f).ToArray();
             ElementFieldsNames = MainPlugin.ElementDescription.Fields.Select(f => f.UIName).ToArray();
 
+            var firstFilterComponent = MainPlugin.FiltersDescription?.FirstOrDefault();
+            if (firstFilterComponent != null)
+            {
+                GroupsFilterComponentModel gfc_model = new GroupsFilterComponentModel(MainPlugin.ElementModelType,
+                firstFilterComponent.PropertyName);
+
+                DevGroupsFilterVM = new GroupsFilterComponentViewModel(gfc_model);
+                gfc_model.GroupsSelectionGotDirty += (s, e) =>
+                {
+                    Debug.WriteLine("GroupsSelectionGotDirty");
+                    notif(nameof(ElementsViewModels));
+                };
+                DevGroupsFilterVM.Model.Update(ElementsViewModels_arr.Select(m=>m.Model));
+            }
+           
+            
             Debug.WriteLine("endof init");
 
         }
@@ -118,9 +134,20 @@ namespace scraper.ViewModel
 
             }
         }
-        IEnumerable<ElementViewModel> ElementsViewModels_arr = new List<ElementViewModel>();
 
-        
+        private IEnumerable<ElementViewModel> _ElementsViewModels_arr = new List<ElementViewModel>();
+        IEnumerable<ElementViewModel> ElementsViewModels_arr { get {
+                return _ElementsViewModels_arr;
+            } set
+            {
+                _ElementsViewModels_arr = value;
+                onElementsViewModels_arrChanged();
+            } }
+
+        private void onElementsViewModels_arrChanged()
+        {
+            DevGroupsFilterVM?.Model?.Update(ElementsViewModels_arr.Select(m=>m.Model));
+        }
 
         private IEnumerable<string> _ElementFieldsNames;
         public IEnumerable<string> ElementFieldsNames
@@ -492,13 +519,14 @@ namespace scraper.ViewModel
                 if(string.IsNullOrWhiteSpace(SearchQuery)) return
                     ElementsViewModels_arr
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
+                    .Where(p=> DevGroupsFilterVM==null||DevGroupsFilterVM.Model.Passes(p.Model))
                 ;
                 string lowertrim = SearchQuery.ToLower().Trim();
                 return 
                     ElementsViewModels_arr
                     .Where(p => p.Name.ToLower().Contains(lowertrim))
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
-
+                    .Where(p => DevGroupsFilterVM == null || DevGroupsFilterVM.Model.Passes(p.Model))
                     ;
                 }
             set {
@@ -627,7 +655,7 @@ namespace scraper.ViewModel
         }
 
 
-        private GroupsFilterComponentViewModel _DevGroupsFilterVM = new GroupsFilterComponentViewModel(null);
+        private GroupsFilterComponentViewModel _DevGroupsFilterVM = null;
         public GroupsFilterComponentViewModel DevGroupsFilterVM
         {
             set { _DevGroupsFilterVM = value; notif(nameof(DevGroupsFilterVM)); }

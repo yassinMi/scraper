@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace scraper.Core
 {
 
-    
-    
-   
+
+
+
 
     /// <summary>
     /// supported pattern is: download a page's static elements
@@ -26,6 +26,7 @@ namespace scraper.Core
         public virtual string ElementName { get; } = "Element";
         public virtual string ElementNamePlural { get; } = "Elements";
         private ElementDescription _ElementDescription;
+        public virtual IEnumerable<FilterComponenetDescription> FiltersDescription { get;}
         public virtual ElementDescription ElementDescription
         {
             get

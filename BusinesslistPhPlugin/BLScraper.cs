@@ -24,6 +24,7 @@ namespace BusinesslistPhPlugin
     }
     public class BLScraper : Plugin
     {
+
         public override ElementDescription ElementDescription
         {
             get
@@ -50,6 +51,21 @@ namespace BusinesslistPhPlugin
                 };
             }
         }
+
+
+        public override IEnumerable<FilterComponenetDescription> FiltersDescription
+        {
+            get
+            {
+                return new FilterComponenetDescription[]
+                {
+                    new FilterComponenetDescription() {Header = "Employees", PropertyName="employees", Type= FilterComponenetType.GroupFilter },
+
+                };
+            }
+        }
+
+
         /// <summary>
         /// needded by the plugin to save objects and output files
         /// </summary>
