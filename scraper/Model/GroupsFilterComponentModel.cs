@@ -68,7 +68,11 @@ namespace scraper.Model
         public event EventHandler<IEnumerable<SelectableGroup>> GroupsSelectionGotDirty;
         public override void Update(IEnumerable<object> input)
         {
-            if (input == null || !input.Any()) return;
+            if (input == null || !input.Any()) {
+                Groups = new List<SelectableGroup>();
+                GroupsCollectionUpdated?.Invoke(this, Groups);
+                return;
+            };
             if (input.FirstOrDefault().GetType() != ModelType)
             {
                 Debug.WriteLine($"Objects of type {input.FirstOrDefault().GetType()} does not match expected model type {ModelType }");
@@ -76,7 +80,13 @@ namespace scraper.Model
             }
 
             var grps = input.GroupBy(o => ModelType.GetProperty(GroupByPropertyName).GetValue(o));
-            Groups = grps.Select(g => new SelectableGroup(this) { Name = g.Key.ToString(), IsSelected = true }).ToList();
+            SelectableGroup[] previouslyDisabledGroups = null;
+            if (Groups!=null && Groups.Any())
+            {
+                //preserving the groups disabled state for better UX 
+                previouslyDisabledGroups = Groups.Where(g => g.IsSelected == false).ToArray();
+            }
+            Groups = grps.Select(g => new SelectableGroup(this) { Name = g.Key.ToString(), IsSelected = (previouslyDisabledGroups!=null)&& previouslyDisabledGroups.Any(d=>d.Name==g.Key.ToString())? false :true }).ToList();
            
             GroupsCollectionUpdated?.Invoke(this, Groups);
         }

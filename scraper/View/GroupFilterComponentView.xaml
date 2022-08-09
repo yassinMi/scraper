@@ -16,8 +16,8 @@
     <Grid>
         <Expander HorizontalAlignment="Stretch" Header="{Binding Model.Header, Mode=OneWay}" Background="#00571919">
             <Grid Margin="4,0,4,4">
-                <TextBlock Foreground="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Model.Groups.Count, Converter={StaticResource BooleanToVisibilityInverted}, Mode=OneWay}"><Run Text="None"/></TextBlock>
-                <ItemsControl ItemsSource="{Binding Groups}">
+                <TextBlock Foreground="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Items.Count, Converter={StaticResource BooleanToVisibilityInverted}, ElementName=itemsControl, Mode=OneWay}"><Run Text="None"/></TextBlock>
+                <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Groups}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel IsItemsHost="True" VerticalAlignment="Top" />
