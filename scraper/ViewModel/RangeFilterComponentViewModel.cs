@@ -15,16 +15,12 @@ namespace scraper.ViewModel
         public RangeFilterComponentViewModel()
         {
             //design time only ctor   
-            notif(nameof(Header));
-            (Model as RangeFilterComponentModel).Error += (s, e) =>
-            {
-                ValidationErrorMessage = e;
-            };
+            
 
         }
 
 
-        private string _ValidationErrorMessage;
+        private string _ValidationErrorMessage=null;
         public string ValidationErrorMessage
         {
             set { _ValidationErrorMessage = value; notif(nameof(ValidationErrorMessage)); }
@@ -60,6 +56,14 @@ namespace scraper.ViewModel
         public RangeFilterComponentViewModel(RangeFilterComponentModel model)
         {
             this.Model = model;
+            notif(nameof(Header));
+            ((RangeFilterComponentModel)Model).Error += (s, e) =>
+            {
+                ValidationErrorMessage = e;
+                Debug.WriteLine(e);
+                notif(ValidationErrorMessage);
+                Debug.WriteLine(ValidationErrorMessage);
+            };
         }
 
         public override string Header

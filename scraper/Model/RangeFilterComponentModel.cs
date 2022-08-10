@@ -14,6 +14,7 @@ namespace scraper.Model
         public RangeFilterComponentModel(FilterComponenetDescription desc)
         {
             originalDescriptor = desc;
+            Header = desc.Header;
         }
         public override IEnumerable<T> Filter<T>(IEnumerable<T> input)
         {

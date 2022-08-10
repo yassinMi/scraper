@@ -60,7 +60,16 @@ namespace BusinesslistPhPlugin
                 return new FilterComponenetDescription[]
                 {
                     new FilterComponenetDescription() {Header = "Filter by employees", PropertyName="employees", Type= FilterComponenetType.GroupFilter },
-                    new FilterComponenetDescription() {Header = "Filter by year", PropertyName="year", Type= FilterComponenetType.RangeFilter, IsInRange=(min,max,e)=> { return true; }, MinMaxValidator = (val)=> {  return new Tuple<bool, string>(true, null); } },
+                    new FilterComponenetDescription() {Header = "Filter by year", PropertyName="year", Type= FilterComponenetType.RangeFilter,
+                        IsInRange =(min,max,e)=> {
+                            return true;
+                        }
+                        , MinMaxValidator = (val)=> {
+                            int i;
+                            if(int.TryParse(val,out i)==false) return new Tuple<bool, string>(false, "invalid year");
+                            return new Tuple<bool, string>(true, null);
+                        }
+                    },
                 };
             }
         }
