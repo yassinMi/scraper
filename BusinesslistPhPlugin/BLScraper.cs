@@ -62,7 +62,20 @@ namespace BusinesslistPhPlugin
                     new FilterComponenetDescription() {Header = "Filter by employees", PropertyName="employees", Type= FilterComponenetType.GroupFilter },
                     new FilterComponenetDescription() {Header = "Filter by year", PropertyName="year", Type= FilterComponenetType.RangeFilter,
                         IsInRange =(min,max,e)=> {
-                            return true;
+                            Business b = e as Business;
+                            if(b==null) return true;
+                            int b_year;
+                            //returning true on missing data
+                            if(int.TryParse(b.year, out b_year)==false) return true;
+                            int min_i, max_i;
+                            //returning true on bad params (not supposed to make it here)
+                            if(!int.TryParse(min,out min_i)) return true;
+                            if(!int.TryParse(max,out max_i)) return true;
+                            if(b_year<=max_i && b_year >=min_i) return true;
+                            else
+                            {
+                                return false;
+                            }
                         }
                         , MinMaxValidator = (val)=> {
                             int i;
