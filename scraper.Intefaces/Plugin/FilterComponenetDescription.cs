@@ -21,9 +21,8 @@ namespace scraper.Core
         /// called when the user changes the Min or Max parameter, must return must return a value indicating whether the user input is valid
         /// </summary>
         /// <param name="input"></param>
-        /// <param name="errorMessage">the UI error message to display</param>
-        /// <returns></returns>
-        public delegate bool ValidateMinMaxParameterHandler(string input, out string errorMessage);
+        /// <returns>bool, string: the UI error message to be displayed if invalid</returns>
+        public delegate Tuple<bool, string> ValidateMinMaxParameterHandler(string input);
 
         /// <summary>
         /// predicate used to filter the elements

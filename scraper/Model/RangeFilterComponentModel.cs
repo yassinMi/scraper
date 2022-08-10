@@ -29,8 +29,10 @@ namespace scraper.Model
             }
             set
             {
-                if (!originalDescriptor.MinMaxValidator(value, out ErrorMessage))
+                var val_res = originalDescriptor.MinMaxValidator(value);
+                if (!val_res.Item1)
                 {
+                    ErrorMessage = val_res.Item2;
                     onErrorMessageChanged();
                     min = null;
                     return;
@@ -57,9 +59,11 @@ namespace scraper.Model
                 return max;
             }
             set
-            {     
-                if(!originalDescriptor.MinMaxValidator(value,out ErrorMessage))
+            {
+                var val_res = originalDescriptor.MinMaxValidator(value);
+                if (!val_res.Item1)
                 {
+                    ErrorMessage = val_res.Item2;
                     onErrorMessageChanged();
                     max = null;
                     return;
