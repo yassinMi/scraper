@@ -160,6 +160,7 @@
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\CSVResourceVM.cs" />
     <Compile Include="ViewModel\FilteringRuleViewModel.cs" />
+    <Compile Include="ViewModel\RangeFilterComponentViewModel.cs" />
     <Compile Include="ViewModel\GroupsFilterComponentViewModel.cs" />
     <Compile Include="ViewModel\HelpVM.cs" />
     <Compile Include="ViewModel\HomeScreen\RecentWorkspaceVM.cs" />
@@ -178,6 +179,9 @@
     </Compile>
     <Compile Include="View\ProductCardView.xaml.cs">
       <DependentUpon>ProductCardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RangeFilterComponentView.xaml.cs">
+      <DependentUpon>RangeFilterComponentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ScrapingActionCardView.xaml.cs">
       <DependentUpon>ScrapingActionCardView.xaml</DependentUpon>
@@ -218,6 +222,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ProductCardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RangeFilterComponentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -94,10 +94,7 @@ namespace scraper.ViewModel
                 {
                     if(desc.Type== FilterComponenetType.GroupFilter)
                     {
-                        GroupsFilterComponentModel gfc_model = 
-                            new GroupsFilterComponentModel(MainPlugin.ElementModelType,
-                desc.PropertyName,desc.Header);
-
+                        var gfc_model = new GroupsFilterComponentModel(MainPlugin.ElementModelType, desc.PropertyName,desc.Header);
                         var vm = new GroupsFilterComponentViewModel(gfc_model);
                         gfc_model.GroupsSelectionGotDirty += (s, e) =>
                         {
@@ -107,7 +104,19 @@ namespace scraper.ViewModel
                         vm.Model.Update(ElemenetsVMSLoaded.Select(m => m.Model));
                         FilterComponenetsVMS.Add(vm);
                         Debug.WriteLine("added  FilterComponenetsVMS item");
-
+                    }
+                    else if (desc.Type == FilterComponenetType.RangeFilter)
+                    {
+                        var rfc_model = new RangeFilterComponentModel( desc);
+                        var vm = new RangeFilterComponentViewModel(rfc_model);
+                        rfc_model.RangeParamsGotDirty += (s, e) =>
+                        {
+                            Debug.WriteLine("RangeParamsGotDirty");
+                            notif(nameof(ElementsViewModels));
+                        };
+                        vm.Model.Update(ElemenetsVMSLoaded.Select(m => m.Model));
+                        FilterComponenetsVMS.Add(vm);
+                        Debug.WriteLine("added  FilterComponenetsVMS item");
                     }
                 }
                  }
