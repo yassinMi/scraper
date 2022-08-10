@@ -32,7 +32,6 @@ namespace scraper.Attached
         private static void hndlPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             Debug.WriteLine($"Adding columns");
-            Debug.WriteLine($"new vaues is "+ e.NewValue.GetType());
 
             DataGrid dg = d as DataGrid;
             IEnumerable<Field> fields = e.NewValue as IEnumerable<Field>;
@@ -40,12 +39,11 @@ namespace scraper.Attached
                 dg.Columns.Clear();return;
             }
             dg.Columns.Clear();
-            Debug.WriteLine($"Adding columns 2");
 
             foreach (var f in fields)
             {
                 if (f.IsDataGridDisabled) continue;
-                Debug.WriteLine($"Adding columns: {f.UIName}");
+                Debug.WriteLine($"Adding column: {f.UIName}");
                 DataGridTextColumn c = new DataGridTextColumn();
                 TextBlock htb = new TextBlock();
                 htb.Text = f.UIName;

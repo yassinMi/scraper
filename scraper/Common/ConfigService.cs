@@ -215,7 +215,6 @@ namespace Mi.Common
         public event PropertyChangedEventHandler PropertyChanged;
         private void notif(string propertyName)
         {
-            Trace.WriteLine("ConfigServce Instance is dirty");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 

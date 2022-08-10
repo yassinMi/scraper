@@ -459,18 +459,15 @@ namespace scraper.ViewModel
                 if (enumerated == null) return i;
                 return i.Concat(enumerated.Select(p => new ElementViewModel(p,MainPlugin.ElementDescription)));
             }).ToList();
-            Debug.WriteLine("ienumerable");
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
                             new Action(() =>
                             {
                                 ElementsViewModels = new ObservableCollection<ElementViewModel>(ElemenetsVMSLoaded);
-                                Debug.WriteLine("list");
-
                                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
                                     new Action(() =>
                                     {
                                         notif(nameof(ElementsViewModels));
-                                        Debug.WriteLine("CG collect");
+                                        Debug.WriteLine("GC collect");
                                         GC.Collect(4, GCCollectionMode.Forced);
                                     }));
 
