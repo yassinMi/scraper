@@ -411,6 +411,17 @@
                                                 </Trigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
+                                        <DataTemplate DataType="{x:Type ViewModel:RangeFilterComponentViewModel}">
+                                            <StackPanel>
+                                                <Grid Height="1" x:Name="sepGrd" Background="{StaticResource MaterialDesignDivider}" />
+                                                <View:RangeFilterComponentView DataContext="{Binding}" />
+                                            </StackPanel>
+                                            <DataTemplate.Triggers>
+                                                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                                    <Setter TargetName="sepGrd" Property="Visibility" Value="Collapsed"/>
+                                                </Trigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
                                     </ItemsControl.Resources>
                                 </ItemsControl>
                                 <Grid Height="1"  Background="{StaticResource MaterialDesignDivider}" />
