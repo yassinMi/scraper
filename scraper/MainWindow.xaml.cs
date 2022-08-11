@@ -53,7 +53,7 @@ namespace scraper
                 {
                     ws = Workspace.Load(ws_dir);
                 }
-                catch (MissingPluginException err)
+                catch (Exception err) when (err is MissingPluginException || err is WorkspaceNotFoundException)
                 {
                     MessageBox.Show(err.Message, "error", MessageBoxButton.OK, MessageBoxImage.Error);
                     //fassling back to the setup mode 

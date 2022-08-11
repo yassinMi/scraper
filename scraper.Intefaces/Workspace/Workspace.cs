@@ -84,14 +84,17 @@ namespace scraper.Core.Workspace
             return res;
         }
         /// <summary>
-        /// exceptions: MissingPluginException when the specified ws requires a plugin that counld not be found at pluginManager.GetGlobalPlugins (which implies that it's missing or incompatible) 
+        /// <para>
+        /// WorkspaceNotFoundException : if the specified folder doesn't correspond to a workspace folder (criteria: folder exists and has a valid plugins ptr file)
+        /// </para><para>MissingPluginException : when the specified ws requires a plugin that counld not be found at pluginManager.GetGlobalPlugins (which implies that it's missing or incompatible)
+        /// </para>
         /// </summary>
         /// <param name="workspacePath"></param>
         /// <returns></returns>
         public static Workspace Load(string workspacePath)
         {
             if (string.IsNullOrWhiteSpace( workspacePath )) throw new Exception("workspacePath cannot be null"); // workspacePath = ConfigService.Instance.WorkspaceDirectory;
-            if (!Exists(workspacePath)) throw new Exception($"cannot load workspace at '{workspacePath}' because the're is no folder and/or plugin ptr file");
+            if (!Exists(workspacePath)) throw new WorkspaceNotFoundException($"cannot load workspace at '{workspacePath}' because there is no folder and/or plugin ptr file");
             Workspace res = new Workspace() { Directory = workspacePath };
             res.CSVResources = new List<CSVResource>();
             

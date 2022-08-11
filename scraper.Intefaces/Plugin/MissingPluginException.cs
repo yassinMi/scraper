@@ -13,4 +13,12 @@ namespace scraper.Core
 
         }
     }
+
+    public class WorkspaceNotFoundException : Exception
+    {
+        public WorkspaceNotFoundException(string s):base(s)
+        {
+
+        }
+    }
 }

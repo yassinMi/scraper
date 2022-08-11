@@ -822,13 +822,11 @@ namespace scraper.ViewModel
             {
                 ws = Workspace.Load(ws_dir);
             }
-            catch (MissingPluginException err)
+            catch (Exception err) when (err is MissingPluginException || err is WorkspaceNotFoundException)
             {
                 MessageBox.Show(err.Message, "error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            
-
             Workspace.MakeCurrent(ws);
             Trace.Assert(ws.Plugin != null, "failed to load any plugins, make sure to have a .scraper/plugins file pointing to existing global plugins or chose a plugin before creating workspace");
             MainWorkspace = ws;
