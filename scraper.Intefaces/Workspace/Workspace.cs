@@ -84,7 +84,7 @@ namespace scraper.Core.Workspace
             return res;
         }
         /// <summary>
-        /// incomplete: doesnt loead the Plugin property (utils refactoring needed)
+        /// exceptions: MissingPluginException when the specified ws requires a plugin that counld not be found at pluginManager.GetGlobalPlugins (which implies that it's missing or incompatible) 
         /// </summary>
         /// <param name="workspacePath"></param>
         /// <returns></returns>
@@ -98,6 +98,7 @@ namespace scraper.Core.Workspace
             SetUpWorkspaceFolders(res);
             //assign plugin
             res.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == res.PluginsNames.FirstOrDefault());
+            if (res.Plugin == null) throw new MissingPluginException($"cannot load workspace at '{res.Directory}' because plugin '{res.PluginsNames.FirstOrDefault()}' is missing or has incompatible varsion");
             var all_file_in_csv = System.IO.Directory.GetFiles(res.CSVOutputFolder);
             foreach (var item in all_file_in_csv)
             {

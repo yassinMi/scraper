@@ -48,7 +48,18 @@ namespace scraper
             {
                 Debug.WriteLine($"starting ws dir is{ws_dir}");
                 Debug.WriteLine($"loading workspace at {ws_dir}");
-                var ws = Workspace.Load(ws_dir);
+                Workspace ws=null;
+                try
+                {
+                    ws = Workspace.Load(ws_dir);
+                }
+                catch (MissingPluginException err)
+                {
+                    MessageBox.Show(err.Message, "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //fassling back to the setup mode 
+                    DataContext = new MainViewModel();
+                    return;
+                }
                 Workspace.MakeCurrent(ws);
                 Core.Plugin plugin = ws.Plugin;
                 Trace.Assert(plugin != null, "failed to load any plugins into the workspace, make sure to have a .scraper/plugins file pointing to existing global plugins");

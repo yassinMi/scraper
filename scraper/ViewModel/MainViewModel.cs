@@ -35,6 +35,8 @@ namespace scraper.ViewModel
 
         public MainViewModel(Core.Plugin plugin, Workspace workspace)
         {
+            if (plugin == null) throw new ArgumentNullException( nameof(plugin), "cannot create MainViewModel instance using null plugin param");
+            if (plugin == null) throw new ArgumentNullException(nameof(plugin), "cannot create MainViewModel instance using null workspace param");
             MainPlugin = plugin;
             MainWorkspace = workspace;
             Init();
@@ -815,8 +817,17 @@ namespace scraper.ViewModel
 
         private void hndlOpenRecentWorkspaceCommand(string ws_dir)
         {
-            Workspace ws = Workspace.Load(ws_dir);
-            ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(pl => pl.Name == ws.PluginsNames.FirstOrDefault());
+            Workspace ws = null;
+            try
+            {
+                ws = Workspace.Load(ws_dir);
+            }
+            catch (MissingPluginException err)
+            {
+                MessageBox.Show(err.Message, "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            
 
             Workspace.MakeCurrent(ws);
             Trace.Assert(ws.Plugin != null, "failed to load any plugins, make sure to have a .scraper/plugins file pointing to existing global plugins or chose a plugin before creating workspace");
@@ -884,9 +895,17 @@ namespace scraper.ViewModel
             else
             {
                 //open mode
-                ws = Workspace.Load(ws_dir);
-                ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(pl => pl.Name == ws.PluginsNames.FirstOrDefault());
-
+                try
+                {
+                    ws = Workspace.Load(ws_dir);
+                }
+                catch (MissingPluginException err)
+                {
+                    MessageBox.Show(err.Message, "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return ;
+                }
+                //ws.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(pl => pl.Name == ws.PluginsNames.FirstOrDefault());
+                
                 Workspace.MakeCurrent(ws);
             }
             

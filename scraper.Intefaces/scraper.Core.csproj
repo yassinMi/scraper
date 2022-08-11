@@ -81,6 +81,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Plugin\Attributes\CoreAPIVersionAttribute.cs" />
     <Compile Include="Plugin\FilterComponenetDescription.cs" />
+    <Compile Include="Plugin\MissingPluginException.cs" />
     <Compile Include="Plugin\PluginUsageInfo.cs" />
     <Compile Include="Plugin\StaticScrapingTask.cs" />
     <Compile Include="Plugin\TaskStatsInfo.cs" />
