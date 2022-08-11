@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -48,7 +49,15 @@ namespace scraper.Core.Utils
     }
     public static class CoreUtils
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>null in case the attribute is missing </returns>
+        public static string GetCurrentCoreAPIVersion()
+        {
+            var cav = typeof(Plugin).Assembly.GetCustomAttribute<Attributes.CoreAPIVersionAttribute>();
+            return cav?.APIVersion;
+        }
         public static void se()
         {
             var opts = new ChromeOptions() { };

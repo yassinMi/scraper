@@ -6,7 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+///declaring the current core api version this should be upated when breaking hanges are made to the core api
+[assembly:scraper.Core.Attributes.CoreAPIVersion("0.1.2")]
 namespace scraper.Core
 {
 

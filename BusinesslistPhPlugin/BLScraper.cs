@@ -14,7 +14,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-
+///declaring the core api version that this plugin is written for
+[assembly: scraper.Core.Attributes.CoreAPIVersion("0.1.2")]
 namespace BusinesslistPhPlugin
 {
     public class BusinessCompact

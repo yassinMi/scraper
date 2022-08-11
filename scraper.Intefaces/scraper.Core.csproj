@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="DownloadingProg.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Plugin\Attributes\CoreAPIVersionAttribute.cs" />
     <Compile Include="Plugin\FilterComponenetDescription.cs" />
     <Compile Include="Plugin\PluginUsageInfo.cs" />
     <Compile Include="Plugin\StaticScrapingTask.cs" />
