@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+[assembly:scraper.Core.Attributes.CoreAPIVersion("0.1.2")]
 namespace GoogleSearchPlugin
 {
     public class GSScraper: Plugin
