@@ -183,7 +183,8 @@ namespace scraper.Core.Utils
                         list = csv.GetRecords(recordType).ToList();
                     }
                 }
-                catch (HeaderValidationException err)
+                catch (Exception err) when (err is HeaderValidationException 
+                || err is CsvHelper.MissingFieldException)
                 {
                     return null;
                 }
