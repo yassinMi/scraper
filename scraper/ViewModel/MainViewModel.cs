@@ -774,7 +774,7 @@ namespace scraper.ViewModel
 
         private void handleCloseWindowCommand()
         {
-            if(mw!=null)
+            if (mw!=null)
             mw.Close();
         }
         public ICommand CloseWindowCommand { get { return new MICommand(handleCloseWindowCommand); } }

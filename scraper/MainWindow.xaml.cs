@@ -33,49 +33,48 @@ namespace scraper
     {
         public MainWindow()
         {
-            Debug.WriteLine("starting main window");
-            InitializeComponent();
-
-            string ws_dir = getStartupWs();
-            Debug.WriteLine("getting startup ws dir retured: " + ws_dir);
-            if (ws_dir == null)
+            try
             {
-                Debug.WriteLine("no starting ws dir could be determined");
-                Debug.WriteLine("instantiating a fresh MainVewModel (setup screen mode)");
-                DataContext = new MainViewModel();
-            }
-            else
-            {
-                Debug.WriteLine($"starting ws dir is{ws_dir}");
-                Debug.WriteLine($"loading workspace at {ws_dir}");
-                Workspace ws=null;
-                try
+                Debug.WriteLine("starting main window");
+                InitializeComponent();
+                string ws_dir = getStartupWs();
+                Debug.WriteLine("getting startup ws dir retured: " + ws_dir);
+                if (ws_dir == null)
                 {
-                    ws = Workspace.Load(ws_dir);
-                }
-                catch (Exception err) when (err is MissingPluginException || err is WorkspaceNotFoundException)
-                {
-                    MessageBox.Show(err.Message, "error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //fassling back to the setup mode 
+                    Debug.WriteLine("no starting ws dir could be determined");
+                    Debug.WriteLine("instantiating a fresh MainVewModel (setup screen mode)");
                     DataContext = new MainViewModel();
-                    return;
                 }
-                Workspace.MakeCurrent(ws);
-                Core.Plugin plugin = ws.Plugin;
-                Trace.Assert(plugin != null, "failed to load any plugins into the workspace, make sure to have a .scraper/plugins file pointing to existing global plugins");
-                 //new BLScraper() { WorkspaceDirectory = ws.Directory };
-                DataContext = new MainViewModel(plugin,ws);
+                else
+                {
+                    Debug.WriteLine($"starting ws dir is{ws_dir}");
+                    Debug.WriteLine($"loading workspace at {ws_dir}");
+                    Workspace ws = null;
+                    try
+                    {
+                        ws = Workspace.Load(ws_dir);
+                    }
+                    catch (Exception err) when (err is MissingPluginException || err is WorkspaceNotFoundException)
+                    {
+                        MessageBox.Show(err.Message, "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        //fassling back to the setup mode 
+                        DataContext = new MainViewModel();
+                        return;
+                    }
+                    Workspace.MakeCurrent(ws);
+                    Core.Plugin plugin = ws.Plugin;
+                    Trace.Assert(plugin != null, "failed to load any plugins into the workspace, make sure to have a .scraper/plugins file pointing to existing global plugins");
+                    //new BLScraper() { WorkspaceDirectory = ws.Directory };
+                    DataContext = new MainViewModel(plugin, ws);
+                }
             }
-
-            
-            
-            
-     
-
-            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight-(SystemParameters.WindowResizeBorderThickness.Top+ SystemParameters.WindowResizeBorderThickness.Bottom);
-            this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
-            ((MainViewModel)DataContext).mw = this;
-            Debug.WriteLine("endof mw ctor");
+            finally
+            {
+                this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - (SystemParameters.WindowResizeBorderThickness.Top + SystemParameters.WindowResizeBorderThickness.Bottom);
+                this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+                ((MainViewModel)DataContext).mw = this;
+                Debug.WriteLine("endof mw ctor");
+            }
         }
 
         /// <summary>
