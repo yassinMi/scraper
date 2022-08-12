@@ -75,6 +75,18 @@ namespace scraper.Core
             if ((TargetHost != null) && !((website == TargetHost))) return false;
             return true;
         }
+        /// <summary>
+        /// filter elements by search query, the default behaviour uses the first property in the model type as the value and checks whather it contains the query string
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="searchQuery"></param>
+        /// <returns></returns>
+        public virtual bool SearchPredicate(object element, string searchQuery)
+        {
+            var first_property = element.GetType().GetProperties().FirstOrDefault();
+            if (first_property == null) return true;
+            return first_property.GetValue(element).ToString().ToLower().Contains(searchQuery);
+        }
     }
 
 

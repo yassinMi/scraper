@@ -552,7 +552,7 @@ namespace scraper.ViewModel
                 string lowertrim = SearchQuery.ToLower().Trim();
                 return 
                     ElemenetsVMSLoaded
-                    .Where(p => p.Name.ToLower().Contains(lowertrim))
+                    .Where(p => MainPlugin.SearchPredicate(p.Model,lowertrim))
                     .Where(p => FilterRulesVMS.All(r => r.Model.Check(p.Model)))
                     .Where(p => FilterComponenetsVMS.All(c=>(c == null || c.Model.Passes(p.Model))))
                     ;
