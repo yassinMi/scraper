@@ -68,10 +68,15 @@ namespace scraper
                     DataContext = new MainViewModel(plugin, ws);
                 }
             }
+            catch
+            {
+                throw;
+            }
             finally
             {
                 this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - (SystemParameters.WindowResizeBorderThickness.Top + SystemParameters.WindowResizeBorderThickness.Bottom);
                 this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+                if (DataContext != null) 
                 ((MainViewModel)DataContext).mw = this;
                 Debug.WriteLine("endof mw ctor");
             }

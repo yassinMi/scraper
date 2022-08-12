@@ -19,6 +19,14 @@ namespace scraper.ViewModel
             IsBadFormat = cr.isbadFormat;
             IsRemoved = cr.isRemoved;
             FullPath = cr.Path.OriginalString;
+            cr.Changed += (s, e) =>
+            {
+                RowsCount = cr.Rows;
+                FilenameOnly = System.IO.Path.GetFileName(cr.Path.OriginalString);
+                IsBadFormat = cr.isbadFormat;
+                IsRemoved = cr.isRemoved;
+                FullPath = cr.Path.OriginalString;
+            };
         }
         public CSVResourceVM()
         {
@@ -49,8 +57,17 @@ namespace scraper.ViewModel
         private bool _IsBadFormat;
         public bool IsBadFormat
         {
-            set { _IsBadFormat = value; notif(nameof(IsBadFormat)); }
+            set { _IsBadFormat = value; notif(nameof(IsBadFormat)); notif(nameof(IsEnabled)); }
             get { return _IsBadFormat; }
+        }
+
+        /// <summary>
+        /// exposes the inverted IsBadFormat for usage by IsEnebled listBoxItem property
+        /// </summary>
+        public bool IsEnabled
+        {
+            
+            get { return !IsBadFormat; }
         }
 
 

@@ -466,8 +466,9 @@ namespace scraper.ViewModel
             TotalRecordsCountString = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, int>(0, (v, i) => v + i.RowsCount).ToString();
 
             ElemenetsVMSLoaded = CSVResourcesVMS.Where(i => i.IsActive).Aggregate<CSVResourceVM, IEnumerable<ElementViewModel>>(new List<ElementViewModel>(), (i, csvVM) => {
-                var enumerated = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, csvVM.FullPath) .Cast<dynamic>();//ufr
+                IEnumerable<object> enumerated = CSVUtils.parseCSVfile(MainPlugin.ElementModelType, csvVM.FullPath);
                 if (enumerated == null) return i;
+                enumerated = enumerated.Cast<dynamic>();//ufr
                 return i.Concat(enumerated.Select(p => new ElementViewModel(p,MainPlugin.ElementDescription)));
             }).ToList();
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,

@@ -20,9 +20,30 @@ namespace scraper.Core.Utils
         /// </summary>
         /// <param name="path">must exist</param>
         /// <returns></returns>
-        public static bool checkCSV(string path,ElementDescription elementDescriptor, out int rowsCount, out int validRowsCount)
+        public static bool checkCSV(string path, Plugin plugin, out int rowsCount, out int validRowsCount)
         {
             Debug.WriteLine("parsing csv: " + path);
+            //# validating header
+            using (var reader = new StreamReader(path))
+                try
+                {
+                    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                    {
+                        csv.Read();
+                        csv.ReadHeader();
+                        csv.ValidateHeader(plugin.ElementModelType);
+                    }
+                }
+                catch (Exception err) when (err is CsvHelper.ReaderException ||
+                err is HeaderValidationException
+                )
+                {
+                    rowsCount = 0; validRowsCount = 0;
+                    return false;
+                }
+        
+
+            //# validatinng rows: format is considered bad if no valid rows found
             using (TextFieldParser csvParser = new TextFieldParser(path))
             {
                 rowsCount = 0;
@@ -39,7 +60,7 @@ namespace scraper.Core.Utils
                     {
                         //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
                         string[] fields = csvParser.ReadFields();
-                        int ed_fields_cc = elementDescriptor.Fields.Count();
+                        int ed_fields_cc = plugin.ElementDescription.Fields.Count();
                         isCurrentRowValid &= (fields.Count() == ed_fields_cc);
                         if (isCurrentRowValid == false) {
                             Debug.WriteLine($"bad csv format: {fields.Count()} fields exist while {ed_fields_cc} are expected in csv resource '{path}'");
@@ -48,7 +69,7 @@ namespace scraper.Core.Utils
 
                         byte f_ix = 0;
                         //company,contactPerson,address,phonenumber,email,employees,website,year,imageUrl,link,description
-                        foreach (var f in elementDescriptor.Fields)
+                        foreach (var f in plugin.ElementDescription.Fields)
                         {
                             if (f.IsRequired)
                             {
@@ -83,7 +104,7 @@ namespace scraper.Core.Utils
 
                     }
                 }
-                return validRowsCount == 0;
+                return validRowsCount != 0;
             }
         }
 
@@ -138,7 +159,13 @@ namespace scraper.Core.Utils
 
             return list;
         }
-        public static IEnumerable parseCSVfile(Type recordType, string path)
+        /// <summary>
+        /// returns null when bad data or missing file
+        /// </summary>
+        /// <param name="recordType"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static IEnumerable<object> parseCSVfile(Type recordType, string path)
         {
             Debug.WriteLine("parsing csv: " + path);
             bool fileExixsts = File.Exists(path);
@@ -149,10 +176,18 @@ namespace scraper.Core.Utils
             }
             List<object> list = new List<object>();
             using (var reader = new StreamReader(path))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                list = csv.GetRecords(recordType).ToList();
-            }
+                try
+                {
+                    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                    {
+                        list = csv.GetRecords(recordType).ToList();
+                    }
+                }
+                catch (HeaderValidationException err)
+                {
+                    return null;
+                }
+            
 
             return list;
         }
