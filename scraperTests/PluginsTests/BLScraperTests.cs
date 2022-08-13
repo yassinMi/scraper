@@ -5,6 +5,7 @@ using scraper.Core.Utils;
 using scraper.Core.Workspace;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,8 +46,9 @@ namespace scraperTests.PluginsTests
             foreach (var known_page in BLScraperTestsData.KnownPages())
             {
                 var ttask = tws.Plugin.GetTask(known_page.targetPageUrl);
-                
-                 ttask.RunScraper(new System.Threading.CancellationToken()).GetAwaiter().GetResult();
+                var sw = Stopwatch.StartNew();
+                ttask.RunScraper(new System.Threading.CancellationToken()).GetAwaiter().GetResult();
+                Debug.WriteLine($"RunScraper for known page:'{known_page.targetPageUrl}' took {sw.Elapsed}");
                 Assert.IsTrue(File.Exists(ttask.ActualOutputFile),$"task didn't generate the file expected at '{ttask.ActualOutputFile}'");
                 Assert.IsTrue(File.ReadAllText(ttask.ActualOutputFile) == File.ReadAllText(known_page.csvRef), $"generated file content at '{ttask.ActualOutputFile}' diffres from the csv.ref counterpart at '{known_page.csvRef}'");
                                 
