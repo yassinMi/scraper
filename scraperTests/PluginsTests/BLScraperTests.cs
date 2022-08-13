@@ -38,9 +38,12 @@ namespace scraperTests.PluginsTests
             }
         }
 
+        [TestCategory("results")]
         [TestMethod]
         public void CorrectResults()
         {
+            var h = CoreUtils.getUniqueLinkHash(@"https://www.businesslist.ph/company/296663/basilio-rentals-and-sales-corp");
+            Debug.WriteLine(h);
             PluginTestsUtils.initialize();
             var tws = PluginTestsUtils.loadOrCreateTestsWorkspace(BLScraperTestsData.bl_tests_ws_path, BLScraperTestsData.pluginName);
             foreach (var known_page in BLScraperTestsData.KnownPages())

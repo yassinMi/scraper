@@ -27,6 +27,16 @@ namespace scraperTests.PluginsTests
             });
 
 
+
+            res.Add(new TargetPageBLScraperTestData()
+            {
+                targetPageUrl = @"https://www.businesslist.ph/location/santa-rosa-city",
+                elementsCount = -1,
+                csvRef = @"E:\TOOLS\scraper\tests.yass\blWorkspace\cs.ref\Companies in Santa Rosa City, Philippines.csv",
+                pagesCount = 9
+            });
+
+
             return res;
 
         }

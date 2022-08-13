@@ -252,6 +252,7 @@ namespace BusinesslistPhPlugin
         }
         public static string getEmail(HtmlNode elementPage)
         {
+            //return "testing email resolving performance effect";
             //System.Net.WebUtility.HtmlDecode
             string email = elementPage.InnerHtml;
             Regex regex = new Regex(@"([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)");
@@ -261,11 +262,24 @@ namespace BusinesslistPhPlugin
             else
                 return "N/A";
         }
+        //efficient version
+        public static string getEmail_2(HtmlNode pageNode)
+        {
+            //string html_s = pageNode.SelectSingleNode("//div[@id='company_item']")?.OuterHtml;
+            string html_s = pageNode.SelectSingleNode("//div[@class='cmp_details']")?.OuterHtml
+                + pageNode.SelectSingleNode("//div[@class='cmp_more']")?.OuterHtml;
+            Regex regex = new Regex(@"[\w\.\-]+@[\w\-]+(\.(\w){2,3})+");
+            Match match = regex.Match(html_s);
+            if (match.Success)
+                return match.Value;
+            else
+                return "N/A";
+        }
         public static string getWebsite(HtmlNode elementPage)
         {
             return "unr";
         }
-       public static string getEmployees(HtmlNode elementPage)
+        public static string getEmployees(HtmlNode elementPage)
         {
             return "unr";
         }
@@ -317,10 +331,12 @@ namespace BusinesslistPhPlugin
         public static void resolveFullElement( Business compactElement, out int writtenBytes , out int WrittenObjectsCoutnt)
         {
             writtenBytes = 0; WrittenObjectsCoutnt = 0;
-
+            var sw = Stopwatch.StartNew();
             Debug.WriteLine("downloading or reading html link: "+ compactElement.link);
             
             string rawElementPage = downloadOrRead(compactElement.link, Workspace.Current.HtmlObjectsFolder);
+            var dor = sw.Elapsed;
+            Debug.WriteLine($"downloadOrRead took {dor}");
             WrittenObjectsCoutnt++;
             writtenBytes += rawElementPage.Length;
             HtmlDocument elementDoc = new HtmlDocument();
@@ -403,8 +419,11 @@ Video
                 //employees
 
             }
-            
-            
+
+            var ir = sw.Elapsed - dor;
+            Debug.WriteLine($"info resolving took {ir}");
+
+
             compactElement.contactPerson = string.Join(", ", persons.Where(s=>!string.IsNullOrWhiteSpace(s)));
 
 
@@ -412,8 +431,10 @@ Video
             //compactElement.email = "N/A"; //not available
             //old parsers
             //compactElement.phonenumber = getPhoneNumber(elementDoc.DocumentNode);
-            compactElement.email = getEmail(elementDoc.DocumentNode);
+            compactElement.email = getEmail_2(elementDoc.DocumentNode);
             //compactElement.employees = getEmployees(elementDoc.DocumentNode);
+            var air = sw.Elapsed - ir;
+            Debug.WriteLine($"additional info resolving took {air}");
             Debug.WriteLine("done");
         }
 

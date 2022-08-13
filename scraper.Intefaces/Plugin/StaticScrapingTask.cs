@@ -131,8 +131,11 @@ namespace scraper.Core
                     foreach (var page in EnumeratePages(TargetPage))
                     {
                         OnPageStarted($"[page {page.Item1}/{page.Item2}]");
+                        Stopwatch sw = Stopwatch.StartNew();
                         var compactElements = EnumerateCompactElements<object>(page.Item3).ToList();
                         List<object> resolvedElements = new List<object>(compactElements.Count);
+                        var ect = sw.Elapsed;
+                        Debug.WriteLine($"Enumerating CompactElements took {ect}");
                         int i = 0;
                         foreach (var item in compactElements)
                         {
@@ -155,6 +158,8 @@ namespace scraper.Core
                             OnProgress(new DownloadingProg() { Total = compactElements.Count, Current = i });
                             OnTaskDetailChanged($"Collecting {"Element"} info: {GetElementTaskDetailHint(item)}");
                         }
+                        var rct = sw.Elapsed-ect;
+                        Debug.WriteLine($"Resolving CompactElements took {rct}");
                         Debug.WriteLine("saving csv");
                         CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
                         Debug.WriteLine("saved current page conent:" + outputPath);
