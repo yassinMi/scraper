@@ -22,7 +22,7 @@ namespace scraper.Core.Utils
         /// <returns></returns>
         public static bool checkCSV(string path, Plugin plugin, out int rowsCount, out int validRowsCount)
         {
-            Debug.WriteLine("parsing csv: " + path);
+            Debug.WriteLine("checking csv: " + path);
             //# validating header
             using (var reader = new StreamReader(path))
                 try
@@ -32,6 +32,11 @@ namespace scraper.Core.Utils
                         csv.Read();
                         csv.ReadHeader();
                         csv.ValidateHeader(plugin.ElementModelType);
+                        int vc = csv.GetRecords(plugin.ElementModelType).Count();
+                        validRowsCount = vc;
+                        rowsCount = vc;
+                        return true;
+                        
                     }
                 }
                 catch (Exception err) when (err is CsvHelper.ReaderException ||
@@ -42,70 +47,8 @@ namespace scraper.Core.Utils
                     return false;
                 }
         
-
-            //# validatinng rows: format is considered bad if no valid rows found
-            using (TextFieldParser csvParser = new TextFieldParser(path))
-            {
-                rowsCount = 0;
-                validRowsCount = 0;
-                csvParser.CommentTokens = new string[] { "#" }; csvParser.SetDelimiters(new string[] { "," }); csvParser.HasFieldsEnclosedInQuotes = true;
-                // first row only contains column names  id,title,upc,sku,price,img,link
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
-                {
-                    bool isCurrentRowValid = true;
-                    rowsCount++;
-                    try
-                    {
-                        //as : name,address,phonenumber,email,employees,website,imageUrl,link,description, id?
-                        string[] fields = csvParser.ReadFields();
-                        int ed_fields_cc = plugin.ElementDescription.Fields.Count();
-                        isCurrentRowValid &= (fields.Count() == ed_fields_cc);
-                        if (isCurrentRowValid == false) {
-                            Debug.WriteLine($"bad csv format: {fields.Count()} fields exist while {ed_fields_cc} are expected in csv resource '{path}'");
-                            continue;
-                        };
-
-                        byte f_ix = 0;
-                        //company,contactPerson,address,phonenumber,email,employees,website,year,imageUrl,link,description
-                        foreach (var f in plugin.ElementDescription.Fields)
-                        {
-                            if (f.IsRequired)
-                            {
-                                if(string.IsNullOrWhiteSpace(fields[f_ix]))
-                                {
-                                    isCurrentRowValid = false;
-                                    Debug.WriteLine($"required field '{f.Name}' has empty valuein csv resource '{path}'");
-                                    continue;
-                                }
-                            }
-                            f_ix++;
-                        }
-                        
-                        /*string address = fields[2];
-                        string phonenumber = fields[3];
-                        string email = fields[4];
-                        string employees = fields[5];
-                        string website = fields[6];
-                        string year = fields[7];
-                        string imageUrl = fields[8];
-                        string link = fields[9];
-                        string desc = fields[10];*/
-
-
-                        if (isCurrentRowValid)
-                        {
-                            validRowsCount++;
-                        }
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }
-                return validRowsCount != 0;
-            }
+            
+            
         }
 
 
