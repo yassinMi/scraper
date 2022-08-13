@@ -31,10 +31,9 @@ namespace scraper.Core
         public abstract void ResolveElement(object compactElement, out int bytes, out int obj_cc);
 
         /// <summary>
-        /// the User implies user friendly piece of information that has well formatted text
+        /// property names convention: the suffix "User" implies that the property is visible to the user
         /// </summary>
         /// <returns></returns>
-        /// 
         public abstract string GetElementUniqueID(HtmlNode elementRootNode);//from targetpage and only,(compact elem enumerating phase)
         /// <summary>
         /// not used yet
@@ -45,30 +44,19 @@ namespace scraper.Core
         /// </summary>
         public abstract string GetElementUserUniqueID(HtmlNode elementRootNode);
         /// <summary>
-        /// not used yet
+        /// used to resolve the title and determine file name, this has precedence over the GetPageUniqueID, at least one must return a valid string
         /// </summary>
-        /// <returns></returns>
-        public abstract string GetPageUserTitle(HtmlNode pageNode);
+        public virtual string GetPageUniqueUserTitle(HtmlNode pageNode) { return null; }
         /// <summary>
-        /// not used yet
+        /// used to resolve the title and determine file name, GetElementUserUniqueID has precedence over this, at least one must return a valid string
         /// </summary>
-        public abstract string GetPageUniqueUserTitle(HtmlNode pageNode);
-        /// <summary>
-        /// not used yet
-        /// </summary>
-        public abstract string GetPageUniqueID(HtmlNode pageNode);
+        public virtual string GetPageUniqueID(HtmlNode pageNode) { return TargetPage; }
         public abstract bool HasElementsTBF(HtmlNode pageNode);
         /// <summary>
-        /// used as part of the UI displayed task details while resolving the element, this should siimply return a suitable property e,g name or url
+        /// (todo) used to display task details while resolving the element, this should return a string that tells the user what elemnt is currently being resolved e,g a name or url property value, returning null hides the detail (default)
         /// </summary>
         /// <returns></returns>
-        public abstract string GetElementTaskDetailHint(object elem);
-        /// <summary>
-        /// used in task details ,nd 
-        /// </summary>
-        /// <param name="compactElement"></param>
-        /// <returns></returns>
-        public abstract string GetElementHint(object compactElement);
+        public virtual string GetElementTaskDetailHint(object elem) { return null; }
 
         public static string downloadOrRead(string pageLink, string folder)
         {
@@ -94,7 +82,7 @@ namespace scraper.Core
         /// <summary>
         /// the value used to lock running scraper, usually the target page ptr (url) should be used to prevent starting concurrent tasks that wrte to the same output files
         /// </summary>
-        public abstract string TaskLockValue { get; }
+        protected virtual string TaskLockValue { get { return TargetPage; } }
 
 
         static Synchronizer<string> targetPageBasedLock = new Synchronizer<string>();
@@ -131,7 +119,8 @@ namespace scraper.Core
                 {
                     return;
                 }
-                ResolvedTitle = GetPageUniqueUserTitle(doc.DocumentNode); ///+ ;
+                ResolvedTitle = GetPageUniqueUserTitle(doc.DocumentNode)?? GetPageUniqueID(doc.DocumentNode); ///+ ;
+                if (string.IsNullOrWhiteSpace(ResolvedTitle)) throw new Exception("couldn't resolve page title");
                 OnResolved(ResolvedTitle);
                 try
                 {

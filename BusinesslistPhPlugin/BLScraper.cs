@@ -179,7 +179,7 @@ namespace BusinesslistPhPlugin
 
         public string WorkspaceDirectory { get; set; }
 
-        public override string TaskLockValue
+        protected override string TaskLockValue
         {
             get
             {
@@ -613,16 +613,6 @@ Video
             throw new NotImplementedException();
         }
 
-        public override string GetPageUserTitle(HtmlNode pageNode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string GetPageUniqueID(HtmlNode pageNode)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool HasElementsTBF(HtmlNode pageNode)
         {
             return isBusinessesListings(pageNode) && isNoneEmptyBusinessesListings(pageNode);
@@ -631,11 +621,6 @@ Video
         public override string GetElementTaskDetailHint(object elem)
         {
             return (elem as Business).company;
-        }
-
-        public override string GetElementHint(object compactElement)
-        {
-            return (compactElement as Business).company;
         }
 
         static Synchronizer<string> targetPageBasedLock = new Synchronizer<string>();

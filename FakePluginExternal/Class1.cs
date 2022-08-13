@@ -9,6 +9,9 @@ using FakePluginExternal.Model;
 using System.Text.RegularExpressions;
 using scraper.Core.Utils;
 using System.Collections;
+using HtmlAgilityPack;
+
+[assembly:scraper.Core.Attributes.CoreAPIVersion("0.1.2")]
 
 namespace FakePluginExternal
 {
@@ -116,18 +119,15 @@ namespace FakePluginExternal
         }
     }
 
-    public class FakePluginExternalScrapingTask : ScrapingTaskBase
+    public class FakePluginExternalScrapingTask :ScrapingTaskBase
     {
-
-
-
-      
-        
 
         public override void Pause()
         {
 
         }
+
+       
         public override async Task RunConverter()
         {
             
