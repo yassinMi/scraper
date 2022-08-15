@@ -11,8 +11,22 @@ namespace DNTestPlugin
 {
     public class NPMScraper : Plugin
     {
-        
-        
+        public override IEnumerable<FilterComponenetDescription> FiltersDescription
+        {
+            get
+            {
+                return new FilterComponenetDescription[]
+                {
+                    new FilterComponenetDescription()
+                    {
+                         Header = "Categories",
+                         Type = FilterComponenetType.GroupFilter,
+                         PropertyName = nameof(Topic.Category)
+                    }
+                };
+            }
+        }
+
         public override Type ElementModelType
         {
             get

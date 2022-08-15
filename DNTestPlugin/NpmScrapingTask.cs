@@ -31,7 +31,7 @@ namespace DNTestPlugin
         {
             throw new NotImplementedException();
         }
-        object _lock = new object();
+        static object _lock = new object();
         static WebDriver mainWebDriver { get; set; } = null;
         const string CAT_CLASS = "kl";
         const string TOPIC_CLASS = "css-l3rx45";
