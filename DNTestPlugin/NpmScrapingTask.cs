@@ -31,7 +31,7 @@ namespace DNTestPlugin
         {
             throw new NotImplementedException();
         }
-        static object _lock = new object();
+        static Synchronizer<string> _lock = new Synchronizer<string>();
         static WebDriver mainWebDriver { get; set; } = null;
         const string CAT_CLASS = "kl";
         const string TOPIC_CLASS = "css-l3rx45";
@@ -41,24 +41,35 @@ namespace DNTestPlugin
         {
             Debug.WriteLine("RunScraper call..");
 
-            lock (_lock)
+            lock (_lock[TargetPage])
             {
+                List<Topic> list = new List<Topic>();
                 if (Workspace.Current?.CSVOutputFolder == null) Debug.WriteLine("null ws");
                 ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, "All topics"+".csv");
-                Debug.WriteLine("init chrome driver..");
-                if (mainWebDriver==null)
-                mainWebDriver = new ChromeDriver();
+                IWebElement categories_welements_wrapper;
+                OnTaskDetailChanged("Waiting for other task(s) to end..");
+                lock (_lock)//concurrent tasks can'y run this part of code simultaneously
+                {
 
-                Debug.WriteLine("GoToUrl driver..");
-                mainWebDriver.Url = TargetPage;
-                mainWebDriver.Navigate();
+                    if (mainWebDriver == null)
+                    {
+                        OnStageChanged(ScrapTaskStage.Setup);
+                        OnTaskDetailChanged("Starting chrome driver..");
+                        mainWebDriver = new ChromeDriver();
+                    }
+                        
+                    mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
+                    Debug.WriteLine("GoToUrl driver..");
+                    mainWebDriver.Url = TargetPage;
+                    OnStageChanged(ScrapTaskStage.DownloadingData);
+                    mainWebDriver.Navigate();
 
-                List<Topic> list = new List<Topic>();
-                Debug.WriteLine("getting categories_welements_wrapper..");
-                var categories_welements_wrapper = mainWebDriver.FindElement(
-                    By.ClassName("Sidebar__Container-gs0c67-0"));
 
-               // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
+                    Debug.WriteLine("getting categories_welements_wrapper..");
+                    categories_welements_wrapper = mainWebDriver.FindElement(
+                        By.ClassName("Sidebar__Container-gs0c67-0"));
+                
+                // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
                 Debug.WriteLine("enumerating categories_welements..");
                 var categories_welements = categories_welements_wrapper.FindElements(By.XPath("./div"));
                 foreach (var cat in categories_welements)
@@ -68,8 +79,10 @@ namespace DNTestPlugin
                     OnPageStarted(current_cat);
                     Debug.WriteLine($"enumerating topics in {current_cat}..");
                     var topics_welements = cat.FindElements(By.XPath($".//div[@class='{TOPIC_CLASS}']"));
+                    int i = 0;
                     foreach (var item in topics_welements)
                     {
+                        i++;
                         Topic new_cmp_topic = new Topic();
                         Debug.WriteLine($"creating new comp_elem ..");
                         new_cmp_topic.Title = getTitle(item);
@@ -78,9 +91,12 @@ namespace DNTestPlugin
                         new_cmp_topic.Link = getLink(item);
                         TaskStatsInfo.incElem(1);
                         Debug.WriteLine($"delaying ..");
-                        Task.Delay(100);
+                        OnStageChanged(ScrapTaskStage.Delaying);
+                        Task.Delay(5500).GetAwaiter().GetResult();
                         list.Add(new_cmp_topic);
+                        OnProgress(new DownloadingProg() { Current = i, Total = topics_welements.Count });
                     }
+                }
                 }
 
                 CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
