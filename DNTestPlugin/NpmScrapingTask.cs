@@ -16,6 +16,9 @@ using System.Diagnostics;
 [assembly:CoreAPIVersion("0.1.2")]
 namespace DNTestPlugin
 {
+    /// <summary>
+    /// todo extract generic class for dynamic scraping with se from this plugin
+    /// </summary>
     public class NpmScrapingTask : ScrapingTaskBase
     {
         public NpmScrapingTask(string tp)
@@ -62,15 +65,40 @@ namespace DNTestPlugin
                     Debug.WriteLine("GoToUrl driver..");
                     mainWebDriver.Url = TargetPage;
                     OnStageChanged(ScrapTaskStage.DownloadingData);
+                    try
+                    {
+
+                    
                     mainWebDriver.Navigate();
+                    OpenQA.Selenium.Support.UI.WebDriverWait w = new OpenQA.Selenium.Support.UI.WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
+                        
+                        w.Until((e) =>
+                    {
+                        try
+                        {
+                            return e.FindElement(By.ClassName("Sidebar__Container-gs0c67-0")) != null;
+                        }
+                        catch (StaleElementReferenceException err)
+                        {
+                            throw;
+                        }
+                    });
 
-
+                    OnResolved("NPM Docs topics");
                     Debug.WriteLine("getting categories_welements_wrapper..");
                     categories_welements_wrapper = mainWebDriver.FindElement(
                         By.ClassName("Sidebar__Container-gs0c67-0"));
-                
-                // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
-                Debug.WriteLine("enumerating categories_welements..");
+                    }
+                    catch (Exception err)
+                    {
+
+                        OnError(err.Message);
+                        OnStageChanged(ScrapTaskStage.Failed);
+                        return;
+                    }
+
+                    // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
+                    Debug.WriteLine("enumerating categories_welements..");
                 var categories_welements = categories_welements_wrapper.FindElements(By.XPath("./div"));
                 foreach (var cat in categories_welements)
                 {
@@ -92,7 +120,7 @@ namespace DNTestPlugin
                         TaskStatsInfo.incElem(1);
                         Debug.WriteLine($"delaying ..");
                         OnStageChanged(ScrapTaskStage.Delaying);
-                        Task.Delay(5500).GetAwaiter().GetResult();
+                        Task.Delay(500).GetAwaiter().GetResult();
                         list.Add(new_cmp_topic);
                         OnProgress(new DownloadingProg() { Current = i, Total = topics_welements.Count });
                     }
