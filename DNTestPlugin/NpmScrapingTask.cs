@@ -54,15 +54,20 @@ namespace DNTestPlugin
                 mainWebDriver.Navigate();
 
                 List<Topic> list = new List<Topic>();
+                Debug.WriteLine("getting categories_welements_wrapper..");
+                var categories_welements_wrapper = mainWebDriver.FindElement(
+                    By.ClassName("Sidebar__Container-gs0c67-0"));
+
+               // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
                 Debug.WriteLine("enumerating categories_welements..");
-                var categories_welements =   mainWebDriver.FindElement(By.ClassName("Sidebar__Container-gs0c67-0 bXQeSB sidebar")).FindElements(By.XPath("/div"));
+                var categories_welements = categories_welements_wrapper.FindElements(By.XPath("./div"));
                 foreach (var cat in categories_welements)
                 {
                     
                     string current_cat = getCategoryFromCatElem(cat);
                     OnPageStarted(current_cat);
                     Debug.WriteLine($"enumerating topics in {current_cat}..");
-                    var topics_welements = cat.FindElements(By.XPath($".//div[class='{TOPIC_CLASS}']"));
+                    var topics_welements = cat.FindElements(By.XPath($".//div[@class='{TOPIC_CLASS}']"));
                     foreach (var item in topics_welements)
                     {
                         Topic new_cmp_topic = new Topic();
@@ -74,7 +79,7 @@ namespace DNTestPlugin
                         TaskStatsInfo.incElem(1);
                         Debug.WriteLine($"delaying ..");
                         Task.Delay(100);
-
+                        list.Add(new_cmp_topic);
                     }
                 }
 
