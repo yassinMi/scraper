@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace scraper.Model
                     else if (value is int) return (value != null && ((int)value) != 0);
                     else return true;
                 case FilteringRuleType.Equals:
-                    return value == ConvertParamStringToTargetPropertyType(b.GetType());
+                    return value.Equals(ConvertParamStringToTargetPropertyType(b.GetType()));
                 case FilteringRuleType.Contains:
                     return (value is string) && ((string)value).Contains(RuleParam);
                 default:
