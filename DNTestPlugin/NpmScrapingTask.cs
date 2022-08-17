@@ -62,6 +62,7 @@ namespace DNTestPlugin
                     }
                         
                     mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
+                    OnBrowserWindowsCountChanged(++BrowserWindowsCount);
                     Debug.WriteLine("GoToUrl driver..");
                     mainWebDriver.Url = TargetPage;
                     OnStageChanged(ScrapTaskStage.DownloadingData);

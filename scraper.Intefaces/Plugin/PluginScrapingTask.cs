@@ -35,6 +35,7 @@ namespace scraper.Core
         public event EventHandler<string> Resolved;  //fired after obtaining the page html, indicating that the Title is resolved and the page is valid for this scraper
         public event EventHandler<string> PageDone;  //fired when the current page changes, the string provides the page progress like: [4/51]
         public event EventHandler<ScrapTaskStage> StageChanged; //stdout prints something like P: [4/35]
+        public event EventHandler<int> BrowserWindowsCountChanged; //
 
 
         protected void OnProgress(DownloadingProg e)
@@ -68,6 +69,12 @@ namespace scraper.Core
             Stage = e;
             StageChanged?.Invoke(this, e);
         }
+
+        protected void OnBrowserWindowsCountChanged(int cc)
+        {
+            BrowserWindowsCount = cc;
+            BrowserWindowsCountChanged?.Invoke(this, cc);
+        }
         /// <summary>
         /// downloads the raw objects containing the required flieds, saves them under workspace/raw or workspace/{ElementName}-raw
         /// </summary>
@@ -99,6 +106,8 @@ namespace scraper.Core
         /// used for all stages, to indicate the current process, e,g in setup stage it can be "starting chrome driver"
         /// </summary>
         public string TaskDetail { get; set; }
+        
+        public int BrowserWindowsCount { get; set; }
         /// <summary>
         /// pause the task
         /// only supported or downloading data stage

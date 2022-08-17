@@ -151,7 +151,7 @@ namespace GoogleSearchPlugin
 
         }
 
-        static bool tryInitWebDriver()
+        bool tryInitWebDriver()
         {
             try
             {
@@ -159,6 +159,8 @@ namespace GoogleSearchPlugin
                 {
                     //mainWebDriver.Close();
                     mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
+                    BrowserWindowsCount++;
+                    OnBrowserWindowsCountChanged(BrowserWindowsCount);
                     return true;
                 }
                 var opts = new ChromeOptions() { };

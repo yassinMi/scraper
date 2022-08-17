@@ -40,6 +40,10 @@ namespace scraper.ViewModel
             m.PageDone+=(s,p)=> {
                 CurrentPage = p;
                 notif(nameof(CurrentPage)); };
+            m.BrowserWindowsCountChanged += (s, cc) =>
+            {
+                this.BrowserWindowsCount = cc;
+            };
 
         }
         public ScrapingTaskVM()
@@ -113,6 +117,19 @@ namespace scraper.ViewModel
                 return Model.Stage;
             }
         }
+
+
+        private int _BrowserWindowsCount;
+        /// <summary>
+        /// number of open browser windows(tabs) 
+        /// </summary>
+        public int BrowserWindowsCount
+        {
+            set { _BrowserWindowsCount = value; notif(nameof(BrowserWindowsCount)); }
+            get { return _BrowserWindowsCount; }
+        }
+
+
 
         public ICommand PauseCommand { get { return new Mi.Common.MICommand(this.hndlPauseCommand, this.canExecutePauseCommand); } }
 
