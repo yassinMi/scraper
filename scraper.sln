@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other plugins", "Other plug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNTestPlugin", "DNTestPlugin\DNTestPlugin.csproj", "{2FF5F9E9-D8AD-42A7-A7C6-3FDE9322B45E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoGisPlugin", "TwoGisPlugin\TwoGisPlugin.csproj", "{092D8309-4144-48CE-9692-CBE66465BB80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{2FF5F9E9-D8AD-42A7-A7C6-3FDE9322B45E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FF5F9E9-D8AD-42A7-A7C6-3FDE9322B45E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FF5F9E9-D8AD-42A7-A7C6-3FDE9322B45E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{092D8309-4144-48CE-9692-CBE66465BB80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{092D8309-4144-48CE-9692-CBE66465BB80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{092D8309-4144-48CE-9692-CBE66465BB80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{092D8309-4144-48CE-9692-CBE66465BB80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

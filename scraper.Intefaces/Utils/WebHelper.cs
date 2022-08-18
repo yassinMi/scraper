@@ -18,10 +18,15 @@ namespace scraper.Core.Utils
 
     public class WebHelper:  HttpClient, IWebHelper
     {
+        public const string USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36";
 
         public static WebHelper instance { get; set; } = new WebHelper();
         public string GetPageTextSync(string pageUrl)
         {
+            this.DefaultRequestHeaders.Add("user-agent", USER_AGENT);
+            DefaultRequestHeaders.UserAgent.Clear();
+          
+
             var t = this.GetStringAsync(pageUrl);
             Exception erorr = null;
             string result = null;

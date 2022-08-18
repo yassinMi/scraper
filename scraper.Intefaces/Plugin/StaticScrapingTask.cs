@@ -60,7 +60,7 @@ namespace scraper.Core
 
         public static string downloadOrRead(string pageLink, string folder)
         {
-            Debug.WriteLine("downloadOrRead ");
+            Debug.WriteLine($"downloadOrRead '{pageLink}'");
             string uniqueFilename = Path.Combine(folder, CoreUtils.getUniqueLinkHash(pageLink) + ".html");
             if (File.Exists(uniqueFilename)) { return File.ReadAllText(uniqueFilename); }
             else
@@ -103,7 +103,7 @@ namespace scraper.Core
                 {
                     Stage = ScrapTaskStage.Failed;
                     OnStageChanged(Stage);
-                    OnError("Network error");
+                    OnError("Network HttpRequestException error");
                     return;
                 }
                 catch (Exception err)
@@ -131,6 +131,7 @@ namespace scraper.Core
                     foreach (var page in EnumeratePages(TargetPage))
                     {
                         OnPageStarted($"[page {page.Item1}/{page.Item2}]");
+                        Debug.WriteLine($"Enumerating CompactElements..");
                         Stopwatch sw = Stopwatch.StartNew();
                         var compactElements = EnumerateCompactElements<object>(page.Item3).ToList();
                         List<object> resolvedElements = new List<object>(compactElements.Count);

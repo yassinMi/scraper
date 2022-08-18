@@ -763,7 +763,7 @@
                                             <TextBox materialDesign:ColorZoneAssist.Mode="Standard"
 												materialDesign:TextFieldAssist.LeadingIcon="Globe"
 												materialDesign:TextFieldAssist.HasLeadingIcon="True"
-												materialDesign:HintAssist.Hint="Products page URL"
+												materialDesign:HintAssist.Hint="Target page URL"
 												materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
 												FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,16,0" KeyDown="TextBox_KeyDown" >
                                                 <TextBox.InputBindings>
