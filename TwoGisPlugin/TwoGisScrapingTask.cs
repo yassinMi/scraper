@@ -195,12 +195,19 @@ namespace TwoGisPlugin
                     mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
                     OnBrowserWindowsCountChanged(++BrowserWindowsCount);
                     Debug.WriteLine("GoToUrl driver..");
-                    mainWebDriver.Url = TargetPage;
+                    string cachedHtmlFilename = Path.Combine(Workspace.Current.TPFolder, CoreUtils.getUniqueLinkHash(TargetPage)+".html");
+                    string cacheUrlOrOriginalUrl = TargetPage;
+                    bool shouldBeCached = true; // ndicating the target page must be cached as soon as fetched successfully.
+                    if (File.Exists(cachedHtmlFilename))
+                    {
+                        cacheUrlOrOriginalUrl = cachedHtmlFilename;
+                        shouldBeCached = false;
+                    }
+
+                    mainWebDriver.Url = cacheUrlOrOriginalUrl;
                     OnStageChanged(ScrapTaskStage.DownloadingData);
                     try
                     {
-
-
                         mainWebDriver.Navigate();
                         OpenQA.Selenium.Support.UI.WebDriverWait w = new OpenQA.Selenium.Support.UI.WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
 
@@ -217,7 +224,11 @@ namespace TwoGisPlugin
                         });
                         OnResolved(mainWebDriver.Title);
                         ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
-
+                        if (shouldBeCached)
+                        {
+                            File.WriteAllText(cachedHtmlFilename, mainWebDriver.PageSource);
+                            Debug.WriteLine($"saved cache tp file at: '{cachedHtmlFilename}' ");
+                        }
                         Debug.WriteLine("getting categories_welements_wrapper..");
                         elements_wrapper = mainWebDriver.FindElement(
                             By.ClassName(ELEMENTS_WRAPPER_CLASS));
@@ -244,10 +255,11 @@ namespace TwoGisPlugin
                     int i = 0;
                     
                     OnPageStarted("test cat");
+
                     foreach (var item in elements_divs)
                     {
                         var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
-                        act.ScrollToElement(item);
+                        act.ScrollToElement(elements_divs[Math.Min( i+1, elements_divs.Count-1)]);
                         act.Perform();
                         Task.Delay(80).GetAwaiter().GetResult();
                         Debug.WriteLine($"enumerating topics in {"test cat"}..");
@@ -258,6 +270,8 @@ namespace TwoGisPlugin
                         new_cmp_elem.phone = getPhone(item);
                         new_cmp_elem.location = getLocation(item);
                         new_cmp_elem.category = getCategory(item);
+                        new_cmp_elem.link = getLink(item);
+                        ResolveElementDynamic(new_cmp_elem);
                         TaskStatsInfo.incElem(1);
                         Debug.WriteLine($"delaying ..");
                         OnStageChanged(ScrapTaskStage.Delaying);
@@ -275,11 +289,61 @@ namespace TwoGisPlugin
 
             }
         }
-
-        private string getPhone(IWebElement item)
+        const string RootInfo_InElementPage = "_1rkbbi0x";
+        /// <summary>
+        /// opens new tab and collects additional fields and switchs back to original tab
+        /// </summary>
+        /// <param name="new_cmp_elem"></param>
+        private void ResolveElementDynamic(Company compact_elem)
         {
+            //phone 
+            string elem_link = compact_elem.link;
+            string original_tab_handle = mainWebDriver.CurrentWindowHandle;
+            elem_link = @"file:///F:/epicMyth-tmp-6-2022/freelancing/projects/gis/Al Falaq Technical Services Company, Al Rashdaan Building, 67, Al Muteena Street, Dubai — 2GIS.html";
+            mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
+            mainWebDriver.Url = elem_link;
+            mainWebDriver.Navigate();
+            compact_elem.phone = getPhone(mainWebDriver.FindElement(By.ClassName(RootInfo_InElementPage)));
+            mainWebDriver.Close();
+            mainWebDriver.SwitchTo().Window(original_tab_handle);
+        }
 
-            return "N/A";
+        private string getLink(IWebElement item)
+        {
+            Debug.WriteLine($"link ..");
+            Debug.Assert(item.GetAttribute("class") == ELEMENT_CLASS, "eexpected element class const");
+            try
+            {
+                string res = item.FindElement(By.XPath("./div[2]/a"))?.GetAttribute("href") ?? "N/A";
+                Debug.WriteLine($"res {res}");
+                return res;
+            }
+            catch (NoSuchElementException)
+            {
+                Debug.WriteLine("element not found n returning n/a");
+                return "N/A";
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item">a root of infos in element page</param>
+        /// <returns></returns>
+        public static string getPhone(IWebElement item)
+        {
+            //div _49kxlr >  div _b0ke8 > a _2lcm958  has format tel:+97142398771 in href
+            Debug.WriteLine($"phone ..");
+            try
+            {
+                var ee = item.FindElement(By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']"));
+                if (ee == null) return "N/A";
+                return ee?.GetAttribute("href") ?? "N/A";
+            }
+            catch (NoSuchElementException)
+            {
+                Debug.WriteLine("element not found n returning n/a");
+                return "N/A";
+            }
         }
 
         private string getCategory(IWebElement item)
@@ -300,10 +364,24 @@ namespace TwoGisPlugin
 
         private string getLocation(IWebElement item)
         {
+            //the 4th div (not always,) or the class _4l12l8 (unless it's grayed out
+            //here it's class _15orusq2 )
             Debug.WriteLine($"loc ..");
             try
             {
-                return item.FindElement(By.XPath("./div[4]"))?.Text ?? "N/A";
+                var case_normal = item.FindElements(By.XPath("./div[@class='_4l12l8']"));
+                if(case_normal.Count>0) return case_normal.FirstOrDefault()?.Text??"N/A";
+                else
+                {
+                    var case_gray = item.FindElements(By.XPath("./div[@class='_15orusq2']"));
+                    if (case_gray.Count > 0) return case_gray.FirstOrDefault()?.Text ?? "N/A";
+                    else
+                    {
+                        Debug.WriteLine("element not found 5n returning n/a");
+                        return "N/A";
+                    }
+
+                }
 
             }
             catch (NoSuchElementException)

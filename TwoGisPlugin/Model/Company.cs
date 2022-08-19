@@ -13,5 +13,6 @@ namespace TwoGisPlugin.Model
         public string phone { get; set; }
         public string email { get; set; }
         public string category { get; set; }
+        public string link { get; set; }
     }
 }

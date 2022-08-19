@@ -64,6 +64,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="WebDriver, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.4.3.0\lib\net45\WebDriver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -80,6 +84,7 @@
   <ItemGroup>
     <Compile Include="PluginsTests\BLScraperTests.cs" />
     <Compile Include="PluginsTests\BLScraperTestsData.cs" />
+    <Compile Include="PluginsTests\GisTests.cs" />
     <Compile Include="PluginsTests\PluginTestsUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\MainViewModelTests.cs" />
@@ -97,6 +102,10 @@
     <ProjectReference Include="..\scraper\scraper.csproj">
       <Project>{580F02D5-7B14-44B8-9878-12CEF418EF7F}</Project>
       <Name>scraper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TwoGisPlugin\TwoGisPlugin.csproj">
+      <Project>{092d8309-4144-48ce-9692-cbe66465bb80}</Project>
+      <Name>TwoGisPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
