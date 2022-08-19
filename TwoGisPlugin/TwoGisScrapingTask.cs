@@ -15,6 +15,7 @@ using OpenQA.Selenium;
 using TwoGisPlugin.Model;
 using System.IO;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 
 namespace TwoGisPlugin
 {
@@ -162,13 +163,37 @@ namespace TwoGisPlugin
             
         }
 
+        public static void WaitFor(IWebDriver wd, By by, TimeSpan tm)
+        {
+            WebDriverWait w = new WebDriverWait(wd, tm);
+
+            w.Until((iwd) =>
+            {
+                try
+                {
+                    return wd.FindElement(by) != null;
+                }
+                catch (StaleElementReferenceException err)
+                {
+                    throw;
+                }
+            });
+        }
+
         public void ResolveElement(object compactElement, out int bytes, out int obj_cc)
         {
             bytes = 0;
             obj_cc = 0;
         }
-        const string ELEMENT_CLASS = "_1hf7139"; 
-             const string ELEMENTS_WRAPPER_CLASS = "_z72pvu";
+        const string ELEMENT_CLASS = "_1hf7139";
+        const string ELEMENT_CLASS_SELECTED = "_1uckoc70";
+        const string ELEMENT_CLASS_HOVERED = "_oqz3tdy"; //hovered not selected
+        const string ELEMENT_CLASS_HOVERED_SELECTED = "_19keelio"; //hovered not selected
+
+        const string _elems_content_x = ".//div[@class='_1xzra4e']/div[@class='_1g0w9mx']/div[@class='_jcreqo']/div[@class='_1tdquig']/div[@class='_z72pvu']/div[@class='_3zzdxk']/div[@class='_1667t0u']/div[@class='_1rkbbi0x']/div[@class='_15gu4wr']";
+        const string _details_section_x = ".//div[@class='_r47nf']//div[@class='_18lzknl']"; //works from doc level
+
+        const string ELEMENTS_WRAPPER_CLASS = "_z72pvu";
         static WebDriver mainWebDriver { get; set; } = null;
         static Synchronizer<string> _lock = new Synchronizer<string>();
 
@@ -180,7 +205,7 @@ namespace TwoGisPlugin
             {
                 List<Company> list = new List<Company>();
                 if (Workspace.Current?.CSVOutputFolder == null) Debug.WriteLine("null ws");
-                IWebElement elements_wrapper;
+                IWebElement list__; //last wrapper that ahs divs directly
                 OnTaskDetailChanged("Waiting for other task(s) to end..");
                 lock (_lock)//concurrent tasks can'y run this part of code simultaneously
                 {
@@ -197,8 +222,9 @@ namespace TwoGisPlugin
                     Debug.WriteLine("GoToUrl driver..");
                     string cachedHtmlFilename = Path.Combine(Workspace.Current.TPFolder, CoreUtils.getUniqueLinkHash(TargetPage)+".html");
                     string cacheUrlOrOriginalUrl = TargetPage;
+                    bool enable_cache = false; //obsolete
                     bool shouldBeCached = true; // ndicating the target page must be cached as soon as fetched successfully.
-                    if (File.Exists(cachedHtmlFilename))
+                    if (enable_cache && File.Exists(cachedHtmlFilename))
                     {
                         cacheUrlOrOriginalUrl = cachedHtmlFilename;
                         shouldBeCached = false;
@@ -208,21 +234,22 @@ namespace TwoGisPlugin
                     OnStageChanged(ScrapTaskStage.DownloadingData);
                     try
                     {
+                        Debug.WriteLine("navigating..");
                         mainWebDriver.Navigate();
-                        OpenQA.Selenium.Support.UI.WebDriverWait w = new OpenQA.Selenium.Support.UI.WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
-
+                        OnTaskDetailChanged("waiting for elemetns_content");
+                        WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
                         w.Until((e) =>
                         {
                             try
                             {
-                                return e.FindElement(By.ClassName(ELEMENTS_WRAPPER_CLASS)) != null;
+                                return e.FindElement(By.XPath(_elems_content_x)) != null;
                             }
                             catch (StaleElementReferenceException err)
                             {
-                                throw;
+                                return false;
                             }
                         });
-                        OnResolved(mainWebDriver.Title);
+                        OnResolved(mainWebDriver.Title??"title error");
                         ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
                         if (shouldBeCached)
                         {
@@ -230,10 +257,15 @@ namespace TwoGisPlugin
                             Debug.WriteLine($"saved cache tp file at: '{cachedHtmlFilename}' ");
                         }
                         Debug.WriteLine("getting categories_welements_wrapper..");
-                        elements_wrapper = mainWebDriver.FindElement(
-                            By.ClassName(ELEMENTS_WRAPPER_CLASS));
-                        var scrollView = elements_wrapper.FindElement(By.ClassName("_1rkbbi0x"));
-                        mainWebDriver.ExecuteScript("document.getElementsByClassName(\"_1rkbbi0x\")[2].scrollTo(0,50000)");
+                        //# listing
+                        //elems_content is _z72pvu ([2nd]after filr) o>  _3zzdxk o> _1667t0u o> _1rkbbi0x o> _15gu4wr 
+                        //list is: div[2rd] no class o> _awwm2v
+                        //currentlyusing .//div[@class='_z72pvu']//div[@class='_1667t0u']
+                        var list_wrapper_rnd = mainWebDriver.FindElement(
+                            By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']"));
+                        list__ = list_wrapper_rnd.FindElement(By.XPath(".//div[@class='_awwm2v']"));
+                        //var scrollView = list_wrapper_rnd.FindElement(By.ClassName("_1rkbbi0x"));
+                        //mainWebDriver.ExecuteScript("document.getElementsByClassName(\"_1rkbbi0x\")[2].scrollTo(0,50000)");
                         
                     }
                     catch (Exception err)
@@ -245,9 +277,9 @@ namespace TwoGisPlugin
                     }
 
                     // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
-                    Debug.WriteLine($"enumerating categories_welements.. is null {elements_wrapper.GetDomProperty("innerHTML")}");
+                    Debug.WriteLine($"enumerating categories_welements.. is null {list__.GetDomProperty("innerHTML")}");
 
-                    var elements_divs = elements_wrapper.FindElements(By.XPath($".//div[@class='{ELEMENT_CLASS}']"));
+                    var elements_divs = list__.FindElements(By.XPath($"./div"));
                     Debug.WriteLine($"elements_divs null {elements_divs==null} ");
                     Debug.WriteLine($"elements_divs count {elements_divs.Count} ");
                     
@@ -256,22 +288,24 @@ namespace TwoGisPlugin
                     
                     OnPageStarted("test cat");
 
-                    foreach (var item in elements_divs)
+                    foreach (var div in elements_divs)
                     {
                         var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
                         act.ScrollToElement(elements_divs[Math.Min( i+1, elements_divs.Count-1)]);
                         act.Perform();
                         Task.Delay(80).GetAwaiter().GetResult();
-                        Debug.WriteLine($"enumerating topics in {"test cat"}..");
                         i++;
                         Company new_cmp_elem = new Company();
                         Debug.WriteLine($"creating new comp_elem ..");
-                        new_cmp_elem.companyName = getName(item);
-                        new_cmp_elem.phone = getPhone(item);
-                        new_cmp_elem.location = getLocation(item);
-                        new_cmp_elem.category = getCategory(item);
-                        new_cmp_elem.link = getLink(item);
-                        ResolveElementDynamic(new_cmp_elem);
+                        var element_component = div.FindElement(By.XPath("./div"));
+                        new_cmp_elem.companyName = getName(element_component);
+                        OnTaskDetailChanged($"{new_cmp_elem.companyName}/location");
+                        new_cmp_elem.location = getLocation(element_component);
+                        OnTaskDetailChanged($"{new_cmp_elem.companyName}/category");
+                        new_cmp_elem.category = getCategory(element_component);
+                        OnTaskDetailChanged($"{new_cmp_elem.companyName}/link");
+                        new_cmp_elem.link = getLink(element_component);
+                        ResolveElementDynamic2(new_cmp_elem, element_component);
                         TaskStatsInfo.incElem(1);
                         Debug.WriteLine($"delaying ..");
                         OnStageChanged(ScrapTaskStage.Delaying);
@@ -290,6 +324,7 @@ namespace TwoGisPlugin
             }
         }
         const string RootInfo_InElementPage = "_1rkbbi0x";
+        [Obsolete("use 2", true)]
         /// <summary>
         /// opens new tab and collects additional fields and switchs back to original tab
         /// </summary>
@@ -307,30 +342,99 @@ namespace TwoGisPlugin
             mainWebDriver.Close();
             mainWebDriver.SwitchTo().Window(original_tab_handle);
         }
-
-        private string getLink(IWebElement item)
+        /// <summary>
+        /// es
+        /// no tab apprach, clicks on element_component and waits for details_section 
+        /// </summary>
+        /// <param name="compact_elem"></param>
+        /// <param name="element_component">element_component</param>
+        private void ResolveElementDynamic2(Company compact_elem, IWebElement element_component)
         {
-            Debug.WriteLine($"link ..");
-            Debug.Assert(item.GetAttribute("class") == ELEMENT_CLASS, "eexpected element class const");
+            if (element_component == null)
+            {
+                Trace.WriteLine($"ResolveElementDynamic2: null obj passed");
+                return;
+            }
+            string elem_calss = element_component.GetAttribute("class");
+            if (!(elem_calss == ELEMENT_CLASS
+             || elem_calss == ELEMENT_CLASS_SELECTED
+             || elem_calss == ELEMENT_CLASS_HOVERED
+             || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
+            {
+                Trace.WriteLine($"ResolveElementDynamic2: expected one of element_component classes got {elem_calss}");
+                return;//todo should return only in a strict_dev_mode, otherwise keep going as long as exception safe
+            }
             try
             {
-                string res = item.FindElement(By.XPath("./div[2]/a"))?.GetAttribute("href") ?? "N/A";
-                Debug.WriteLine($"res {res}");
-                return res;
+                OnTaskDetailChanged($"{compact_elem.companyName}/waiting for phone info");
+                element_component.Click();
+                WaitFor(mainWebDriver, By.XPath(_details_section_x + "//div[@class='_599hh']"), TimeSpan.FromSeconds(8));
+                var tel_awaiter = By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']");
+                WaitFor(mainWebDriver, tel_awaiter, TimeSpan.FromSeconds(8));
+                //#expanding phones and joining all:  //not supported
+                OnTaskDetailChanged($"{compact_elem.companyName}/delay 500ms");
+                Task.Delay(500).GetAwaiter().GetResult();
+                OnTaskDetailChanged($"{compact_elem.companyName}/phone");
+                compact_elem.phone = getPhone(mainWebDriver.FindElement(By.XPath(_details_section_x)));
+
+            }
+            catch (Exception err)
+            {
+
+                Trace.WriteLine($"ResolveElementDynamic2: unkown exception {err}");
+                return;
+            }
+             }
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="item">element_component</param>
+        /// <returns></returns>
+        private string getLink(IWebElement item)
+        {
+            if (item == null)
+            {
+                Trace.WriteLine("getLink: passed null object");
+                return "N/A";
+            }
+
+            Debug.WriteLine($"link ..");
+            string elem_calss = item.GetAttribute("class");
+            if (!(elem_calss == ELEMENT_CLASS
+             || elem_calss == ELEMENT_CLASS_SELECTED
+             || elem_calss == ELEMENT_CLASS_HOVERED
+             || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
+            {
+                Trace.WriteLine($"getLink: expected one of element_component classes got {elem_calss}");
+                return "N/A";
+            }
+            try
+            {
+                return item.FindElement(By.XPath("./div[2]/a"))?.GetAttribute("href") ?? "N/A";
             }
             catch (NoSuchElementException)
             {
-                Debug.WriteLine("element not found n returning n/a");
+                Trace.WriteLine("getLink: NoSuchElementException");
+                return "N/A";
+            }
+            catch (Exception err)
+            {
+                Trace.WriteLine($"getLink: unknows exception: {err}");
                 return "N/A";
             }
         }
         /// <summary>
-        /// 
+        /// es
         /// </summary>
-        /// <param name="item">a root of infos in element page</param>
+        /// <param name="item">details section </param>
         /// <returns></returns>
         public static string getPhone(IWebElement item)
         {
+            if (item == null)
+            {
+                Trace.WriteLine("getPhone: passed null object");
+                return "N/A";
+            }
             //div _49kxlr >  div _b0ke8 > a _2lcm958  has format tel:+97142398771 in href
             Debug.WriteLine($"phone ..");
             try
@@ -341,13 +445,36 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
-                Debug.WriteLine("element not found n returning n/a");
+                Trace.WriteLine("getPhone: NoSuchElementException");
+                return "N/A";
+            }
+            catch (Exception err)
+            {
+                Trace.WriteLine($"getPhone: unknown exception: {err}");
                 return "N/A";
             }
         }
-
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="item">element_component</param>
+        /// <returns></returns>
         private string getCategory(IWebElement item)
         {
+            if (item == null)
+            {
+                Trace.WriteLine("getCategory: passed null object");
+                return "N/A";
+            }
+            string elem_calss = item.GetAttribute("class");
+            if (!(elem_calss == ELEMENT_CLASS
+             || elem_calss == ELEMENT_CLASS_SELECTED
+             || elem_calss == ELEMENT_CLASS_HOVERED
+             || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
+            {
+                Trace.WriteLine($"getCategory: expected one of element_component classes got {elem_calss}");
+                return "N/A";
+            }
             Debug.WriteLine($"cat ..");
             try
             {
@@ -355,58 +482,107 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
-                Debug.WriteLine("element not found n returning n/a");
+                Trace.WriteLine("getCategory: NoSuchElementException");
                 return "N/A";
             }
-            
+            catch (Exception err)
+            {
+                Trace.WriteLine($"getCategory: unknown exception: {err}");
+                return "N/A";
+            }
+
 
         }
-
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="item">element_component</param>
+        /// <returns></returns>
         private string getLocation(IWebElement item)
         {
+            if (item == null)
+            {
+                Trace.WriteLine("getLocation: passed null object");
+                return "N/A";
+            }
+            string elem_calss = item.GetAttribute("class");
+            if (!(elem_calss == ELEMENT_CLASS
+             || elem_calss == ELEMENT_CLASS_SELECTED
+             || elem_calss == ELEMENT_CLASS_HOVERED
+             || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
+            {
+                Trace.WriteLine($"getLocation: expected one of element_component classes got {elem_calss}");
+                return "N/A";
+            }
             //the 4th div (not always,) or the class _4l12l8 (unless it's grayed out
             //here it's class _15orusq2 )
             Debug.WriteLine($"loc ..");
             try
             {
-                var case_normal = item.FindElements(By.XPath("./div[@class='_4l12l8']"));
+                var case_normal = item.FindElements(By.XPath("./div[@class='_4l12l8']//span[@class='_1w9o2igt']"));
                 if(case_normal.Count>0) return case_normal.FirstOrDefault()?.Text??"N/A";
                 else
                 {
-                    var case_gray = item.FindElements(By.XPath("./div[@class='_15orusq2']"));
+                    var case_gray = item.FindElements(By.XPath("./div[@class='_15orusq2']"));//todo add //span[@class='_1w9o2igt'] is it exists to avoid branches
                     if (case_gray.Count > 0) return case_gray.FirstOrDefault()?.Text ?? "N/A";
                     else
                     {
                         Debug.WriteLine("element not found 5n returning n/a");
                         return "N/A";
                     }
-
                 }
 
             }
             catch (NoSuchElementException)
             {
-                Debug.WriteLine("element not found n returning n/a");
+                Trace.WriteLine("getLocation: NoSuchElementException");
+                return "N/A";
+            }
+            catch (Exception err)
+            {
+                Trace.WriteLine($"getLocation: unknown exception: {err}");
                 return "N/A";
             }
         }
-
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="item">element_cmomponent</param>
+        /// <returns></returns>
         private string getName(IWebElement item)
         {
+            if (item == null)
+            {
+                Trace.WriteLine("getName: passed null object");
+                return "N/A";
+            }
             Debug.WriteLine($"name ..");
-            Debug.Assert(item.GetAttribute("class") == ELEMENT_CLASS,"eexpected element class const");
+            string elem_calss = item.GetAttribute("class");
+            if (!(elem_calss == ELEMENT_CLASS
+             || elem_calss == ELEMENT_CLASS_SELECTED
+             || elem_calss == ELEMENT_CLASS_HOVERED
+             || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
+            {
+                Trace.WriteLine($"getName: expected one of element_cmomponent classes got {elem_calss}");
+                return "N/A";
+            }
             try
             {
                 string res = item.FindElement(By.XPath("./div[2]"))?.Text ?? "N/A";
-                Debug.WriteLine($"res {res}");
+                Debug.WriteLine($"name: {res}");
                 return res;
             }
             catch (NoSuchElementException)
             {
-                Debug.WriteLine("element not found n returning n/a");
+                Debug.WriteLine("getName: NoSuchElementException");
                 return "N/A";
             }
-            
+            catch (Exception err)
+            {
+                Trace.WriteLine($"getName: unknown exception: {err}");
+                return "N/A";
+            }
+
 
         }
 
