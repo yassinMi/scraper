@@ -329,6 +329,8 @@ namespace TwoGisPlugin
                         int i = 0;
                         
                         OnPageStarted($"page {current_page}");
+#if true
+
 
                         foreach (var div in elements_divs)
                         {
@@ -356,12 +358,15 @@ namespace TwoGisPlugin
                             OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
                         }
                         CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
-
+#endif
                         IWebElement next, prev;
                         IWebElement[] pages_butts;
                         bool isNextEnabled;
                         int curr_page_num;
+                        Debug.WriteLine($"at page {current_page} calling it.");
                         exists_next_page = resolvePagination(list_wrapper_rnd, out pages_butts, out next, out prev, out  isNextEnabled, out curr_page_num) && isNextEnabled && !ct.IsCancellationRequested ;
+                        Debug.WriteLine($"exists_next_page resulted in  {exists_next_page}.");
+
                         if (exists_next_page)
                         {
                             //#clicking next page
@@ -715,21 +720,32 @@ namespace TwoGisPlugin
             IWebElement pagination;
             try
             {
+                
                 pagination = elems_content.FindElement(By.XPath(pagination_x_));
-                if(pagination.GetAttribute("class")== "_1x4k6z7")
+                var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
+                act.ScrollToElement(pagination);
+                act.Perform();
+                if (pagination.GetAttribute("class")== "_1x4k6z7")
                 {
                     var all_pages = pagination.FindElements(By.XPath(pages_x_));//including the selected one (whch is a div and not a)
                     pagesButtons = all_pages.Where(e => e.TagName == "a").ToArray();
+                    Debug.WriteLine($"all pages are {string.Join(", ", all_pages.Select(p=>p.Text))} .");
 
                     var nav_next = pagination.FindElement(By.XPath(".//div[@class='_5ocwns']/div[2]"));
                     var nav_prev = pagination.FindElement(By.XPath(".//div[@class='_5ocwns']/div[1]"));
                     next = nav_next; prev = nav_prev;
                     isNextEnabled = next.GetAttribute("class") == enabled_nav_butt_class_;
-                    curr_page_num = int.Parse(all_pages.First((e) => e.TagName == "div").Text);
+                    string te = all_pages.First((e) => e.TagName == "div" && e.GetAttribute("class")== "_l934xo5").Text;
+                    
+                    if( int.TryParse(te,out curr_page_num) == false)
+                    {
+                        CoreUtils.WriteLine($"expected number got {te}");
+                    };
                     return true;
                 }
                 else
                 {
+                    CoreUtils.WriteLine($"else cl .");
                     pagesButtons = null; prev = null; next = null; isNextEnabled = false;
                     curr_page_num = 0;
                     return false;
@@ -737,6 +753,8 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
+                Debug.WriteLine($"no such.");
+
                 CoreUtils.WriteLine($"resolvePagination:warning: NoSuchElementException");
                 pagesButtons = null; prev = null; next = null; isNextEnabled = false;
                 curr_page_num = 0;
@@ -745,6 +763,8 @@ namespace TwoGisPlugin
             }
             catch (Exception err)
             {
+                Debug.WriteLine($"gen exc");
+
                 CoreUtils.WriteLine($"resolvePagination:nkow axception {err}");
                 pagesButtons = null; prev = null; next = null; isNextEnabled = false;
                 curr_page_num = 0;

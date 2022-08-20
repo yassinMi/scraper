@@ -40,7 +40,7 @@
                 </Grid.ContextMenu>
                 <!--materialDesign:PackIcon Width="13"   Kind="FileOutline" VerticalAlignment="Center" /-->
                 <TextBlock Grid.Column="2"  Margin="8 0 0 0" VerticalAlignment="Center"  >
-                    <Run Text="{Binding Name}" /> <Run Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding ElementsCount, StringFormat=(\{0\} Companies)}" />
+                    <Run TextElement.FontWeight="Bold" Text="{Binding Name}" /> <Run Foreground="{StaticResource AppImportantDataColor }" Text="{Binding ElementsCount, StringFormat=(\{0\} Companies)}" />
                 </TextBlock>
             </Grid>
         </DataTemplate>

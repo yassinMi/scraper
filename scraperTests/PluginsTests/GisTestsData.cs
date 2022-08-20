@@ -55,6 +55,13 @@ namespace scraperTests.PluginsTests
               false
               ));
 
+            res.Add(new KeyValuePair<string, bool>(
+              "https://2gis.ae/search/Reflective%20materials%20%2F%20goods/rubricId/57364",
+              true
+              ));
+
+            //
+
 
 
             return res;

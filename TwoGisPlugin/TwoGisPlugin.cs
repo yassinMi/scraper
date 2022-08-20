@@ -66,6 +66,32 @@ namespace TwoGisPlugin
             }
         }
 
+        private ElementDescription _ElementDescription = null;
+        public override ElementDescription ElementDescription
+        {
+            get
+            {
+                if (_ElementDescription == null)
+                {
+
+                    _ElementDescription = new ElementDescription()
+                    {
+                        Fields = ElementModelType.GetProperties().Select(p => new Field()
+                        {
+                            Name = p.Name,
+                            NativeType = p.PropertyType,
+                            UIName = CoreUtils.CamelCaseToUIText(p.Name),
+                            UIHeaderWidth = 130
+
+                        }),
+                        ID = ElementName,
+                        Name = ElementName
+                    };
+
+                }
+                return _ElementDescription;
+            }
+        }
         public override string TargetHost
         {
             get

@@ -46,6 +46,7 @@ namespace scraper
 
             var hvm = new scraper.ViewModel.UnhandledErrorWindowVM();
             hvm.ExceptionObj = e.Exception;
+            CoreUtils.WriteLine($"UnhandledeExpection[{DateTime.Now}]: { e?.Exception}");
             w.DataContext = hvm;
             w.ShowDialog();
             e.Handled = true;

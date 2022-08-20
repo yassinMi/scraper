@@ -197,7 +197,7 @@ namespace Mi.Common
             var facto = new ConfigService();
             //facto.WorkspaceDirectory = @"E:\TOOLS\scraper\scraper\scripts"; DEV ONLY TO SAVE SETUP TIME
             facto.WorkspaceDirectory = null;
-            facto.RecentWorkspaces = new ObservableCollection<RecentWorkspace>(new RecentWorkspace[] { new RecentWorkspace() { Path = "lk" }, new RecentWorkspace() { Path = "lkj" } });
+            facto.RecentWorkspaces = new ObservableCollection<RecentWorkspace>(new RecentWorkspace[] {  });
             return facto;
         }
 

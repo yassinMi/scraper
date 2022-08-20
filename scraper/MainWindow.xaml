@@ -532,9 +532,9 @@
                                             <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
                                                 <Grid Height="27" Margin="0">
                                                     <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="{Binding ElementNamePlural}"/>
-                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" FontWeight="Bold" Text="{Binding SelectionCount}"/>
+                                                    <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" FontWeight="Bold" Text="{Binding TotalRecordsCountString}"/>
                                                 </Grid>
-                                                <Grid Height="27" Margin="0">
+                                                <Grid Visibility="Collapsed" Height="27" Margin="0">
                                                     <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="locations"/>
                                                     <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="14.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="-" FontWeight="Bold"/>
                                                 </Grid>
@@ -797,7 +797,7 @@
                                             <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0,0,16,0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task" ToolTip="Start scraping the target page"/>
                                             <StackPanel  Orientation="Horizontal"   Grid.Row="1">
                                                 <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" Margin="0,0,6,0" ><Run Text="Using plugin:"/><Run Foreground="{StaticResource SecondaryHueMidBrush}" Text="{Binding CurrentPluginName, FallbackValue=null, Mode=OneWay, StringFormat=\{0\}}"/></TextBlock>
-                                                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding OpenPluginOptionsCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0" ToolTip="plugin options">
+                                                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding OpenPluginOptionsCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" Width="16" Height="16" Padding="0" ToolTip="plugin options" Visibility="Collapsed">
                                                     <custom:PackIconMaterial Height="12" Width="12" Kind="Cog"/>
                                                 </Button>
 
@@ -1029,7 +1029,7 @@
 
                 </StackPanel>
             </StackPanel>
-            <Grid Grid.Row="1" d:LayoutOverrides="Height" HorizontalAlignment="Center" MinWidth="330" Margin="0,0,0,10">
+            <Grid Grid.Row="1" d:LayoutOverrides="Height" HorizontalAlignment="Center" MinWidth="330" Margin="0,0,0,10" Visibility="{Binding RecentlyOpenedWorkspaces.Count, Converter={StaticResource IntToVisibilityConverter}, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32"/>
                     <RowDefinition/>
