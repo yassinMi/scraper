@@ -187,7 +187,7 @@ namespace TwoGisPlugin
         }
         const string ELEMENT_CLASS = "_1hf7139";
         const string ELEMENT_CLASS_SELECTED = "_1uckoc70";
-        const string ELEMENT_CLASS_HOVERED = "_oqz3tdy"; //hovered not selected
+        const string ELEMENT_CLASS_HOVERED = "_oqztd3y"; //hovered not selected 
         const string ELEMENT_CLASS_HOVERED_SELECTED = "_19keelio"; //hovered not selected
 
         const string _elems_content_x = ".//div[@class='_1xzra4e']/div[@class='_1g0w9mx']/div[@class='_jcreqo']/div[@class='_1tdquig']/div[@class='_z72pvu']/div[@class='_3zzdxk']/div[@class='_1667t0u']/div[@class='_1rkbbi0x']/div[@class='_15gu4wr']";
@@ -196,6 +196,7 @@ namespace TwoGisPlugin
         const string ELEMENTS_WRAPPER_CLASS = "_z72pvu";
         static WebDriver mainWebDriver { get; set; } = null;
         static Synchronizer<string> _lock = new Synchronizer<string>();
+        bool titleHasBeenResolved = false;
 
         public override async Task RunScraper(CancellationToken ct)
         {
@@ -206,6 +207,7 @@ namespace TwoGisPlugin
                 List<Company> list = new List<Company>();
                 if (Workspace.Current?.CSVOutputFolder == null) Debug.WriteLine("null ws");
                 IWebElement list__; //last wrapper that ahs divs directly
+                IWebElement list_wrapper_rnd; // a common wrapper for pagnation also;
                 OnTaskDetailChanged("Waiting for other task(s) to end..");
                 lock (_lock)//concurrent tasks can'y run this part of code simultaneously
                 {
@@ -213,12 +215,10 @@ namespace TwoGisPlugin
                     if (mainWebDriver == null)
                     {
                         OnStageChanged(ScrapTaskStage.Setup);
-                        OnTaskDetailChanged("Starting chrome driver..");
+                        OnTaskDetailChanged("Starting chrome..");                        
                         mainWebDriver = new ChromeDriver();
                     }
-
-                    mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
-                    OnBrowserWindowsCountChanged(++BrowserWindowsCount);
+                   
                     Debug.WriteLine("GoToUrl driver..");
                     string cachedHtmlFilename = Path.Combine(Workspace.Current.TPFolder, CoreUtils.getUniqueLinkHash(TargetPage)+".html");
                     string cacheUrlOrOriginalUrl = TargetPage;
@@ -229,95 +229,134 @@ namespace TwoGisPlugin
                         cacheUrlOrOriginalUrl = cachedHtmlFilename;
                         shouldBeCached = false;
                     }
-
-                    mainWebDriver.Url = cacheUrlOrOriginalUrl;
+                    Debug.WriteLine("url driver");
+                    
                     OnStageChanged(ScrapTaskStage.DownloadingData);
+                    Debug.WriteLine("nav");
                     try
                     {
+                        mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
+                        OnBrowserWindowsCountChanged(++BrowserWindowsCount);
+                        mainWebDriver.Url = cacheUrlOrOriginalUrl;
+                        mainWebDriver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(2);
                         Debug.WriteLine("navigating..");
                         mainWebDriver.Navigate();
-                        OnTaskDetailChanged("waiting for elemetns_content");
-                        WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
-                        w.Until((e) =>
-                        {
-                            try
-                            {
-                                return e.FindElement(By.XPath(_elems_content_x)) != null;
-                            }
-                            catch (StaleElementReferenceException err)
-                            {
-                                return false;
-                            }
-                        });
-                        OnResolved(mainWebDriver.Title??"title error");
-                        ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
-                        if (shouldBeCached)
-                        {
-                            File.WriteAllText(cachedHtmlFilename, mainWebDriver.PageSource);
-                            Debug.WriteLine($"saved cache tp file at: '{cachedHtmlFilename}' ");
-                        }
-                        Debug.WriteLine("getting categories_welements_wrapper..");
-                        //# listing
-                        //elems_content is _z72pvu ([2nd]after filr) o>  _3zzdxk o> _1667t0u o> _1rkbbi0x o> _15gu4wr 
-                        //list is: div[2rd] no class o> _awwm2v
-                        //currentlyusing .//div[@class='_z72pvu']//div[@class='_1667t0u']
-                        var list_wrapper_rnd = mainWebDriver.FindElement(
-                            By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']"));
-                        list__ = list_wrapper_rnd.FindElement(By.XPath(".//div[@class='_awwm2v']"));
-                        //var scrollView = list_wrapper_rnd.FindElement(By.ClassName("_1rkbbi0x"));
-                        //mainWebDriver.ExecuteScript("document.getElementsByClassName(\"_1rkbbi0x\")[2].scrollTo(0,50000)");
-                        
                     }
                     catch (Exception err)
                     {
-
                         OnError(err.Message);
                         OnStageChanged(ScrapTaskStage.Failed);
                         return;
                     }
-
-                    // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
-                    Debug.WriteLine($"enumerating categories_welements.. is null {list__.GetDomProperty("innerHTML")}");
-
-                    var elements_divs = list__.FindElements(By.XPath($"./div"));
-                    Debug.WriteLine($"elements_divs null {elements_divs==null} ");
-                    Debug.WriteLine($"elements_divs count {elements_divs.Count} ");
-                    
-                    
-                    int i = 0;
-                    
-                    OnPageStarted("test cat");
-
-                    foreach (var div in elements_divs)
+                    bool exists_next_page = false;
+                    int current_page = 1;
+                    do
                     {
-                        var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
-                        act.ScrollToElement(elements_divs[Math.Min( i+1, elements_divs.Count-1)]);
-                        act.Perform();
-                        Task.Delay(80).GetAwaiter().GetResult();
-                        i++;
-                        Company new_cmp_elem = new Company();
-                        Debug.WriteLine($"creating new comp_elem ..");
-                        var element_component = div.FindElement(By.XPath("./div"));
-                        new_cmp_elem.companyName = getName(element_component);
-                        OnTaskDetailChanged($"{new_cmp_elem.companyName}/location");
-                        new_cmp_elem.location = getLocation(element_component);
-                        OnTaskDetailChanged($"{new_cmp_elem.companyName}/category");
-                        new_cmp_elem.category = getCategory(element_component);
-                        OnTaskDetailChanged($"{new_cmp_elem.companyName}/link");
-                        new_cmp_elem.link = getLink(element_component);
-                        ResolveElementDynamic2(new_cmp_elem, element_component);
-                        TaskStatsInfo.incElem(1);
-                        Debug.WriteLine($"delaying ..");
-                        OnStageChanged(ScrapTaskStage.Delaying);
-                        Task.Delay(500).GetAwaiter().GetResult();
-                        list.Add(new_cmp_elem);
-                        OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
+                        try
+                        {
+
+                            OnTaskDetailChanged("waiting for elemetns_content");
+                            WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
+                            w.Until((e) =>
+                            {
+                                try
+                                {
+                                    return e.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
+                                }
+                                catch (StaleElementReferenceException err)
+                                {
+                                    return false;
+                                }
+                            });
+                            if (titleHasBeenResolved == false)
+                            {
+                                titleHasBeenResolved = true;
+                                OnResolved(mainWebDriver.Title ?? "title error");
+                                ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
+
+                            }
+                            if (shouldBeCached)
+                            {
+                                File.WriteAllText(cachedHtmlFilename, mainWebDriver.PageSource);
+                                Debug.WriteLine($"saved cache tp file at: '{cachedHtmlFilename}' ");
+                            }
+                            Debug.WriteLine("getting categories_welements_wrapper..");
+                            //# listing
+                            //elems_content is _z72pvu ([2nd]after filr) o>  _3zzdxk o> _1667t0u o> _1rkbbi0x o> _15gu4wr 
+                            //list is: div[2rd] no class o> _awwm2v
+                            //currentlyusing .//div[@class='_z72pvu']//div[@class='_1667t0u']
+                            list_wrapper_rnd = mainWebDriver.FindElement(
+                                By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']"));
+                            list__ = list_wrapper_rnd.FindElement(By.XPath(".//div[@class='_awwm2v']"));
+                            //var scrollView = list_wrapper_rnd.FindElement(By.ClassName("_1rkbbi0x"));
+                            //mainWebDriver.ExecuteScript("document.getElementsByClassName(\"_1rkbbi0x\")[2].scrollTo(0,50000)");
+
+                        }
+                        catch (Exception err)
+                        {
+
+                            OnError(err.Message);
+                            OnStageChanged(ScrapTaskStage.Failed);
+                            return;
+                        }
+
+                        // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
+                        Debug.WriteLine($"enumerating categories_welements.. is null {list__.GetDomProperty("innerHTML")}");
+
+                        var elements_divs = list__.FindElements(By.XPath($"./div"));
+                        Debug.WriteLine($"elements_divs null {elements_divs == null} ");
+                        Debug.WriteLine($"elements_divs count {elements_divs.Count} ");
 
 
-                    }
+                        int i = 0;
+                        
+                        OnPageStarted($"page {current_page}");
+
+                        foreach (var div in elements_divs)
+                        {
+                            var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
+                            act.ScrollToElement(elements_divs[Math.Min(i + 1, elements_divs.Count - 1)]);
+                            act.Perform();
+                            Task.Delay(80).GetAwaiter().GetResult();
+                            i++;
+                            Company new_cmp_elem = new Company();
+                            Debug.WriteLine($"creating new comp_elem ..");
+                            var element_component = div.FindElement(By.XPath("./div"));
+                            new_cmp_elem.companyName = getName(element_component);
+                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/location");
+                            new_cmp_elem.location = getLocation(element_component);
+                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/category");
+                            new_cmp_elem.category = getCategory(element_component);
+                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/link");
+                            new_cmp_elem.link = getLink(element_component);
+                            ResolveElementDynamic2(new_cmp_elem, element_component);
+                            TaskStatsInfo.incElem(1);
+                            Debug.WriteLine($"delaying ..");
+                            OnStageChanged(ScrapTaskStage.Delaying);
+                            Task.Delay(500).GetAwaiter().GetResult();
+                            list.Add(new_cmp_elem);
+                            OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
+                        }
+                        CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
+
+                        IWebElement next, prev;
+                        IWebElement[] pages_butts;
+                        bool isNextEnabled;
+                        int curr_page_num;
+                        exists_next_page = resolvePagination(list_wrapper_rnd, out pages_butts, out next, out prev, out  isNextEnabled, out curr_page_num) && isNextEnabled && !ct.IsCancellationRequested ;
+                        if (exists_next_page)
+                        {
+                            //#clicking next page
+                            next.Click();
+                            Task.Delay(100).GetAwaiter().GetResult();
+                        }
+                        current_page = curr_page_num + 1;
+                    } while (exists_next_page);
+
+                    
                 }
+                    
 
-                CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
                 OnStageChanged(ScrapTaskStage.Success);
                 return;
 
@@ -370,13 +409,18 @@ namespace TwoGisPlugin
                 element_component.Click();
                 WaitFor(mainWebDriver, By.XPath(_details_section_x + "//div[@class='_599hh']"), TimeSpan.FromSeconds(8));
                 var tel_awaiter = By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']");
-                WaitFor(mainWebDriver, tel_awaiter, TimeSpan.FromSeconds(8));
+                WaitFor(mainWebDriver, tel_awaiter, TimeSpan.FromSeconds(20));
                 //#expanding phones and joining all:  //not supported
                 OnTaskDetailChanged($"{compact_elem.companyName}/delay 500ms");
                 Task.Delay(500).GetAwaiter().GetResult();
                 OnTaskDetailChanged($"{compact_elem.companyName}/phone");
                 compact_elem.phone = getPhone(mainWebDriver.FindElement(By.XPath(_details_section_x)));
 
+            }
+            catch  (WebDriverTimeoutException err)
+            {
+                Trace.WriteLine($"ResolveElementDynamic2: timed out {err.Message}");
+                return;
             }
             catch (Exception err)
             {
@@ -454,6 +498,7 @@ namespace TwoGisPlugin
                 return "N/A";
             }
         }
+
         /// <summary>
         /// es
         /// </summary>
@@ -527,7 +572,7 @@ namespace TwoGisPlugin
                     if (case_gray.Count > 0) return case_gray.FirstOrDefault()?.Text ?? "N/A";
                     else
                     {
-                        Debug.WriteLine("element not found 5n returning n/a");
+                        Trace.WriteLine("getLocation: counld'd find loc in 2 cases");
                         return "N/A";
                     }
                 }
@@ -583,6 +628,63 @@ namespace TwoGisPlugin
                 return "N/A";
             }
 
+
+        }
+        /// <summary>
+        /// retirns a value indicating wither the pagination footer exists
+        /// </summary>
+        /// <param name="elems_content"></param>
+        /// <param name="pagesButtons">clickable a elements, the selected one is excluded</param>
+        /// <param name="next"></param>
+        /// <param name="prev"></param>
+        /// <returns>false means single page or something wrong (tarce)</returns>
+        bool resolvePagination(IWebElement elems_content, out IWebElement[] pagesButtons, out IWebElement next, out IWebElement prev, out bool isNextEnabled, out int curr_page_num)
+        {
+            var enabled_nav_butt_class_ = "_n5hmn94";
+            var disabled_nav_butt_class_ = "_7q94tr";
+            var display_non_class_ = "_fe2hl4";//used for 3rd div in case no pagination section 
+            var normal_pagination_class_ = "_1x4k6z7"; //in normal pagination
+            var pagination_x_ = ".//div[@class='_15gu4wr']/div[3]";//from elems_content or before
+            var pages_x_ = "./div[1]/*";//from pagination
+            IWebElement pagination;
+            try
+            {
+                pagination = elems_content.FindElement(By.XPath(pagination_x_));
+                if(pagination.GetAttribute("class")== "_1x4k6z7")
+                {
+                    var all_pages = pagination.FindElements(By.XPath(pages_x_));//including the selected one (whch is a div and not a)
+                    pagesButtons = all_pages.Where(e => e.TagName == "a").ToArray();
+
+                    var nav_next = pagination.FindElement(By.XPath(".//div[@class='_5ocwns']/div[2]"));
+                    var nav_prev = pagination.FindElement(By.XPath(".//div[@class='_5ocwns']/div[1]"));
+                    next = nav_next; prev = nav_prev;
+                    isNextEnabled = next.GetAttribute("class") == enabled_nav_butt_class_;
+                    curr_page_num = int.Parse(all_pages.First((e) => e.TagName == "div").Text);
+                    return true;
+                }
+                else
+                {
+                    pagesButtons = null; prev = null; next = null; isNextEnabled = false;
+                    curr_page_num = 0;
+                    return false;
+                }
+            }
+            catch (NoSuchElementException)
+            {
+                Trace.WriteLine($"resolvePagination:warning: NoSuchElementException");
+                pagesButtons = null; prev = null; next = null; isNextEnabled = false;
+                curr_page_num = 0;
+                return false;
+
+            }
+            catch (Exception err)
+            {
+                Trace.WriteLine($"resolvePagination:nkow axception {err}");
+                pagesButtons = null; prev = null; next = null; isNextEnabled = false;
+                curr_page_num = 0;
+                return false;
+
+            }
 
         }
 

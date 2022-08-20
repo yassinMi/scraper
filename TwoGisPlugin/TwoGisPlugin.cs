@@ -29,11 +29,46 @@ namespace TwoGisPlugin
             }
         }
 
+        public override PluginUsageInfo UsageInfo
+        {
+            get
+            {
+                return new PluginUsageInfo()
+                {
+                    UsageInfoViewHeader = "Supported URL's:",
+                    UseCases = new TargetPageUrlUseCaseHelp[]
+                      {
+                          new TargetPageUrlUseCaseHelp()
+                          {
+                               Description = "Categories urls",
+                               ExampleUrls = new string[]
+                               {
+                                   "https://2gis.ae/search/Special%20vehicle%20equipment/rubricId/433",
+                                   "https://2gis.ae/search/Reflective%20materials%20%2F%20goods/rubricId/57364"
+                               }
+
+
+                          },
+                          new TargetPageUrlUseCaseHelp()
+                          {
+                              Description = "Search query urls",
+                               ExampleUrls = new string[]
+                               {
+                                   "https://2gis.ae/search/technical%20services%20company",
+                                   "https://2gis.ae/search/technical%20services%20company/page/2"
+                               }
+                          }
+                      }
+
+                };
+            }
+        }
+
         public override string TargetHost
         {
             get
             {
-                return "2gis.com";
+                return "2gis.ae";
             }
         }
         static string[] hosts = { "2gis.com", "2gis.ae", "2gis.au" };
