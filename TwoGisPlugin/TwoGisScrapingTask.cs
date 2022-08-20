@@ -200,7 +200,7 @@ namespace TwoGisPlugin
 
         public override async Task RunScraper(CancellationToken ct)
         {
-            Debug.WriteLine("RunScraper call..");
+            Trace.WriteLine("RunScraper call..");
 
             lock (_lock[TargetPage])
             {
@@ -215,11 +215,28 @@ namespace TwoGisPlugin
                     if (mainWebDriver == null)
                     {
                         OnStageChanged(ScrapTaskStage.Setup);
-                        OnTaskDetailChanged("Starting chrome..");                        
-                        mainWebDriver = new ChromeDriver();
+                        OnTaskDetailChanged("Starting chrome..");
+                        Trace.WriteLine("Starting driver..");
+                        try
+                        {
+                            mainWebDriver = new ChromeDriver();
+                        }
+                        catch (DriverServiceNotFoundException err)
+                        {
+                            OnError(err.Message);
+                            OnStageChanged(ScrapTaskStage.Failed);
+                            return;
+                        }
+                        catch (Exception err)
+                        {
+                            OnError(err.Message);
+                            OnStageChanged(ScrapTaskStage.Failed);
+                            return;
+                        }
+                        
                     }
-                   
-                    Debug.WriteLine("GoToUrl driver..");
+
+                    Trace.WriteLine("GoToUrl driver..");
                     string cachedHtmlFilename = Path.Combine(Workspace.Current.TPFolder, CoreUtils.getUniqueLinkHash(TargetPage)+".html");
                     string cacheUrlOrOriginalUrl = TargetPage;
                     bool enable_cache = false; //obsolete
