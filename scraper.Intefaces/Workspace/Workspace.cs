@@ -101,7 +101,7 @@ namespace scraper.Core.Workspace
             SetUpWorkspaceFolders(res);
             //assign plugin
             res.Plugin = PluginsManager.CachedGlobalPlugins.FirstOrDefault(p => p.Name == res.PluginsNames.FirstOrDefault());
-            if (res.Plugin == null) throw new MissingPluginException($"cannot load workspace at '{res.Directory}' because plugin '{res.PluginsNames.FirstOrDefault()}' is missing or has incompatible varsion");
+            if (res.Plugin == null) throw new MissingPluginException($"Cannot load workspace '{res.Directory}', plugin '{res.PluginsNames.FirstOrDefault()}' is missing or has incompatible version");
             var all_file_in_csv = System.IO.Directory.GetFiles(res.CSVOutputFolder);
             foreach (var item in all_file_in_csv)
             {
