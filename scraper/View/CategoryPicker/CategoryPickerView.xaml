@@ -44,8 +44,13 @@
         </DataTemplate>
 
     </UserControl.Resources>
-    <Grid>
-        <TextBlock  Text="Pick"></TextBlock>
+    <Grid Margin="12,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="21*"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,10" FontSize="16" Text="Pick category:"/>
+
         <TreeView materialDesign:TreeViewAssist.ShowSelection="False" materialDesign:TransitionAssist.DisableTransitions="True" materialDesign:RippleAssist.IsDisabled="True"    ItemsSource="{Binding Children}"  materialDesign:TreeViewAssist.ExpanderSize="2" x:Name="treeView" Margin="10" Grid.Row="1" VerticalAlignment="Stretch">
             <TreeView.Resources>
                 <catPickerModel:ExplorerTarget Name="My target 1" x:Key="file1" />
