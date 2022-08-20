@@ -300,6 +300,7 @@ namespace TwoGisPlugin
                             return;
                         }
 
+                        tryHideFooter();
                         // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
                         Debug.WriteLine($"enumerating categories_welements.. is null {list__.GetDomProperty("innerHTML")}");
 
@@ -362,6 +363,30 @@ namespace TwoGisPlugin
 
             }
         }
+        /// <summary>
+        /// footer sometimes receves pagination click events and causes problems
+        /// this methods attempts to clos it if exists)
+        /// </summary>
+        private void tryHideFooter()
+        {
+            var footer_close_button_x_ = "//footer//div[@class='_euwdl0']";
+            try
+            {
+                var butt = mainWebDriver.FindElement(By.XPath(footer_close_button_x_));
+                butt.Click();
+
+            }
+            catch(NoSuchElementException)
+            {
+                return;
+            }
+            catch (Exception err)
+            {
+                Trace.WriteLine($"tryHideFooter: unknown axception : {err}");
+                return;
+            }
+        }
+
         const string RootInfo_InElementPage = "_1rkbbi0x";
         [Obsolete("use 2", true)]
         /// <summary>
