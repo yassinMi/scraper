@@ -125,6 +125,12 @@ namespace scraper.ViewModel
 
 
             MainCategoryPickerVM = new CategoryPicker.CategoryPickerVM();
+            MainCategoryPickerVM.StartRequested += (s, e) =>
+            {
+                TargetPageQueryText = e.URL;
+                if(canExecuteStartScrapingCommand())
+                StartScrapingCommand.Execute(null);
+            };
             Debug.WriteLine("endof init");
 
         }

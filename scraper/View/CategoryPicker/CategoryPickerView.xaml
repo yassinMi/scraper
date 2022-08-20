@@ -12,7 +12,7 @@
              xmlns:TemplateSelectors="clr-namespace:scraper.View.TemplateSelectors"
              xmlns:CategoryPicker="clr-namespace:scraper.ViewModel.CategoryPicker" x:Class="scraper.View.CategoryPicker.CategoryPickerView"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance {x:Type CategoryPicker:CategoryPickerVM}, IsDesignTimeCreatable=True}" Width="300" Height="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance {x:Type CategoryPicker:CategoryPickerVM}, IsDesignTimeCreatable=True}" MinWidth="300" Height="300">
     <UserControl.Resources>
         <DataTemplate  DataType="{x:Type catPickerModel:ExplorerFolder}" >
             <Grid  >
@@ -35,11 +35,13 @@
                 </Grid.ColumnDefinitions>
                 <Grid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Open external" Command="{Binding OpenFileExternalCommand}" />
+                        <MenuItem Header="Start scraping" Command="{Binding RequestStartCommand}" />
                     </ContextMenu>
                 </Grid.ContextMenu>
                 <!--materialDesign:PackIcon Width="13"   Kind="FileOutline" VerticalAlignment="Center" /-->
-                <TextBlock Grid.Column="2" Text="{Binding Name}" Margin="8 0 0 0" VerticalAlignment="Center" Foreground="#FFC50303" />
+                <TextBlock Grid.Column="2"  Margin="8 0 0 0" VerticalAlignment="Center"  >
+                    <Run Text="{Binding Name}" /> <Run Foreground="{StaticResource MaterialDesignBodyLight}" Text="{Binding ElementsCount, StringFormat=(\{0\} Companies)}" />
+                </TextBlock>
             </Grid>
         </DataTemplate>
 
