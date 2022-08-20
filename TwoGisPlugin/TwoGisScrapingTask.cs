@@ -200,7 +200,7 @@ namespace TwoGisPlugin
 
         public override async Task RunScraper(CancellationToken ct)
         {
-            Trace.WriteLine("RunScraper call..");
+            CoreUtils.WriteLine($"RunScraper.. [{DateTime.Now}], {TargetPage}");
 
             lock (_lock[TargetPage])
             {
@@ -216,7 +216,7 @@ namespace TwoGisPlugin
                     {
                         OnStageChanged(ScrapTaskStage.Setup);
                         OnTaskDetailChanged("Starting chrome..");
-                        Trace.WriteLine("Starting driver..");
+                        CoreUtils.WriteLine("Starting driver..");
                         try
                         {
                             mainWebDriver = new ChromeDriver();
@@ -236,7 +236,7 @@ namespace TwoGisPlugin
                         
                     }
 
-                    Trace.WriteLine("GoToUrl driver..");
+                    CoreUtils.WriteLine("GoToUrl driver..");
                     string cachedHtmlFilename = Path.Combine(Workspace.Current.TPFolder, CoreUtils.getUniqueLinkHash(TargetPage)+".html");
                     string cacheUrlOrOriginalUrl = TargetPage;
                     bool enable_cache = false; //obsolete
@@ -266,7 +266,7 @@ namespace TwoGisPlugin
                         return;
                     }
                     bool exists_next_page = false;
-                    int current_page = 1;
+                    int current_page = tryGetPageNumFromUrl(TargetPage);
                     do
                     {
                         try
@@ -381,6 +381,30 @@ namespace TwoGisPlugin
             }
         }
         /// <summary>
+        /// excractes page from url, returns 1 as fallback
+        /// </summary>
+        /// <param name="targetPage"></param>
+        /// <returns></returns>
+        public static int tryGetPageNumFromUrl(string targetPage)
+        {
+            var m = Regex.Match(targetPage, @"/page/(\d+)");
+            if (m.Success)
+            {
+                try
+                {
+                    return int.Parse(m.Groups[1].Value);
+                }
+                catch (Exception)
+                {
+
+                    return 1;
+                }
+                
+            }
+            return 1;
+        }
+
+        /// <summary>
         /// footer sometimes receves pagination click events and causes problems
         /// this methods attempts to clos it if exists)
         /// </summary>
@@ -399,7 +423,7 @@ namespace TwoGisPlugin
             }
             catch (Exception err)
             {
-                Trace.WriteLine($"tryHideFooter: unknown axception : {err}");
+                CoreUtils.WriteLine($"tryHideFooter: unknown axception : {err}");
                 return;
             }
         }
@@ -433,7 +457,7 @@ namespace TwoGisPlugin
         {
             if (element_component == null)
             {
-                Trace.WriteLine($"ResolveElementDynamic2: null obj passed");
+                CoreUtils.WriteLine($"ResolveElementDynamic2: null obj passed");
                 return;
             }
             string elem_calss = element_component.GetAttribute("class");
@@ -442,7 +466,7 @@ namespace TwoGisPlugin
              || elem_calss == ELEMENT_CLASS_HOVERED
              || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
             {
-                Trace.WriteLine($"ResolveElementDynamic2: expected one of element_component classes got {elem_calss}");
+                CoreUtils.WriteLine($"ResolveElementDynamic2: expected one of element_component classes got {elem_calss}");
                 return;//todo should return only in a strict_dev_mode, otherwise keep going as long as exception safe
             }
             try
@@ -461,13 +485,13 @@ namespace TwoGisPlugin
             }
             catch  (WebDriverTimeoutException err)
             {
-                Trace.WriteLine($"ResolveElementDynamic2: timed out {err.Message}");
+                CoreUtils.WriteLine($"ResolveElementDynamic2: timed out {err.Message}");
                 return;
             }
             catch (Exception err)
             {
 
-                Trace.WriteLine($"ResolveElementDynamic2: unkown exception {err}");
+                CoreUtils.WriteLine($"ResolveElementDynamic2: unkown exception {err}");
                 return;
             }
              }
@@ -480,7 +504,7 @@ namespace TwoGisPlugin
         {
             if (item == null)
             {
-                Trace.WriteLine("getLink: passed null object");
+                CoreUtils.WriteLine("getLink: passed null object");
                 return "N/A";
             }
 
@@ -491,7 +515,7 @@ namespace TwoGisPlugin
              || elem_calss == ELEMENT_CLASS_HOVERED
              || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
             {
-                Trace.WriteLine($"getLink: expected one of element_component classes got {elem_calss}");
+                CoreUtils.WriteLine($"getLink: expected one of element_component classes got {elem_calss}");
                 return "N/A";
             }
             try
@@ -500,12 +524,12 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
-                Trace.WriteLine("getLink: NoSuchElementException");
+                CoreUtils.WriteLine("getLink: NoSuchElementException");
                 return "N/A";
             }
             catch (Exception err)
             {
-                Trace.WriteLine($"getLink: unknows exception: {err}");
+                CoreUtils.WriteLine($"getLink: unknows exception: {err}");
                 return "N/A";
             }
         }
@@ -518,7 +542,7 @@ namespace TwoGisPlugin
         {
             if (item == null)
             {
-                Trace.WriteLine("getPhone: passed null object");
+                CoreUtils.WriteLine("getPhone: passed null object");
                 return "N/A";
             }
             //div _49kxlr >  div _b0ke8 > a _2lcm958  has format tel:+97142398771 in href
@@ -531,12 +555,12 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
-                Trace.WriteLine("getPhone: NoSuchElementException");
+                CoreUtils.WriteLine("getPhone: NoSuchElementException");
                 return "N/A";
             }
             catch (Exception err)
             {
-                Trace.WriteLine($"getPhone: unknown exception: {err}");
+                CoreUtils.WriteLine($"getPhone: unknown exception: {err}");
                 return "N/A";
             }
         }
@@ -550,7 +574,7 @@ namespace TwoGisPlugin
         {
             if (item == null)
             {
-                Trace.WriteLine("getCategory: passed null object");
+                CoreUtils.WriteLine("getCategory: passed null object");
                 return "N/A";
             }
             string elem_calss = item.GetAttribute("class");
@@ -559,7 +583,7 @@ namespace TwoGisPlugin
              || elem_calss == ELEMENT_CLASS_HOVERED
              || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
             {
-                Trace.WriteLine($"getCategory: expected one of element_component classes got {elem_calss}");
+                CoreUtils.WriteLine($"getCategory: expected one of element_component classes got {elem_calss}");
                 return "N/A";
             }
             Debug.WriteLine($"cat ..");
@@ -569,12 +593,12 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
-                Trace.WriteLine("getCategory: NoSuchElementException");
+                CoreUtils.WriteLine("getCategory: NoSuchElementException");
                 return "N/A";
             }
             catch (Exception err)
             {
-                Trace.WriteLine($"getCategory: unknown exception: {err}");
+                CoreUtils.WriteLine($"getCategory: unknown exception: {err}");
                 return "N/A";
             }
 
@@ -589,7 +613,7 @@ namespace TwoGisPlugin
         {
             if (item == null)
             {
-                Trace.WriteLine("getLocation: passed null object");
+                CoreUtils.WriteLine("getLocation: passed null object");
                 return "N/A";
             }
             string elem_calss = item.GetAttribute("class");
@@ -598,7 +622,7 @@ namespace TwoGisPlugin
              || elem_calss == ELEMENT_CLASS_HOVERED
              || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
             {
-                Trace.WriteLine($"getLocation: expected one of element_component classes got {elem_calss}");
+                CoreUtils.WriteLine($"getLocation: expected one of element_component classes got {elem_calss}");
                 return "N/A";
             }
             //the 4th div (not always,) or the class _4l12l8 (unless it's grayed out
@@ -614,7 +638,7 @@ namespace TwoGisPlugin
                     if (case_gray.Count > 0) return case_gray.FirstOrDefault()?.Text ?? "N/A";
                     else
                     {
-                        Trace.WriteLine("getLocation: counld'd find loc in 2 cases");
+                        CoreUtils.WriteLine("getLocation: counld'd find loc in 2 cases");
                         return "N/A";
                     }
                 }
@@ -622,12 +646,12 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
-                Trace.WriteLine("getLocation: NoSuchElementException");
+                CoreUtils.WriteLine("getLocation: NoSuchElementException");
                 return "N/A";
             }
             catch (Exception err)
             {
-                Trace.WriteLine($"getLocation: unknown exception: {err}");
+                CoreUtils.WriteLine($"getLocation: unknown exception: {err}");
                 return "N/A";
             }
         }
@@ -640,7 +664,7 @@ namespace TwoGisPlugin
         {
             if (item == null)
             {
-                Trace.WriteLine("getName: passed null object");
+                CoreUtils.WriteLine("getName: passed null object");
                 return "N/A";
             }
             Debug.WriteLine($"name ..");
@@ -650,7 +674,7 @@ namespace TwoGisPlugin
              || elem_calss == ELEMENT_CLASS_HOVERED
              || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
             {
-                Trace.WriteLine($"getName: expected one of element_cmomponent classes got {elem_calss}");
+                CoreUtils.WriteLine($"getName: expected one of element_cmomponent classes got {elem_calss}");
                 return "N/A";
             }
             try
@@ -666,7 +690,7 @@ namespace TwoGisPlugin
             }
             catch (Exception err)
             {
-                Trace.WriteLine($"getName: unknown exception: {err}");
+                CoreUtils.WriteLine($"getName: unknown exception: {err}");
                 return "N/A";
             }
 
@@ -713,7 +737,7 @@ namespace TwoGisPlugin
             }
             catch (NoSuchElementException)
             {
-                Trace.WriteLine($"resolvePagination:warning: NoSuchElementException");
+                CoreUtils.WriteLine($"resolvePagination:warning: NoSuchElementException");
                 pagesButtons = null; prev = null; next = null; isNextEnabled = false;
                 curr_page_num = 0;
                 return false;
@@ -721,7 +745,7 @@ namespace TwoGisPlugin
             }
             catch (Exception err)
             {
-                Trace.WriteLine($"resolvePagination:nkow axception {err}");
+                CoreUtils.WriteLine($"resolvePagination:nkow axception {err}");
                 pagesButtons = null; prev = null; next = null; isNextEnabled = false;
                 curr_page_num = 0;
                 return false;

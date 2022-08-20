@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TwoGisPlugin;
 
 namespace scraperTests.PluginsTests
 {
@@ -65,6 +66,22 @@ namespace scraperTests.PluginsTests
                 var res = TwoGisPlugin.TwoGisPlugin.TargetPageValidator(i.Key);
                 Assert.IsTrue(res == i.Value, $"expected {i.Value} got {res} for tp '{i.Key}'");
             }
+        }
+
+
+
+        [TestMethod]
+        public void TestTpPageNumFromUrl()
+        {
+            
+            Assert.IsTrue(TwoGisScrapingTask.tryGetPageNumFromUrl("https://2gis.ae/dubai/search/Cooked%20food%20delivery/rubricId/1203/page/8") ==
+                8, $"expected {8} ");
+
+            Assert.IsTrue(TwoGisScrapingTask.tryGetPageNumFromUrl("https://2gis.ae/dubai/search/Cooked%20food%20delivery/rubricId/1203/page/8898/?dslk=sfs") ==
+                8898, $"expected {8898}");
+            Assert.IsTrue(TwoGisScrapingTask.tryGetPageNumFromUrl("https://2gis.ae/dubai/search/Cooked%20food%20delivery/rubricId/1203/?dslk=sfs") ==
+                1, $"expected {1} ");
+
         }
     }
 }

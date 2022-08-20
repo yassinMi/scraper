@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -49,6 +50,13 @@ namespace scraper.Core.Utils
     }
     public static class CoreUtils
     {
+
+        static string logFile = "log.txt";
+        public static void WriteLine(string line)
+        {
+            Trace.WriteLine(line);
+            File.AppendAllLines(logFile, new string[] { line});
+        }
         /// <summary>
         /// 
         /// </summary>
