@@ -122,8 +122,9 @@ namespace scraper.ViewModel
                     }
                 }
                  }
-           
-            
+
+
+            MainCategoryPickerVM = new CategoryPicker.CategoryPickerVM();
             Debug.WriteLine("endof init");
 
         }
@@ -243,6 +244,16 @@ namespace scraper.ViewModel
                 return FilePickerPlugin==null? AllInstalledPlugins : AllInstalledPlugins.Concat(new Core.Plugin[] { FilePickerPlugin });
             }
         }
+
+
+        private object _CurrentDialogContent;
+        public object CurrentDialogContent
+        {
+            set { _CurrentDialogContent = value; notif(nameof(CurrentDialogContent)); }
+            get { return _CurrentDialogContent; }
+        }
+
+
 
         public Core.Plugin FilePickerPlugin { get; set; } = null;
 
@@ -437,6 +448,14 @@ namespace scraper.ViewModel
         {
             set { _CurrentTaskDetail = value; notif(nameof(CurrentTaskDetail)); }
             get { return _CurrentTaskDetail; }
+        }
+
+
+        private ViewModel.CategoryPicker.CategoryPickerVM _MainCategoryPickerVM;
+        public ViewModel.CategoryPicker.CategoryPickerVM MainCategoryPickerVM
+        {
+            set { _MainCategoryPickerVM = value; notif(nameof(MainCategoryPickerVM)); }
+            get { return _MainCategoryPickerVM; }
         }
 
 
@@ -668,11 +687,11 @@ namespace scraper.ViewModel
         }
 
 
-        private bool _IsHelpPopupOpen;
-        public bool IsHelpPopupOpen
+        private bool _IsPopupOpen;
+        public bool IsPopupOpen
         {
-            set { _IsHelpPopupOpen = value; notif(nameof(IsHelpPopupOpen)); }
-            get { return _IsHelpPopupOpen; }
+            set { _IsPopupOpen = value; notif(nameof(IsPopupOpen)); }
+            get { return _IsPopupOpen; }
         }
 
 
@@ -959,7 +978,16 @@ namespace scraper.ViewModel
 
         private void hndlOpenHelpPopupCommand()
         {
-            IsHelpPopupOpen = true;
+            CurrentDialogContent = PluginHelpVM;
+            IsPopupOpen = true;
+        }
+
+        public ICommand OpenCategoryPickerPopupCommand { get { return new MICommand(hndlOpenCategoryPickerPopupCommand); } }
+
+        private void hndlOpenCategoryPickerPopupCommand()
+        {
+            CurrentDialogContent = MainCategoryPickerVM;
+            IsPopupOpen = true;
         }
 
         public ICommand DevFillAndStartCommand { get { return new MICommand<string>(hndlDevFillAndStartCommand); } }

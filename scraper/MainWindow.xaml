@@ -7,12 +7,16 @@
         xmlns:View="clr-namespace:scraper.View"
         xmlns:A="clr-namespace:scraper.Attached"
         xmlns:common="clr-namespace:Mi.Common"
+                 xmlns:TemplateSelectors="clr-namespace:scraper.View.TemplateSelectors"
+
         xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.MainWindow"
-        
+        xmlns:catPickerView="clr-namespace:scraper.View.CategoryPicker"
+    xmlns:catPickerViewModel="clr-namespace:scraper.ViewModel.CategoryPicker"
+    xmlns:catPickerModel="clr-namespace:scraper.Model.CategoryPicker"
         mc:Ignorable="d"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -31,6 +35,18 @@
         <Converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
         <common:ApplicationInfo x:Key="ApplicationInfo"/>
+
+        <DataTemplate DataType="{x:Type ViewModel:HelpVM}">
+            <Grid>
+                <View:HelpView DataContext="{Binding}"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type catPickerViewModel:CategoryPickerVM}">
+            <Grid>
+                <catPickerView:CategoryPickerView DataContext="{Binding}"/>
+            </Grid>
+        </DataTemplate>
+
         <Style x:Key="BasicListViewItemStyle" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -631,17 +647,20 @@
                     </materialDesign:Badged>
                 </TabItem.Header>
                 <Grid>
-                    <materialDesign:DialogHost
-						IsOpen="{Binding IsHelpPopupOpen}"
+                    <materialDesign:DialogHost DialogContent="{Binding CurrentDialogContent}"
+						IsOpen="{Binding IsPopupOpen}"
   
 						CloseOnClickAway="True"
 						OverlayBackground="#00000000"
 						DialogTheme="Inherit" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                        <materialDesign:DialogHost.DialogContent>
+                        <!--materialDesign:DialogHost.DialogContent>
+                        replaced with auto type template in mw resocureces
                             <Grid>
                                 <View:HelpView DataContext="{Binding PluginHelpVM}"/>
                             </Grid>
-                        </materialDesign:DialogHost.DialogContent>
+                        </-->
+                        
+                        
                         <Grid x:Name="content_database" Margin="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="329*"/>
@@ -651,7 +670,7 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="48"/>
-                                <RowDefinition Height="80"/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition/>
                                 <RowDefinition Height="161"/>
                             </Grid.RowDefinitions>
@@ -742,13 +761,14 @@
                                 </ListBox>
 
                             </Grid>
-                            <Grid x:Name="scraping_panel" Grid.Column="1" Margin="10,0" Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Grid.RowSpan="2">
+                            <Grid x:Name="scraping_panel" Grid.Column="1" Margin="10,24,10,0" Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Grid.RowSpan="2">
                                 <materialDesign:Card Padding="4" materialDesign:ShadowAssist.ShadowDepth="Depth0"
 									Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
 									UniformCornerRadius="10" FontFamily="Roboto" Background="#001C1C1C" Margin="6,2,9,2" d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="80"/>
+                                            <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
                                         <Grid x:Name="scrap_page_input" Margin="0">
@@ -759,13 +779,17 @@
                                             <Button x:Name="helpButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0" Width="16" Height="16" Padding="0" Command="{Binding OpenHelpPopupCommand, Mode=OneWay}">
                                                 <custom:PackIconMaterial Height="12" Width="12" Kind="Help"/>
                                             </Button>
+                                            <Button x:Name="pickButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,18,0" Width="16" Height="16" Padding="0" Command="{Binding OpenCategoryPickerPopupCommand, Mode=OneWay}">
+                                                <custom:PackIconMaterial Height="12" Width="12" Kind="AutoFix"/>
+                                            </Button>
+
 
                                             <TextBox materialDesign:ColorZoneAssist.Mode="Standard"
 												materialDesign:TextFieldAssist.LeadingIcon="Globe"
 												materialDesign:TextFieldAssist.HasLeadingIcon="True"
 												materialDesign:HintAssist.Hint="Target page URL"
 												materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-												FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,16,0" KeyDown="TextBox_KeyDown" >
+												FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,34,0" KeyDown="TextBox_KeyDown" >
                                                 <TextBox.InputBindings>
                                                     <KeyBinding Command="{Binding StartScrapingCommand}" Key="Return"/>
                                                 </TextBox.InputBindings>
@@ -780,8 +804,6 @@
                                             </StackPanel>
 
                                         </Grid>
-
-
                                     </Grid>
 
 

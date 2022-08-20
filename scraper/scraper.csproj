@@ -147,6 +147,9 @@
     <Compile Include="Converters\VisibleIfEnumValueMatchesStringParam.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="CsvExport.cs" />
+    <Compile Include="Model\CategoryPicker\ExplorerElement.cs" />
+    <Compile Include="Model\CategoryPicker\ExplorerFolder.cs" />
+    <Compile Include="Model\CategoryPicker\ExplorerTarget.cs" />
     <Compile Include="Model\Element.cs" />
     <Compile Include="Model\FilterComponentBase.cs" />
     <Compile Include="Model\FilteringRule.cs" />
@@ -159,6 +162,10 @@
     <Compile Include="Services\Utils.cs" />
     <Compile Include="ViewModel\BaseFilterComponentViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\CategoryPicker\CategoryPickerVM.cs" />
+    <Compile Include="View\CategoryPicker\CategoryPickerView.xaml.cs">
+      <DependentUpon>CategoryPickerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\CSVResourceVM.cs" />
     <Compile Include="ViewModel\FilteringRuleViewModel.cs" />
     <Compile Include="ViewModel\RangeFilterComponentViewModel.cs" />
@@ -169,6 +176,7 @@
     <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\ScrapingTaskVM.cs" />
     <Compile Include="ViewModel\UnhandledErrorWindowVM.cs" />
+    <Compile Include="View\DataTemplateSelectors.cs" />
     <Compile Include="View\GroupFilterComponentView.xaml.cs">
       <DependentUpon>GroupFilterComponentView.xaml</DependentUpon>
     </Compile>
@@ -210,6 +218,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </DesignData>
+    <Page Include="View\CategoryPicker\CategoryPickerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\GroupFilterComponentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
