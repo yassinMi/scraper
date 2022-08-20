@@ -56,5 +56,15 @@ namespace scraperTests.PluginsTests
             }
 
         }
+
+        [TestMethod]
+        public void TestTpValidator()
+        {
+            foreach (var i in GisestsData.knownTPValidatorData())
+            {
+                var res = TwoGisPlugin.TwoGisPlugin.TargetPageValidator(i.Key);
+                Assert.IsTrue(res == i.Value, $"expected {i.Value} got {res} for tp '{i.Key}'");
+            }
+        }
     }
 }

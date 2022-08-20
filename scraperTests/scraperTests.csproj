@@ -83,6 +83,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="PluginsTests\BLScraperTests.cs" />
+    <Compile Include="PluginsTests\GisTestsData.cs" />
     <Compile Include="PluginsTests\BLScraperTestsData.cs" />
     <Compile Include="PluginsTests\GisTests.cs" />
     <Compile Include="PluginsTests\PluginTestsUtils.cs" />

@@ -7,6 +7,8 @@ using scraper.Core;
 using scraper.Core.Attributes;
 using scraper.Core.Utils;
 using scraper.Core.Workspace;
+using System.Text.RegularExpressions;
+
 [assembly:CoreAPIVersion("0.1.2")]
 
 namespace TwoGisPlugin
@@ -89,17 +91,23 @@ namespace TwoGisPlugin
             }
         }
 
-        public override bool ValidateTargetPageInputQuery(string input)
+        public static bool TargetPageValidator(string input)
         {
-            return true;
             Uri uri;
             if (Uri.TryCreate(input, UriKind.Absolute, out uri) == false)
             {
                 return false;
             }
             string website = uri.Host.ToLower();
-            if ((TargetHost != null) && !((hosts.Contains(website) ))) return false;
+            if  (!(hosts.Contains(website))) return false;
+            if (!Regex.IsMatch(input, @"/search/\w+")) return false;
+            //if (!Regex.IsMatch(input, @"/rubricId/\d+")) return false;
             return true;
+        }
+
+        public override bool ValidateTargetPageInputQuery(string input)
+        {
+            return TargetPageValidator(input);
         }
 
         public override string ElementName { get { return "Company"; } }
