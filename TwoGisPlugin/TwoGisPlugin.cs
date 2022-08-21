@@ -119,6 +119,10 @@ namespace TwoGisPlugin
 
         public static bool TargetPageValidator(string input)
         {
+            if (string.IsNullOrWhiteSpace(input)) return false;
+#if true
+            if (input.StartsWith("file:///")) return true;
+#endif
             Uri uri;
             if (Uri.TryCreate(input, UriKind.Absolute, out uri) == false)
             {

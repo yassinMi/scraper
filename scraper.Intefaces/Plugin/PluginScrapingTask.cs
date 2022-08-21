@@ -36,6 +36,8 @@ namespace scraper.Core
         public event EventHandler<string> PageDone;  //fired when the current page changes, the string provides the page progress like: [4/51]
         public event EventHandler<ScrapTaskStage> StageChanged; //stdout prints something like P: [4/35]
         public event EventHandler<int> BrowserWindowsCountChanged; //
+        public event EventHandler<bool> IsStopRequestedValueChanged; //
+
 
 
         protected void OnProgress(DownloadingProg e)
@@ -75,6 +77,12 @@ namespace scraper.Core
             BrowserWindowsCount = cc;
             BrowserWindowsCountChanged?.Invoke(this, cc);
         }
+
+        protected void OnIsStopRequestedChanged(bool val)
+        {
+            IsStopRequested = val;
+            IsStopRequestedValueChanged?.Invoke(this, IsStopRequested);
+        }
         /// <summary>
         /// downloads the raw objects containing the required flieds, saves them under workspace/raw or workspace/{ElementName}-raw
         /// </summary>
@@ -108,6 +116,10 @@ namespace scraper.Core
         public string TaskDetail { get; set; }
         
         public int BrowserWindowsCount { get; set; }
+        /// <summary>
+        /// used for feedback to disabe Stop button as the stoping process is carried out
+        /// </summary>
+        public bool IsStopRequested { get; internal set; }
         /// <summary>
         /// pause the task
         /// only supported or downloading data stage

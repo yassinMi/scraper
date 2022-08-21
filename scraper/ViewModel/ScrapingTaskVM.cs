@@ -142,7 +142,7 @@ namespace scraper.ViewModel
 
         private bool canExecutePauseCommand()
         {
-            return ((Model?.Stage) != null) && ( Model.Stage ==ScrapTaskStage.DownloadingData
+            return ((Model?.Stage) != null) && !Model.IsStopRequested && ( Model.Stage ==ScrapTaskStage.DownloadingData
                 || Model.Stage == ScrapTaskStage.Delaying
                 );
         }

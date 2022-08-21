@@ -223,12 +223,14 @@ namespace TwoGisPlugin
                         }
                         catch (DriverServiceNotFoundException err)
                         {
+                            CoreUtils.WriteLine($"couldn't start chrome: {err}");
                             OnError(err.Message);
                             OnStageChanged(ScrapTaskStage.Failed);
                             return;
                         }
                         catch (Exception err)
                         {
+                            CoreUtils.WriteLine($"couldn't start chrome:unknown error {err}");
                             OnError(err.Message);
                             OnStageChanged(ScrapTaskStage.Failed);
                             return;
@@ -236,7 +238,6 @@ namespace TwoGisPlugin
                         
                     }
 
-                    CoreUtils.WriteLine("GoToUrl driver..");
                     string cachedHtmlFilename = Path.Combine(Workspace.Current.TPFolder, CoreUtils.getUniqueLinkHash(TargetPage)+".html");
                     string cacheUrlOrOriginalUrl = TargetPage;
                     bool enable_cache = false; //obsolete
@@ -252,20 +253,22 @@ namespace TwoGisPlugin
                     Debug.WriteLine("nav");
                     try
                     {
+                        CoreUtils.WriteLine("SwitchTo() ..");
                         mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
                         OnBrowserWindowsCountChanged(++BrowserWindowsCount);
                         mainWebDriver.Url = cacheUrlOrOriginalUrl;
                         mainWebDriver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(2);
-                        Debug.WriteLine("navigating..");
+                        CoreUtils.WriteLine("Navigate()..");
                         mainWebDriver.Navigate();
                     }
                     catch (Exception err)
                     {
+                        CoreUtils.WriteLine($"couldnt navigate :unknown error {err}");
                         OnError(err.Message);
                         OnStageChanged(ScrapTaskStage.Failed);
                         return;
                     }
-                    bool exists_next_page = false;
+                    bool should_scrape_next_page = false;
                     int current_page = tryGetPageNumFromUrl(TargetPage);
                     do
                     {
@@ -282,6 +285,15 @@ namespace TwoGisPlugin
                                 }
                                 catch (StaleElementReferenceException err)
                                 {
+                                    return false;
+                                }
+                                catch (NoSuchElementException err)
+                                {
+                                    return false;
+                                }
+                                catch (Exception err)
+                                {
+                                    CoreUtils.WriteLine($"Until: unknown error {err}");
                                     return false;
                                 }
                             });
@@ -327,7 +339,7 @@ namespace TwoGisPlugin
 
 
                         int i = 0;
-                        
+                        CoreUtils.WriteLine($"page started:{current_page}");
                         OnPageStarted($"page {current_page}");
 #if true
 
@@ -335,8 +347,16 @@ namespace TwoGisPlugin
                         foreach (var div in elements_divs)
                         {
                             var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
-                            act.ScrollToElement(elements_divs[Math.Min(i + 1, elements_divs.Count - 1)]);
-                            act.Perform();
+                            try
+                            {
+                                act.ScrollToElement(elements_divs[Math.Min(i + 1, elements_divs.Count - 1)]);
+                                act.Perform();
+                            }
+                            catch (Exception err)
+                            {
+                                CoreUtils.WriteLine($"act.Perform failed: {err}");
+                                Trace.Fail("act.Perform failed", err.ToString());
+                            }
                             Task.Delay(80).GetAwaiter().GetResult();
                             i++;
                             Company new_cmp_elem = new Company();
@@ -352,29 +372,65 @@ namespace TwoGisPlugin
                             ResolveElementDynamic2(new_cmp_elem, element_component);
                             TaskStatsInfo.incElem(1);
                             Debug.WriteLine($"delaying ..");
-                            OnStageChanged(ScrapTaskStage.Delaying);
-                            Task.Delay(500).GetAwaiter().GetResult();
+                            Task.Delay(20).GetAwaiter().GetResult();
                             list.Add(new_cmp_elem);
                             OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
+                            if (ct.IsCancellationRequested) {
+                                if (IsStopRequested == false)
+                                {
+                                    OnIsStopRequestedChanged(true);
+                                    CoreUtils.WriteLine($"canceled at element:'{i}', page:'{current_page}'");
+                                }
+                                break;
+                            }
                         }
                         CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
 #endif
-                        IWebElement next, prev;
-                        IWebElement[] pages_butts;
-                        bool isNextEnabled;
-                        int curr_page_num;
-                        Debug.WriteLine($"at page {current_page} calling it.");
-                        exists_next_page = resolvePagination(list_wrapper_rnd, out pages_butts, out next, out prev, out  isNextEnabled, out curr_page_num) && isNextEnabled && !ct.IsCancellationRequested ;
-                        Debug.WriteLine($"exists_next_page resulted in  {exists_next_page}.");
+                        IWebElement next=null, prev;
+                        IWebElement[] pages_butts=null;
+                        bool isNextEnabled=false, exists_next_page=false;
+                        int curr_page_num=0;
+                        exists_next_page = resolvePagination(list_wrapper_rnd, out pages_butts, out next, out prev, out isNextEnabled, out curr_page_num) && isNextEnabled;
+                        CoreUtils.WriteLine($"exists_next_page result : {should_scrape_next_page}, curr_page_num:'{curr_page_num}',isNextEnabled:'{isNextEnabled}',pages_buttons:'{ (pages_butts == null ? "null" : string.Join(",", pages_butts.Select(b => b.Text)))}'");
 
-                        if (exists_next_page)
+                        if (ct.IsCancellationRequested)
+                        {
+                            if (IsStopRequested == false)
+                            {
+                                OnIsStopRequestedChanged(true);
+                                CoreUtils.WriteLine($"canceled at page {current_page}");
+                            }
+                            should_scrape_next_page = false;
+
+                        }
+                        else
+                        {
+                            should_scrape_next_page = exists_next_page;
+                        }
+                        Debug.WriteLine($"at page {current_page} calling it.");
+
+                        if (should_scrape_next_page)
                         {
                             //#clicking next page
-                            next.Click();
-                            Task.Delay(100).GetAwaiter().GetResult();
+                            try
+                            {
+                                next?.Click();
+                                Task.Delay(100).GetAwaiter().GetResult();
+                            }
+                            catch (Exception err)
+                            {
+                                CoreUtils.WriteLine($"next.Click(): {err}");
+                                Trace.Fail("next failed", err.ToString());
+                            }
                         }
-                        current_page = curr_page_num + 1;
-                    } while (exists_next_page);
+                        if(current_page != curr_page_num)
+                        {
+                            CoreUtils.WriteLine($"Expected current page num to be '{current_page}', parser returned '{curr_page_num}'");
+                            Trace.Fail( $"Expected current page num to be '{current_page}', parser returned '{curr_page_num}'");
+                        }
+                        current_page++;
+
+                    } while (should_scrape_next_page);
 
                     
                 }
@@ -424,6 +480,8 @@ namespace TwoGisPlugin
             }
             catch(NoSuchElementException)
             {
+                CoreUtils.WriteLine($"tryHideFooter: NoSuchElementException");
+
                 return;
             }
             catch (Exception err)
@@ -482,8 +540,8 @@ namespace TwoGisPlugin
                 var tel_awaiter = By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']");
                 WaitFor(mainWebDriver, tel_awaiter, TimeSpan.FromSeconds(20));
                 //#expanding phones and joining all:  //not supported
-                OnTaskDetailChanged($"{compact_elem.companyName}/delay 500ms");
-                Task.Delay(500).GetAwaiter().GetResult();
+                OnTaskDetailChanged($"{compact_elem.companyName}/delay 10ms");
+                Task.Delay(10).GetAwaiter().GetResult();
                 OnTaskDetailChanged($"{compact_elem.companyName}/phone");
                 compact_elem.phone = getPhone(mainWebDriver.FindElement(By.XPath(_details_section_x)));
 
@@ -702,6 +760,7 @@ namespace TwoGisPlugin
 
         }
         /// <summary>
+        /// es
         /// retirns a value indicating wither the pagination footer exists
         /// </summary>
         /// <param name="elems_content"></param>
