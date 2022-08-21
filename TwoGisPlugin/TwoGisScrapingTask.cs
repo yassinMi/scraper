@@ -620,8 +620,7 @@ namespace TwoGisPlugin
                 IWebElement first_div = null;
                 try
                 {
-                    first_div = fe.First();
-                    
+                    first_div = fe.First();              
                     show_button = first_div.FindElement(By.XPath("./button"));
                     var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
                     try
@@ -691,7 +690,7 @@ namespace TwoGisPlugin
             Debug.WriteLine($"cat ..");
             try
             {
-                return item.FindElement(By.XPath("./div[3]"))?.Text ?? "N/A";
+                return getElementText(item.FindElement(By.XPath("./div[3]")))?? "N/A";
             }
             catch (NoSuchElementException)
             {
@@ -734,23 +733,28 @@ namespace TwoGisPlugin
             {
                 var case_normal = item.FindElements(By.XPath("./div[@class='_4l12l8']//span[@class='_1w9o2igt']"));
                 if (case_normal.Count > 0) {
-                    var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
-                    try
+                    if (case_normal.FirstOrDefault() == null) return "N/A";
+                    string s= getElementText(case_normal.FirstOrDefault());
+                    if (string.IsNullOrWhiteSpace(s))
                     {
-                        act.ScrollToElement(case_normal.FirstOrDefault());
-                        act.Perform();
+                        CoreUtils.WriteLine($"getLocation; empty name at item: (title item: ({case_normal.FirstOrDefault().GetAttribute("innerHTML")}){Environment.NewLine}");
                     }
-                    catch (Exception err)
-                    {
-                        CoreUtils.WriteLine($"act.Perform failed: {err}");
-                    }
-                    return case_normal.FirstOrDefault()?.Text ?? "N/A";
-                    
+                    return s;
                 } 
                 else
                 {
                     var case_gray = item.FindElements(By.XPath("./div[@class='_15orusq2']"));//todo add //span[@class='_1w9o2igt'] is it exists to avoid branches
-                    if (case_gray.Count > 0) return case_gray.FirstOrDefault()?.Text ?? "N/A";
+                    if (case_gray.Count > 0)
+                    {
+                        if (case_gray.FirstOrDefault() == null) return "N/A";
+                        string s = getElementText(case_gray.FirstOrDefault());
+                        if (string.IsNullOrWhiteSpace(s))
+                        {
+                            CoreUtils.WriteLine($"getLocation: case_gray empty name at item: (title item: ({case_gray.FirstOrDefault().GetAttribute("innerHTML")}){Environment.NewLine}");
+                        }
+                        return s;
+                    }
+                    
                     else
                     {
                         CoreUtils.WriteLine("getLocation: counld'd find loc in 2 cases");
@@ -769,6 +773,21 @@ namespace TwoGisPlugin
                 CoreUtils.WriteLine($"getLocation: unknown exception: {err}");
                 return "N/A";
             }
+        }
+
+        public static string getElementText(IWebElement d)
+        {
+            if (d == null) return null;
+            string s = d.Text;
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                s = d.GetAttribute("innerText");
+            }
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                s = d.GetAttribute("textContent");
+            }
+            return s;
         }
         /// <summary>
         /// es
@@ -795,26 +814,9 @@ namespace TwoGisPlugin
             try
             {
                 var d = item.FindElement(By.XPath("./div[2]"));
-                WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(2));
-               
-                string inner = d?.GetAttribute("innerHTML");
-
                 if (d == null) return "N/A";
-                var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
-                try
-                {
-                    act.ScrollToElement(d);
-                    act.Perform();
-                }
-                catch (Exception err)
-                {
-                    CoreUtils.WriteLine($"act.Perform failed:d: {err}");
-                }
-
-                var s = w.Until<string>(wd =>
-                {
-                    return string.IsNullOrWhiteSpace(d.Text) ? null : d.Text;
-                });
+                string inner = d?.GetAttribute("innerHTML");
+                string s = getElementText(d);
                 if (string.IsNullOrWhiteSpace(s))
                 {
                     CoreUtils.WriteLine($"getName; empty name at item: (title item: ({inner}){Environment.NewLine}");
