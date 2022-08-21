@@ -219,7 +219,7 @@ namespace TwoGisPlugin
                         CoreUtils.WriteLine("Starting driver..");
                         try
                         {
-                            mainWebDriver = new ChromeDriver();
+                            mainWebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), new ChromeOptions(),TimeSpan.FromMinutes(3));
                         }
                         catch (DriverServiceNotFoundException err)
                         {
@@ -253,12 +253,12 @@ namespace TwoGisPlugin
                     Debug.WriteLine("nav");
                     try
                     {
+                        mainWebDriver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(2);
                         CoreUtils.WriteLine("SwitchTo() ..");
                         mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
                         OnBrowserWindowsCountChanged(++BrowserWindowsCount);
                         mainWebDriver.Url = cacheUrlOrOriginalUrl;
-                        mainWebDriver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(2);
-                        CoreUtils.WriteLine("Navigate()..");
+                       CoreUtils.WriteLine("Navigate()..");
                         mainWebDriver.Navigate();
                     }
                     catch (Exception err)
@@ -548,13 +548,13 @@ namespace TwoGisPlugin
             }
             catch  (WebDriverTimeoutException err)
             {
-                CoreUtils.WriteLine($"ResolveElementDynamic2: timed out {err.Message}");
+                CoreUtils.WriteLine($"ResolveElementDynamic: timed out after 20 seconds, name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'");
                 return;
             }
             catch (Exception err)
             {
 
-                CoreUtils.WriteLine($"ResolveElementDynamic2: unkown exception {err}");
+                CoreUtils.WriteLine($"ResolveElementDynamic: (name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'), unkown exception {err}");
                 return;
             }
              }
@@ -583,7 +583,8 @@ namespace TwoGisPlugin
             }
             try
             {
-                return item.FindElement(By.XPath("./div[2]/a"))?.GetAttribute("href") ?? "N/A";
+                string lon= item.FindElement(By.XPath("./div[2]/a"))?.GetAttribute("href") ?? "N/A";
+                return lon.Split('?').FirstOrDefault()??"N/A";
             }
             catch (NoSuchElementException)
             {
@@ -601,7 +602,7 @@ namespace TwoGisPlugin
         /// </summary>
         /// <param name="item">details section </param>
         /// <returns></returns>
-        public static string getPhone(IWebElement item)
+        public  string getPhone(IWebElement item)
         {
             if (item == null)
             {
@@ -612,9 +613,47 @@ namespace TwoGisPlugin
             Debug.WriteLine($"phone ..");
             try
             {
-                var ee = item.FindElement(By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']"));
+                var fe = item.FindElements(By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']"));///a[@class='_2lcm958']
+                if (fe == null) return "N/A";
+                if (fe.Any() == false) return "N/A";
+                IWebElement show_button;
+                IWebElement first_div = null;
+                try
+                {
+                    first_div = fe.First();
+                    
+                    show_button = first_div.FindElement(By.XPath("./button"));
+                    var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
+                    try
+                    {
+                        act.ScrollToElement(show_button);
+                        act.Perform();
+                    }
+                    catch (Exception err)
+                    {
+                        CoreUtils.WriteLine($"act.Perform failed: {err}");
+                    }
+                    //#clicking
+                    Task.Delay(80).GetAwaiter().GetResult();
+                    show_button.Click();
+                    Task.Delay(10).GetAwaiter().GetResult();
+                }
+                catch (ElementNotInteractableException err)
+                {
+                    CoreUtils.WriteLine($"getPhone: ElementNotInteractableException: (page: '{Page}') innerHTML: {first_div?.GetAttribute("innerHTML")}, {err}");
+                }
+                catch (Exception err)
+                {
+                    CoreUtils.WriteLine($"getPhone: exc: {err}");
+                    //bkc_up_return
+                    
+                }
+                
+                var ee = item.FindElements(By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']"));///
                 if (ee == null) return "N/A";
-                return ee?.GetAttribute("href") ?? "N/A";
+                if (ee.Any() == false) return "N/A";
+                return string.Join(" / ", ee.Select(a => a?.GetAttribute("href")));
+                
             }
             catch (NoSuchElementException)
             {
@@ -694,7 +733,20 @@ namespace TwoGisPlugin
             try
             {
                 var case_normal = item.FindElements(By.XPath("./div[@class='_4l12l8']//span[@class='_1w9o2igt']"));
-                if(case_normal.Count>0) return case_normal.FirstOrDefault()?.Text??"N/A";
+                if (case_normal.Count > 0) {
+                    var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
+                    try
+                    {
+                        act.ScrollToElement(case_normal.FirstOrDefault());
+                        act.Perform();
+                    }
+                    catch (Exception err)
+                    {
+                        CoreUtils.WriteLine($"act.Perform failed: {err}");
+                    }
+                    return case_normal.FirstOrDefault()?.Text ?? "N/A";
+                    
+                } 
                 else
                 {
                     var case_gray = item.FindElements(By.XPath("./div[@class='_15orusq2']"));//todo add //span[@class='_1w9o2igt'] is it exists to avoid branches
@@ -742,9 +794,32 @@ namespace TwoGisPlugin
             }
             try
             {
-                string res = item.FindElement(By.XPath("./div[2]"))?.Text ?? "N/A";
-                Debug.WriteLine($"name: {res}");
-                return res;
+                var d = item.FindElement(By.XPath("./div[2]"));
+                WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(2));
+               
+                string inner = d?.GetAttribute("innerHTML");
+
+                if (d == null) return "N/A";
+                var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
+                try
+                {
+                    act.ScrollToElement(d);
+                    act.Perform();
+                }
+                catch (Exception err)
+                {
+                    CoreUtils.WriteLine($"act.Perform failed:d: {err}");
+                }
+
+                var s = w.Until<string>(wd =>
+                {
+                    return string.IsNullOrWhiteSpace(d.Text) ? null : d.Text;
+                });
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    CoreUtils.WriteLine($"getName; empty name at item: (title item: ({inner}){Environment.NewLine}");
+                }
+                return s;
             }
             catch (NoSuchElementException)
             {
@@ -804,9 +879,10 @@ namespace TwoGisPlugin
                 }
                 else
                 {
+                    //pagination is hidden, page would be 1
                     CoreUtils.WriteLine($"else cl .");
                     pagesButtons = null; prev = null; next = null; isNextEnabled = false;
-                    curr_page_num = 0;
+                    curr_page_num = 1;
                     return false;
                 }
             }

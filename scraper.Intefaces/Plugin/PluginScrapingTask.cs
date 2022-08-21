@@ -63,6 +63,7 @@ namespace scraper.Core
 
         protected void OnPageStarted(string e)
         {
+            Page = e;
             PageDone?.Invoke(this, e);
         }
 
@@ -120,6 +121,7 @@ namespace scraper.Core
         /// used for feedback to disabe Stop button as the stoping process is carried out
         /// </summary>
         public bool IsStopRequested { get; internal set; }
+        public string Page { get; internal set; }
         /// <summary>
         /// pause the task
         /// only supported or downloading data stage

@@ -27,7 +27,7 @@ namespace scraperTests.PluginsTests
                 mwd.Navigate();
                 try
                 {
-                    phone = TwoGisPlugin.TwoGisScrapingTask.getPhone(mwd.FindElement(By.ClassName("_1rkbbi0x")));
+                   // phone = TwoGisPlugin.TwoGisScrapingTask.getPhone(mwd.FindElement(By.ClassName("_1rkbbi0x")));
                     phone = phone.Replace("tel:", "");
 
                 }

@@ -14,5 +14,7 @@ namespace TwoGisPlugin.Model
         public string email { get; set; }
         public string category { get; set; }
         public string link { get; set; }
+        public string website { get; set; }
+        public string branches { get; set; }
     }
 }

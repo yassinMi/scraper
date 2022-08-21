@@ -744,7 +744,7 @@ namespace scraper.ViewModel
             Debug.WriteLine("RunScraper");
             tvm.currentCTS = new System.Threading.CancellationTokenSource();
             await newScrapTask.RunScraper(tvm.currentCTS.Token);
-            
+            CoreUtils.WriteLine($"RunScraper return [{DateTime.Now}]");
 
             // Debug.WriteLine("return code is: scraper:" + res.ToString()+", converter:"+ res_c.ToString());
         }
