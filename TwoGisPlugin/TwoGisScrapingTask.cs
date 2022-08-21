@@ -302,6 +302,10 @@ namespace TwoGisPlugin
                                 titleHasBeenResolved = true;
                                 OnResolved(mainWebDriver.Title ?? "title error");
                                 ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
+                                if (File.Exists(ActualOutputFile))
+                                {
+                                    Trace.TraceWarning($"This task will replace an existing file '{ActualOutputFile}' {Environment.NewLine}Make sure to save a copy of it an then click 'ignore' to continue");
+                                }
 
                             }
                             if (shouldBeCached)
@@ -365,6 +369,8 @@ namespace TwoGisPlugin
                             new_cmp_elem.companyName = getName(element_component);
                             OnTaskDetailChanged($"{new_cmp_elem.companyName}/location");
                             new_cmp_elem.location = getLocation(element_component);
+                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/branches");
+                            new_cmp_elem.branches = getBranchesNum(element_component);
                             OnTaskDetailChanged($"{new_cmp_elem.companyName}/category");
                             new_cmp_elem.category = getCategory(element_component);
                             OnTaskDetailChanged($"{new_cmp_elem.companyName}/link");
@@ -543,7 +549,10 @@ namespace TwoGisPlugin
                 OnTaskDetailChanged($"{compact_elem.companyName}/delay 10ms");
                 Task.Delay(10).GetAwaiter().GetResult();
                 OnTaskDetailChanged($"{compact_elem.companyName}/phone");
-                compact_elem.phone = getPhone(mainWebDriver.FindElement(By.XPath(_details_section_x)));
+                var details_sect = mainWebDriver.FindElement(By.XPath(_details_section_x));
+                compact_elem.phone = getPhone(details_sect);
+                compact_elem.email = getEmail(details_sect);
+                compact_elem.website = getWebste(details_sect);
 
             }
             catch  (WebDriverTimeoutException err)
@@ -651,7 +660,7 @@ namespace TwoGisPlugin
                 var ee = item.FindElements(By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']"));///
                 if (ee == null) return "N/A";
                 if (ee.Any() == false) return "N/A";
-                return string.Join(" / ", ee.Select(a => a?.GetAttribute("href")));
+                return string.Join(" / ", ee.Select(a => a?.GetAttribute("href").Replace("tel:","")));
                 
             }
             catch (NoSuchElementException)
@@ -663,6 +672,96 @@ namespace TwoGisPlugin
             {
                 CoreUtils.WriteLine($"getPhone: unknown exception: {err}");
                 return "N/A";
+            }
+        }
+
+
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="item">details section </param>
+        /// <returns></returns>
+        public string getEmail(IWebElement item)
+        {
+            if (item == null)
+            {
+                CoreUtils.WriteLine("getEmail: passed null object");
+                return "N/A";
+            }
+            //matches phone and othern a test is needed
+            //.//div[@class='_172gbf8']//div[@class='_49kxlr']/div/a[@class='_2lcm958']
+            Debug.WriteLine($"email ..");
+            try
+            {
+                var fe = item.FindElements(By.XPath(".//div[@class='_172gbf8']//div[@class='_49kxlr']/div/a[@class='_2lcm958']"));///
+                if (fe == null) return "N/A";
+                if (fe.Any() == false) return "N/A";
+
+
+
+                var email_one = fe.FirstOrDefault(a =>
+                {
+                    string href = a.GetAttribute("href");
+                    if (string.IsNullOrWhiteSpace(href)) return false;
+                    return href.Trim().StartsWith("mailto:");
+
+                });
+                if(email_one==null) return "N/A";
+                return email_one.GetAttribute("href").Trim().Replace("mailto:", "");
+            }
+            catch (NoSuchElementException)
+            {
+                CoreUtils.WriteLine("getEmail: NoSuchElementException");
+                return "N/A";
+            }
+            catch (Exception err)
+            {
+                CoreUtils.WriteLine($"getEmail: unknown exception: {err}");
+                return "N/A";
+            }
+        }
+
+
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="item">details section </param>
+        /// <returns></returns>
+        public string getWebste(IWebElement item)
+        {
+            if (item == null)
+            {
+                CoreUtils.WriteLine("getWebste: passed null object");
+                return "N/A";
+            }
+
+            //.//div[@class='_172gbf8']//div[@class='_49kxlr']/span/div/a[@class='_1rehek']
+            Debug.WriteLine($"website ..");
+            try
+            {
+                var fe = item.FindElements(By.XPath(".//div[@class='_172gbf8']//div[@class='_49kxlr']/span/div/a[@class='_1rehek']"));///
+                if (fe == null) return "";
+                if (fe.Any() == false) return "";
+                foreach (var a in fe)
+                {
+                    string inner = getElementText(a);
+                    if (string.IsNullOrWhiteSpace(inner)) continue;
+                    Uri u;
+                    if (Uri.TryCreate(inner, UriKind.Absolute, out u))  continue;
+                    return inner;
+                }
+
+                return "";
+            }
+            catch (NoSuchElementException)
+            {
+                CoreUtils.WriteLine("getWebste: NoSuchElementException");
+                return "";
+            }
+            catch (Exception err)
+            {
+                CoreUtils.WriteLine($"getWebste: unknown exception: {err}");
+                return "";
             }
         }
 
@@ -739,7 +838,7 @@ namespace TwoGisPlugin
                     {
                         CoreUtils.WriteLine($"getLocation; empty name at item: (title item: ({case_normal.FirstOrDefault().GetAttribute("innerHTML")}){Environment.NewLine}");
                     }
-                    return s;
+                    return s?.Trim();
                 } 
                 else
                 {
@@ -752,7 +851,7 @@ namespace TwoGisPlugin
                         {
                             CoreUtils.WriteLine($"getLocation: case_gray empty name at item: (title item: ({case_gray.FirstOrDefault().GetAttribute("innerHTML")}){Environment.NewLine}");
                         }
-                        return s;
+                        return s?.Trim();
                     }
                     
                     else
@@ -772,6 +871,89 @@ namespace TwoGisPlugin
             {
                 CoreUtils.WriteLine($"getLocation: unknown exception: {err}");
                 return "N/A";
+            }
+        }
+
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="item">element_component</param>
+        /// <returns></returns>
+        private string getBranchesNum(IWebElement item)
+        {
+            if (item == null)
+            {
+                CoreUtils.WriteLine("getBranchesNum: passed null object");
+                return "";
+            }
+            string elem_calss = item.GetAttribute("class");
+            if (!(elem_calss == ELEMENT_CLASS
+             || elem_calss == ELEMENT_CLASS_SELECTED
+             || elem_calss == ELEMENT_CLASS_HOVERED
+             || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
+            {
+                CoreUtils.WriteLine($"getBranchesNum: expected one of element_component classes got {elem_calss}");
+                return "";
+            }
+            //the 4th div (not always,) or the class _4l12l8 (unless it's grayed out
+            //here it's class _15orusq2 )
+            Debug.WriteLine($"BranchesNum ..");
+            try
+            {
+                var case_normal = item.FindElements(By.XPath("./div[@class='_4l12l8']//span[@class='_1w9o2igt']"));
+
+                if (case_normal.Count > 0)
+                {
+                    foreach (var a in case_normal)
+                    {
+                        string s = getElementText(a);
+                        if (string.IsNullOrWhiteSpace(s))
+                        {
+                            continue;
+                        }
+                        if (s.Trim().Contains("branches"))
+                        {
+                            return s.Trim().Replace("branches", "").Trim();
+                        }
+                    }
+                    return "";
+                }
+                else
+                {
+                    var case_gray = item.FindElements(By.XPath("./div[@class='_15orusq2']"));//todo add //span[@class='_1w9o2igt'] is it exists to avoid branches
+                    if (case_gray.Count > 0)
+                    {
+                        foreach (var a in case_gray)
+                        {
+                            string s = getElementText(a);
+                            if (string.IsNullOrWhiteSpace(s))
+                            {
+                                continue;
+                            }
+                            if (s.Trim().Contains("branches"))
+                            {
+                                return s.Trim().Replace("branches", "").Trim();
+                            }
+                        }
+                        return "";
+                    }
+
+                    else
+                    {
+                        return "";
+                    }
+                }
+
+            }
+            catch (NoSuchElementException)
+            {
+                CoreUtils.WriteLine("getBranchesNum: NoSuchElementException");
+                return "";
+            }
+            catch (Exception err)
+            {
+                CoreUtils.WriteLine($"getBranchesNum: unknown exception: {err}");
+                return "";
             }
         }
 
