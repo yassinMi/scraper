@@ -16,6 +16,7 @@ using TwoGisPlugin.Model;
 using System.IO;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.ObjectModel;
 
 namespace TwoGisPlugin
 {
@@ -198,10 +199,338 @@ namespace TwoGisPlugin
         static Synchronizer<string> _lock = new Synchronizer<string>();
         bool titleHasBeenResolved = false;
 
+
+
+
+
+
+
+
+
+
+
+        ///[aux task]
+        private void RunScraper_fromList(CancellationToken ct, string file, int getCount)
+        {
+            CoreUtils.WriteLine($"RunScraper_fromList.. [{DateTime.Now}], {file},{getCount}");
+            lock (_lock[TargetPage])
+            {
+
+                OnResolved($"from list: {Path.GetFileName(file)}");
+                ActualOutputFile =  Path.Combine(Workspace.Current.CSVOutputFolder,$"{Path.GetFileName(file)}.csv");
+                int file_index = 0;
+                while (File.Exists(ActualOutputFile))
+                {
+                    file_index++;
+                    ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, $"{Path.GetFileName(file)}-{file_index}.csv");
+                }
+                var valid_names = File.ReadAllLines(file).Where(l => !string.IsNullOrWhiteSpace(l)).Select(l => l.Trim()).ToList();
+                int valid_names_count = valid_names.Count;
+                if (valid_names_count == 0)
+                {
+                    OnStageChanged(ScrapTaskStage.Failed);
+                    OnError("No valid names in the selected file");
+                    return;
+                }
+                OnStageChanged(ScrapTaskStage.DownloadingData);
+                List<Company> list = new List<Company>();
+                if (Workspace.Current?.CSVOutputFolder == null) Debug.WriteLine("null ws");
+                IWebElement list__; //last wrapper that ahs divs directly
+                IWebElement list_wrapper_rnd; // a common wrapper for pagnation also;
+                OnTaskDetailChanged("Waiting for other task(s) to end..");
+                lock (_lock)//concurrent tasks can'y run this part of code simultaneously
+                {
+
+                }
+                //# instantate mainWebDrivr if null
+                if (tryInstantiateWebDriver() == false) return;
+                for (int cur_name_ix = 0; cur_name_ix < valid_names_count; cur_name_ix++)
+                {
+                    string cur_name = valid_names[cur_name_ix];
+                    OnProgress(new DownloadingProg() { Total = valid_names_count, Current = cur_name_ix + 1 });
+                    OnTaskDetailChanged($"{cur_name}/getting results..");
+                    int elements_in_query = 1;
+                    if (cur_name_ix == 0)
+                    {
+                        //#first navigation using url
+                        string targetUrl = $"https://2gis.ae/search/{cur_name}";
+                        Debug.WriteLine("nav");
+                        try
+                        {
+                            mainWebDriver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(2);
+                            CoreUtils.WriteLine("SwitchTo() ..");
+                            mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
+                            OnBrowserWindowsCountChanged(++BrowserWindowsCount);
+                            mainWebDriver.Url = targetUrl;
+                            CoreUtils.WriteLine($"Navigate()..[{DateTime.Now}] '{targetUrl}'");
+                            mainWebDriver.Navigate();
+                        }
+                        catch (Exception err)
+                        {
+                            CoreUtils.WriteLine($"couldnt navigate :unknown error {err}");
+                            OnError(err.Message);
+                            OnStageChanged(ScrapTaskStage.Failed);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //#ubsequent navigations using form input submision
+
+                        //#locate form_input
+                        IWebElement form_input = null;
+                        try
+                        {
+                            var pre_form_input = mainWebDriver.FindElements(By.XPath(".//div[@class='_ubuirc']//form//input"));
+                            if (pre_form_input.Any() == false)
+                            {
+                                CoreUtils.WriteLine($"no elements found");
+                            }
+                            var pre = pre_form_input
+                               .Where(i => (i.GetAttribute("class") == "_1dhzhec9" )||( i.GetAttribute("class") == "_1gvu1zk"));//two classes one for the norma state the second when input is being edited
+                            if (pre.Any() == false)
+                            {
+                                CoreUtils.WriteLine($"expected classes not found, got {string.Join(", ", pre_form_input.Select(i=>i.GetAttribute("class")))}");
+                            }
+                            form_input = pre.FirstOrDefault();
+                        }
+                        catch (Exception err)
+                        {
+                            CoreUtils.WriteLine($"cannot find form_nput: {err}");
+                            OnError("cannot find form_nput unkown error");
+                            OnStageChanged(ScrapTaskStage.Failed);
+                            return;
+                        }
+                        if (form_input == null)
+                        {
+                            CoreUtils.WriteLine($"cannot find form_nput");
+                            OnError("cannot find form_nput");
+                            OnStageChanged(ScrapTaskStage.Failed);
+                            return;
+                        }
+                        //# perform query submtion
+                        try
+                        {
+                            form_input.Clear();
+                            form_input.SendKeys(Keys.Control+"a");
+                            form_input.SendKeys(Keys.Backspace);
+                            form_input.SendKeys("\b");
+                            form_input.SendKeys(Keys.Backspace);
+
+
+                            form_input.SendKeys(cur_name);
+                            form_input.Submit();
+                        }
+                        catch (Exception err)
+                        {
+                            CoreUtils.WriteLine($"perform query submition failed:{Environment.NewLine} {err}");
+                            OnError("perform query submition failed");
+                            OnStageChanged(ScrapTaskStage.Failed);
+                            return;
+                        }
+                        
+
+                    }
+
+                    //#wait for visible search results 
+                    //# wait for elements visibility
+                    OnTaskDetailChanged("waiting for elemetns content");
+                    WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
+                    try
+                    {
+                        w.Until((e) =>
+                        {
+                            try
+                            {
+                                return e.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
+                            }
+                            catch (StaleElementReferenceException err)
+                            {
+                                return false;
+                            }
+                            catch (NoSuchElementException err)
+                            {
+                                return false;
+                            }
+                            catch (Exception err)
+                            {
+                                CoreUtils.WriteLine($"Until: unknown error {err}");
+                                return false;
+                            }
+                        });
+                    }
+                    catch (Exception err)
+                    {
+                        CoreUtils.WriteLine($"waiting failed [{DateTime.Now}]:{Environment.NewLine}{err}");
+                        OnError(err.Message);
+                        OnStageChanged(ScrapTaskStage.Failed);
+                        return;
+                    }
+
+
+                    ReadOnlyCollection<IWebElement> elements_divs = null;
+                    bool emptyResultsOrSomethingWentWrong = false;
+                    //# get the elements_divs and emptyResults flag values; 
+                    OnTaskDetailChanged("locating elements_divs");
+                    list_wrapper_rnd = mainWebDriver.FindElement(
+                                By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']"));
+                    list__ = list_wrapper_rnd.FindElement(By.XPath(".//div[@class='_awwm2v']"));
+                    elements_divs = list__.FindElements(By.XPath($"./div"));
+                    emptyResultsOrSomethingWentWrong = elements_divs == null || elements_divs.Any() == false;
+
+
+                    //#hide footer (important as phone expanding button gets hiiden by it)
+                    OnTaskDetailChanged("hide footer..");
+                    tryHideFooter();
+                    //#processing
+                    OnTaskDetailChanged("processing..");
+
+                    if (emptyResultsOrSomethingWentWrong)
+                    {
+                        continue;
+                    }
+
+                    int first_page_elements_count = elements_divs.Count;
+                    int max_results_count = Math.Min(getCount, first_page_elements_count);
+                    for (int sr_ix = 0; sr_ix < max_results_count; sr_ix++)
+                    {
+                        var div = elements_divs[sr_ix];
+                        var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
+                        try
+                        {
+                            act.ScrollToElement(elements_divs[Math.Min(sr_ix + 1, elements_divs.Count - 1)]);
+                            act.Perform();
+                        }
+                        catch (Exception err)
+                        {
+                            CoreUtils.WriteLine($"act.Perform failed: {err}");
+                            Trace.Fail("act.Perform failed", err.ToString());
+                        }
+                        Task.Delay(80).GetAwaiter().GetResult();
+                        Company new_cmp_elem = new Company();
+                        var element_component = div.FindElement(By.XPath("./div"));
+                        new_cmp_elem.companyName = getName(element_component);
+                        OnTaskDetailChanged($"{cur_name}/{sr_ix}:{new_cmp_elem.companyName}/location");
+                        new_cmp_elem.location = getLocation(element_component);
+                        OnTaskDetailChanged($"{cur_name}/{sr_ix}:{new_cmp_elem.companyName}/branches");
+                        new_cmp_elem.branches = getBranchesNum(element_component);
+                        OnTaskDetailChanged($"{cur_name}/{sr_ix}:{new_cmp_elem.companyName}/category");
+                        new_cmp_elem.category = getCategory(element_component);
+                        OnTaskDetailChanged($"{cur_name}/{sr_ix}:{new_cmp_elem.companyName}/link");
+                        new_cmp_elem.link = getLink(element_component);
+                        ResolveElementDynamic2(new_cmp_elem, element_component);
+                        TaskStatsInfo.incElem(1);
+                        Debug.WriteLine($"delaying ..");
+                        Task.Delay(20).GetAwaiter().GetResult();
+                        list.Add(new_cmp_elem);
+                        TaskStatsInfo.incElem(1);
+                        if (ct.IsCancellationRequested)
+                        {
+                            if (IsStopRequested == false)
+                            {
+                                OnIsStopRequestedChanged(true);
+                                CoreUtils.WriteLine($"canceled at element:'{sr_ix}', search quqery index:'{cur_name_ix}'");
+                            }
+                            break;
+                        }
+                    }
+                    CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
+
+                    TaskStatsInfo.incElem(elements_in_query);
+                }
+
+
+                OnStageChanged(ScrapTaskStage.Success);
+            }
+
+            return;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /// <summary>
+        /// es
+        /// if(!tryInstantiateWebDriver()) return;
+        /// usage within task object
+        /// all error reportn and stage managment is handeled
+        /// </summary>
+        /// <example> <code>if(!tryInstantiateWebDriver()) return;</code></example>
+        /// <returns></returns>
+        bool tryInstantiateWebDriver()
+        {
+            if (mainWebDriver == null)
+            {
+                OnStageChanged(ScrapTaskStage.Setup);
+                OnTaskDetailChanged("Starting chrome..");
+                CoreUtils.WriteLine("Starting driver..");
+                try
+                {
+                    mainWebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), new ChromeOptions(), TimeSpan.FromMinutes(3));
+                    return true;
+                }
+                catch (DriverServiceNotFoundException err)
+                {
+                    CoreUtils.WriteLine($"couldn't start chrome: {err}");
+                    OnError(err.Message);
+                    OnStageChanged(ScrapTaskStage.Failed);
+                    return false;
+                }
+                catch (Exception err)
+                {
+                    CoreUtils.WriteLine($"couldn't start chrome:unknown error {err}");
+                    OnError(err.Message);
+                    OnStageChanged(ScrapTaskStage.Failed);
+                    return false;
+                }
+            }
+            return true; //todo check wd state and fail or proceed accordingly
+        }
+
+
+
+
+
+
+
         public override async Task RunScraper(CancellationToken ct)
         {
+            //# aux task forwarding (temporary todo refactor)
+            bool isAuxiliaryTask = false;
+            string aux_header;
+            string[] aux_params;
+            isAuxiliaryTask = CoreUtils.TryParseAuxiliaryTaskQuery(TargetPage, out aux_header, out aux_params);
+            if (isAuxiliaryTask) {
+                if (aux_header == "fromList")
+                {
+                    int maxCount = 1;
+                    int.TryParse(aux_params[1], out maxCount);
+                    RunScraper_fromList(ct,aux_params[0], maxCount);
+                    return;
+                }
+                else
+                {
+                    OnStageChanged(ScrapTaskStage.Failed);
+                    OnError($"task type '{aux_header}' not supported");
+                    return;
+                }
+            };
+            //# normal task start
             CoreUtils.WriteLine($"RunScraper.. [{DateTime.Now}], {TargetPage}");
-
             lock (_lock[TargetPage])
             {
                 List<Company> list = new List<Company>();
@@ -211,44 +540,9 @@ namespace TwoGisPlugin
                 OnTaskDetailChanged("Waiting for other task(s) to end..");
                 lock (_lock)//concurrent tasks can'y run this part of code simultaneously
                 {
-
-                    if (mainWebDriver == null)
-                    {
-                        OnStageChanged(ScrapTaskStage.Setup);
-                        OnTaskDetailChanged("Starting chrome..");
-                        CoreUtils.WriteLine("Starting driver..");
-                        try
-                        {
-                            mainWebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), new ChromeOptions(),TimeSpan.FromMinutes(3));
-                        }
-                        catch (DriverServiceNotFoundException err)
-                        {
-                            CoreUtils.WriteLine($"couldn't start chrome: {err}");
-                            OnError(err.Message);
-                            OnStageChanged(ScrapTaskStage.Failed);
-                            return;
-                        }
-                        catch (Exception err)
-                        {
-                            CoreUtils.WriteLine($"couldn't start chrome:unknown error {err}");
-                            OnError(err.Message);
-                            OnStageChanged(ScrapTaskStage.Failed);
-                            return;
-                        }
-                        
-                    }
-
-                    string cachedHtmlFilename = Path.Combine(Workspace.Current.TPFolder, CoreUtils.getUniqueLinkHash(TargetPage)+".html");
-                    string cacheUrlOrOriginalUrl = TargetPage;
-                    bool enable_cache = false; //obsolete
-                    bool shouldBeCached = true; // ndicating the target page must be cached as soon as fetched successfully.
-                    if (enable_cache && File.Exists(cachedHtmlFilename))
-                    {
-                        cacheUrlOrOriginalUrl = cachedHtmlFilename;
-                        shouldBeCached = false;
-                    }
+                    //#instantate wd
+                    if (!tryInstantiateWebDriver()) return;
                     Debug.WriteLine("url driver");
-                    
                     OnStageChanged(ScrapTaskStage.DownloadingData);
                     Debug.WriteLine("nav");
                     try
@@ -257,7 +551,7 @@ namespace TwoGisPlugin
                         CoreUtils.WriteLine("SwitchTo() ..");
                         mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
                         OnBrowserWindowsCountChanged(++BrowserWindowsCount);
-                        mainWebDriver.Url = cacheUrlOrOriginalUrl;
+                        mainWebDriver.Url = TargetPage;
                        CoreUtils.WriteLine("Navigate()..");
                         mainWebDriver.Navigate();
                     }
@@ -274,7 +568,7 @@ namespace TwoGisPlugin
                     {
                         try
                         {
-
+                            //# wait for elements visibility
                             OnTaskDetailChanged("waiting for elemetns_content");
                             WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
                             w.Until((e) =>
@@ -304,14 +598,8 @@ namespace TwoGisPlugin
                                 ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
                                 if (File.Exists(ActualOutputFile))
                                 {
-                                    Trace.TraceWarning($"This task will replace an existing file '{ActualOutputFile}' {Environment.NewLine}Make sure to save a copy of it an then click 'ignore' to continue");
+                                    Trace.Fail($"Starting this task will replace an existing scv file '{ActualOutputFile}' {Environment.NewLine} if you don't want to lose the old file rename it or make a copy of it, then click 'ignore' to continue");
                                 }
-
-                            }
-                            if (shouldBeCached)
-                            {
-                                File.WriteAllText(cachedHtmlFilename, mainWebDriver.PageSource);
-                                Debug.WriteLine($"saved cache tp file at: '{cachedHtmlFilename}' ");
                             }
                             Debug.WriteLine("getting categories_welements_wrapper..");
                             //# listing

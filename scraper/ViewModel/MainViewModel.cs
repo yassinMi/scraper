@@ -1137,6 +1137,32 @@ namespace scraper.ViewModel
         }
         object reff;
 
+
+        ///[non generic]
+        public ICommand StartTaskFromFile2gis { get { return new MICommand(hndlStartTaskFromFile2gis); } }
+
+        private void hndlStartTaskFromFile2gis()
+        {
+            IOUtils.PromptOpeningPathAsync((s, canceled) =>
+            {
+                if (canceled) return;
+                if (File.Exists(s) == false) return;
+                if(string.IsNullOrWhiteSpace( File.ReadAllText(s)))
+                {
+                    MessageBox.Show("Empty file", "failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                TargetPageQueryText = CoreUtils.FormatAuxiliaryTaskQuery("fromList", s, "1");
+                if (canExecuteStartScrapingCommand())
+                    StartScrapingCommand.Execute(null);
+                
+
+            }, ".txt", "Select list source", "TXT File | *.txt | All Files | *");
+        }
+
+
+
         public ICommand DevGPCommand { get { return new MICommand(hndlDevGPCommand); } }
 
         private void hndlDevGPCommand()

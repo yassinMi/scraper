@@ -120,9 +120,17 @@ namespace TwoGisPlugin
         public static bool TargetPageValidator(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return false;
+
+            //# case auxiliary task
+            string aux_header;
+            string[] aux_params;
+            bool isAuxiliaryTask = CoreUtils.TryParseAuxiliaryTaskQuery(input, out aux_header, out aux_params);
+            if (isAuxiliaryTask) return true;
+            //# case dev html files
 #if true
             if (input.StartsWith("file:///")) return true;
 #endif
+            //# case normal target page
             Uri uri;
             if (Uri.TryCreate(input, UriKind.Absolute, out uri) == false)
             {

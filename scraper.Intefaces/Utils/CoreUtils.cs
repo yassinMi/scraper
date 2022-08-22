@@ -51,6 +51,28 @@ namespace scraper.Core.Utils
     public static class CoreUtils
     {
 
+        const string AuxiliaryTask_Query_Separator = "`,";
+        public static bool TryParseAuxiliaryTaskQuery(string q, out string header, out string[] parameters)
+        {
+            var all = Regex.Split(q,AuxiliaryTask_Query_Separator);
+            if(all.Count()<2)
+            {
+                header = null; parameters = null;
+                return false;
+            }
+            header = all.First();
+            parameters = all.Skip(1).ToArray();
+            return true;
+        }
+        public static string FormatAuxiliaryTaskQuery(string header, params string[] parameters)
+        {
+            var auxiliaryTaskQueryBuilder = new StringBuilder();
+            auxiliaryTaskQueryBuilder.Append(header);//auxiliary task type identifier
+            auxiliaryTaskQueryBuilder.Append(AuxiliaryTask_Query_Separator);
+            auxiliaryTaskQueryBuilder.Append(string.Join(AuxiliaryTask_Query_Separator,parameters));
+            return auxiliaryTaskQueryBuilder.ToString();
+        }
+
         static string logFile = "log.txt";
         public static void WriteLine(string line)
         {
