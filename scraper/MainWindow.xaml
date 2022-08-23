@@ -891,7 +891,6 @@
                     <Grid x:Name="dragging_area_middle_Copy1" Margin="0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown"/>
                 </Grid>
             </TabItem>
-            <Grid/>
         </TabControl>
         <Grid x:Name="WorkspaceSetupPanel" Background="{StaticResource MaterialDesignPaper}" Visibility="{Binding IsWorkspaceSetupMode, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" MouseLeftButtonDown="WorkspaceSetupPanel_MouseLeftButtonDown" Grid.RowSpan="2" d:IsHidden="True" >
             <Grid.RowDefinitions>
