@@ -694,7 +694,7 @@
                                 <Grid x:Name="header" Margin="4,14,0,14" VerticalAlignment="Center">
                                     <TextBlock x:Name="head_string1" HorizontalAlignment="Left" Margin="2,0,0,0"  Text="{Binding ElementNamePlural, FallbackValue=Scrap Elements, Mode=OneWay, StringFormat=Scrap \{0\}}" VerticalAlignment="Center" Style="{DynamicResource ViewHeaderStyle}" TextOptions.TextFormattingMode="Ideal"/>
                                 </Grid>
-                                <Grid x:Name="workspace_info" Grid.Row="1" VerticalAlignment="Top" Height="24">
+                                <Grid x:Name="workspace_info" Grid.Row="1" VerticalAlignment="Top" Height="24" Margin="0,0,0,6">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="24"/>
