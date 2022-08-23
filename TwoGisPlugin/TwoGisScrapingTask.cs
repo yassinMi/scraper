@@ -163,22 +163,117 @@ namespace TwoGisPlugin
         {
             
         }
-
-        public static void WaitFor(IWebDriver wd, By by, TimeSpan tm)
+        /// <summary>
+        /// es
+        /// wats and returns false if times out or on unknow exceptions (gets reported)
+        /// uses the main wabdriver
+        /// </summary>
+        /// <param name="wd"></param>
+        /// <param name="by"></param>
+        /// <param name="tm"></param>
+        public static bool WaitFor(ISearchContext sc, By by, TimeSpan tm)
         {
-            WebDriverWait w = new WebDriverWait(wd, tm);
-
-            w.Until((iwd) =>
+            WebDriverWait w = new WebDriverWait(mainWebDriver, tm);
+            try
             {
-                try
+                w.Until((iwd) =>
                 {
-                    return wd.FindElement(by) != null;
-                }
-                catch (StaleElementReferenceException err)
+                    try
+                    {
+                        return sc.FindElement(by) != null;
+                    }
+                    catch (StaleElementReferenceException err)
+                    {
+                        return false;
+                    }
+                    catch (NoSuchElementException err)
+                    {
+                        return false;
+                    }
+                    catch (Exception err)
+                    {
+                        CoreUtils.WriteLine($"WaitFor:Until: unknown error: {Environment.NewLine} {err}");
+                        return false;
+                    }
+                });
+                return true;
+            }
+            catch (WebDriverTimeoutException err)
+            {
+                return false;
+            }
+            catch (Exception err)
+            {
+                CoreUtils.WriteLine($"WaitFor:Until: unknown error:2: {Environment.NewLine} {err}");
+                return false;
+            }
+
+        }
+        /// <summary>
+        /// provides sfety against exceptions in cond, returning false
+        /// </summary>
+        /// <param name="sc"></param>
+        /// <param name="cond"></param>
+        /// <returns></returns>
+        bool isFindElementSafeReturn(ISearchContext sc, Func<ISearchContext ,bool> cond)
+        {
+            try
+            {
+                return cond(sc);
+            }
+           
+            catch (Exception err)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// es
+        /// exceptions are handeled so you don't need handele them in the conditin
+        /// wats and returns false if times out or on unknow exceptions (gets reported)
+        /// uses the main wabdriver
+        /// </summary>
+        /// <param name="wd"></param>
+        /// <param name="by"></param>
+        /// <param name="tm"></param>
+        public static bool WaitForCond(ISearchContext sc, TimeSpan tm, Func<ISearchContext,bool> cond)
+        {
+            WebDriverWait w = new WebDriverWait(mainWebDriver, tm);
+            try
+            {
+                w.Until((iwd) =>
                 {
-                    throw;
-                }
-            });
+                    try
+                    {
+                        return cond(sc);
+                    }
+                    catch (StaleElementReferenceException err)
+                    {
+                        return false;
+                    }
+                    catch (NoSuchElementException err)
+                    {
+                        return false;
+                    }
+                    catch (Exception err)
+                    {
+                        CoreUtils.WriteLine($"WaitForCond:Until: unknown error: {Environment.NewLine} {err}");
+                        return false;
+                    }
+                });
+                return true;
+            }
+            catch (WebDriverTimeoutException err)
+            {
+                return false;
+            }
+            catch (Exception err)
+            {
+                CoreUtils.WriteLine($"WaitForCond:Until: unknown error:2: {Environment.NewLine} {err}");
+                return false;
+            }
+
         }
 
         public void ResolveElement(object compactElement, out int bytes, out int obj_cc)
@@ -241,7 +336,7 @@ namespace TwoGisPlugin
                 lock (_lock)//concurrent tasks can'y run this part of code simultaneously
                 {
 
-                }
+                
                 //# instantate mainWebDrivr if null
                 if (tryInstantiateWebDriver() == false) return;
                 for (int cur_name_ix = 0; cur_name_ix < valid_names_count; cur_name_ix++)
@@ -374,7 +469,7 @@ namespace TwoGisPlugin
                     list_wrapper_rnd = mainWebDriver.FindElement(
                                 By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']"));
                     list__ = list_wrapper_rnd.FindElement(By.XPath(".//div[@class='_awwm2v']"));
-                    elements_divs = list__.FindElements(By.XPath($"./div"));
+                    elements_divs = list__.FindElements(By.XPath($"./div[not(@class='_106bqvr')]"));
                     emptyResultsOrSomethingWentWrong = elements_divs == null || elements_divs.Any() == false;
 
 
@@ -418,7 +513,6 @@ namespace TwoGisPlugin
                         OnTaskDetailChanged($"{cur_name}/{sr_ix}:{new_cmp_elem.companyName}/link");
                         new_cmp_elem.link = getLink(element_component);
                         ResolveElementDynamic2(new_cmp_elem, element_component);
-                        TaskStatsInfo.incElem(1);
                         Debug.WriteLine($"delaying ..");
                         Task.Delay(20).GetAwaiter().GetResult();
                         list.Add(new_cmp_elem);
@@ -438,6 +532,7 @@ namespace TwoGisPlugin
                     TaskStatsInfo.incElem(elements_in_query);
                     OnProgress(new DownloadingProg() { Total = valid_names_count, Current = cur_name_ix + 1 });
 
+                }
                 }
 
 
@@ -625,8 +720,7 @@ namespace TwoGisPlugin
                         tryHideFooter();
                         // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
                         Debug.WriteLine($"enumerating categories_welements.. is null {list__.GetDomProperty("innerHTML")}");
-
-                        var elements_divs = list__.FindElements(By.XPath($"./div"));
+                        var elements_divs = list__.FindElements(By.XPath($"./div[not(@class='_106bqvr')]"));//_106bqvr is advertisement class
                         Debug.WriteLine($"elements_divs null {elements_divs == null} ");
                         Debug.WriteLine($"elements_divs count {elements_divs.Count} ");
 
@@ -813,41 +907,53 @@ namespace TwoGisPlugin
         /// <param name="element_component">element_component</param>
         private void ResolveElementDynamic2(Company compact_elem, IWebElement element_component)
         {
-            if (element_component == null)
-            {
-                CoreUtils.WriteLine($"ResolveElementDynamic2: null obj passed");
-                return;
-            }
+            if (element_component == null) { CoreUtils.WriteLine($"ResolveElementDynamic2: null obj passed"); return; }
             string elem_calss = element_component.GetAttribute("class");
-            if (!(elem_calss == ELEMENT_CLASS
-             || elem_calss == ELEMENT_CLASS_SELECTED
-             || elem_calss == ELEMENT_CLASS_HOVERED
-             || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
+            if (!(elem_calss == ELEMENT_CLASS || elem_calss == ELEMENT_CLASS_SELECTED || elem_calss == ELEMENT_CLASS_HOVERED || elem_calss == ELEMENT_CLASS_HOVERED_SELECTED))
             {
                 CoreUtils.WriteLine($"ResolveElementDynamic2: expected one of element_component classes got {elem_calss}");
                 return;//todo should return only in a strict_dev_mode, otherwise keep going as long as exception safe
             }
             try
             {
-                OnTaskDetailChanged($"{compact_elem.companyName}/waiting for phone info");
+                OnTaskDetailChanged($"{compact_elem.companyName}/waiting for company details");
                 element_component.Click();
-                WaitFor(mainWebDriver, By.XPath(_details_section_x + "//div[@class='_599hh']"), TimeSpan.FromSeconds(8));
-                var tel_awaiter = By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']");
-                WaitFor(mainWebDriver, tel_awaiter, TimeSpan.FromSeconds(20));
-                //#expanding phones and joining all:  //not supported
+                if (!WaitFor(mainWebDriver, By.XPath(_details_section_x ), TimeSpan.FromSeconds(25)))
+                {
+                    CoreUtils.WriteLine($"ResolveElementDynamic: timed out after 25 seconds, name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'");
+                    return;
+                }
+                var details_sect = mainWebDriver.FindElement(By.XPath(_details_section_x));
+
+                
+                //this waits for at least one of: phone dd, email dd, website dd, the P.O.Box 3945 dd
+                var phone_indicator =  By.XPath(".//div[@class='_49kxlr']/div[@class='_b0ke8']/a[@class='_2lcm958']");
+                var website_indicator = By.XPath(".//div[@class='_172gbf8']//div[@class='_49kxlr']/span/div/a[@class='_1rehek']");
+                var dataDividers_locator = By.XPath(".//div[@class='_599hh'and@data-rack]/div");
+                ////div[@class='_599hh'and@data-rack]/div the dd's shoul be more than 2
+
+                if (!WaitForCond(mainWebDriver, TimeSpan.FromSeconds(15),sc=> {
+
+                    //force false if only 2 or less data dividers
+                    if (sc.FindElements(dataDividers_locator).Count <= 2) return false;
+                    //force true if phone exists or website
+                    if (isFindElementSafeReturn(sc, s => s.FindElement(phone_indicator) != null)) return true ;
+                    if (isFindElementSafeReturn(sc, s => s.FindElement(website_indicator) != null)) return true;
+                    
+                    return false;
+                }))
+                {
+                    CoreUtils.WriteLine($"ResolveElementDynamic: waiing phone or website.. timed out after 15 seconds, name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'");
+                    return;
+                }
                 OnTaskDetailChanged($"{compact_elem.companyName}/delay 10ms");
                 Task.Delay(10).GetAwaiter().GetResult();
                 OnTaskDetailChanged($"{compact_elem.companyName}/phone");
-                var details_sect = mainWebDriver.FindElement(By.XPath(_details_section_x));
                 compact_elem.phone = getPhone(details_sect);
                 compact_elem.email = getEmail(details_sect);
                 compact_elem.website = getWebste(details_sect);
+                compact_elem.category = getCatogory2(details_sect, compact_elem.companyName);//todo fllback to the old category approach
 
-            }
-            catch  (WebDriverTimeoutException err)
-            {
-                CoreUtils.WriteLine($"ResolveElementDynamic: timed out after 20 seconds, name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'");
-                return;
             }
             catch (Exception err)
             {
@@ -855,7 +961,104 @@ namespace TwoGisPlugin
                 CoreUtils.WriteLine($"ResolveElementDynamic: (name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'), unkown exception {err}");
                 return;
             }
-             }
+        }
+        /// <summary>
+        /// es
+        /// returns false when something is wrong, (subsequent parsing should be aborted
+        /// </summary>
+        /// <returns></returns>
+        bool switchToInfoTab(IWebElement details_section)
+        {
+            //#locate info tab item 
+            IWebElement info_tab_item = null;
+            try
+            {
+                var ino_tab_item_locator_x = "//div[@class='_1kmhi0c'][.//a[text()='Info']]";//from details_section
+                info_tab_item = details_section.FindElement(By.XPath(ino_tab_item_locator_x));
+
+            }
+            catch (Exception err)
+            {
+                if (err is NoSuchElementException)
+                    CoreUtils.WriteLine($"switchToInfoTab: NoSuchElementException ");
+                else
+                {
+                    CoreUtils.WriteLine($"switchToInfoTab: unknown: {Environment.NewLine}{err} ");
+                }
+                return false;
+            }
+            if (info_tab_item == null) return false;
+            try
+            {
+                info_tab_item.Click();
+                return true;
+            }
+            catch (Exception err)
+            {
+                CoreUtils.WriteLine($"switchToInfoTab: unkclick failed: {Environment.NewLine}{err} ");
+                return false;
+            }
+            //#click
+        }
+        /// <summary>
+        /// gets the correct category(s), this also switches to the info tab, make sure to call only fter done with the contacts tab
+        /// </summary>
+        /// <param name="details_section"></param>
+        /// <returns></returns>
+        string getCatogory2(IWebElement details_section, string elemName=null)
+        {
+            //#switch to info tab
+            if (!switchToInfoTab(details_section))
+            {
+                CoreUtils.WriteLine($"getCatogory2: filed to switch tab (elem_name='{elemName}')");
+                return "N/A";
+            }
+            //# wait for required data to be visible
+            string cat_data_rank_shortcut_locator_x = "//div[@class='_18lzknl']//div[@class='_599hh'][@data-rack='true'][./div[@class='_172gbf8'][1]/div[@class='_49kxlr']/span[@class='_btwk9a2'][text()='Categories']]";
+            //the above takes straight to cat data rank, making sure it exists as a way to avoid bugs in the subsequent parsing
+            if(!WaitFor(mainWebDriver, By.XPath(cat_data_rank_shortcut_locator_x), TimeSpan.FromSeconds(8)))
+            {
+                CoreUtils.WriteLine($"getCatogory2: [{DateTime.Now}] timed out after 8 seconds");
+                return "N/A";
+            };
+
+            var dr = details_section.FindElement(By.XPath(cat_data_rank_shortcut_locator_x));
+            
+            //#locate categories in single case
+            string cat_single_case_locator_x_ = "./div[2]//span[@class='_oqoid']";
+            //the above from dr and return the span with direct cat name
+            try
+            {
+                var cat = dr.FindElement(By.XPath(cat_single_case_locator_x_));
+                return getElementText(cat);
+            }
+            catch (NoSuchElementException)
+            {
+                //pass to multiple
+            }
+
+            //locate categories in multple case
+            string cat_mult_case_locator_x_ = "./div[2]//span[@class='_14quei']";
+            //the above from dr and return the direct wraper of spans
+            try
+            {
+                var cat = dr.FindElement(By.XPath(cat_mult_case_locator_x_));
+                var cats = cat.FindElements(By.XPath(".//a[@class='_1rehek']"));
+                return string.Join(" • ", cats.Select(c => getElementText(c)));
+            }
+            catch (NoSuchElementException)
+            {
+                CoreUtils.WriteLine($"getCatogory2: NoSuchElementException: {dr.GetAttribute("innerHTML")}");
+                return "N/A";
+            }
+            catch (Exception err)
+            {
+                CoreUtils.WriteLine($"getCatogory2: unknow:{Environment.NewLine} {err}");
+                return "N/A";
+            }
+
+        }
+
         /// <summary>
         /// es
         /// </summary>
@@ -985,9 +1188,6 @@ namespace TwoGisPlugin
                 var fe = item.FindElements(By.XPath(".//div[@class='_172gbf8']//div[@class='_49kxlr']/div/a[@class='_2lcm958']"));///
                 if (fe == null) return "N/A";
                 if (fe.Any() == false) return "N/A";
-
-
-
                 var email_one = fe.FirstOrDefault(a =>
                 {
                     string href = a.GetAttribute("href");
