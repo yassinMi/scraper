@@ -932,7 +932,7 @@ namespace TwoGisPlugin
                 var dataDividers_locator = By.XPath(".//div[@class='_599hh'and@data-rack]/div");
                 ////div[@class='_599hh'and@data-rack]/div the dd's shoul be more than 2
 
-                if (!WaitForCond(mainWebDriver, TimeSpan.FromSeconds(15),sc=> {
+                if (!WaitForCond(mainWebDriver, TimeSpan.FromSeconds(35),sc=> {
 
                     //force false if only 2 or less data dividers
                     if (sc.FindElements(dataDividers_locator).Count <= 2) return false;
@@ -943,7 +943,7 @@ namespace TwoGisPlugin
                     return false;
                 }))
                 {
-                    CoreUtils.WriteLine($"ResolveElementDynamic: waiing phone or website.. timed out after 15 seconds, name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'");
+                    CoreUtils.WriteLine($"ResolveElementDynamic: waiing phone or website.. timed out after 35 seconds, name: '{compact_elem.companyName}', link:'{compact_elem.link}, page: '{Page}'");
                     return;
                 }
                 OnTaskDetailChanged($"{compact_elem.companyName}/delay 10ms");
