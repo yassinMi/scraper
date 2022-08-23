@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNTestPlugin", "DNTestPlugi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoGisPlugin", "TwoGisPlugin\TwoGisPlugin.csproj", "{092D8309-4144-48CE-9692-CBE66465BB80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PFPlugin", "PFPlugin\PFPlugin.csproj", "{C356E6B3-3989-4F2A-8240-F5C2AA3E4652}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,11 +61,16 @@ Global
 		{092D8309-4144-48CE-9692-CBE66465BB80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{092D8309-4144-48CE-9692-CBE66465BB80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{092D8309-4144-48CE-9692-CBE66465BB80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C356E6B3-3989-4F2A-8240-F5C2AA3E4652}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C356E6B3-3989-4F2A-8240-F5C2AA3E4652}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C356E6B3-3989-4F2A-8240-F5C2AA3E4652}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C356E6B3-3989-4F2A-8240-F5C2AA3E4652}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2FF5F9E9-D8AD-42A7-A7C6-3FDE9322B45E} = {CBDAB448-6A99-451F-9447-5E9E41337673}
+		{C356E6B3-3989-4F2A-8240-F5C2AA3E4652} = {CBDAB448-6A99-451F-9447-5E9E41337673}
 	EndGlobalSection
 EndGlobal
