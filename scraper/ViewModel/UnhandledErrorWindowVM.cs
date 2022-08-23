@@ -110,7 +110,14 @@ namespace scraper.ViewModel
 
         private void hndlCopyDetailsCommand()
         {
-            Clipboard.SetText(getDetailsText());
+            try
+            {
+                Clipboard.SetDataObject(getDetailsText());
+            }
+            catch (Exception err)
+            {
+                Core.Utils.CoreUtils.WriteLine($"hndlCopyDetailsCommand: unkow exception [gnored][{DateTime.Now}] : {Environment.NewLine}{err}");
+            }
         }
     }
 }

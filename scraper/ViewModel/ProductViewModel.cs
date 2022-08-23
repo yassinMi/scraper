@@ -176,16 +176,24 @@ namespace scraper.ViewModel
 
         private void hndlCopyToClipCommand(string propToCopy)
         {
-            switch (propToCopy)
+            try
             {
-                case "link": Clipboard.SetText(this.Link); break;
+                switch (propToCopy)
+                {
+                    case "link": Clipboard.SetDataObject(this.Link); break;
 
-                case "phone": Clipboard.SetText(this.PhoneNumber); break;
+                    case "phone": Clipboard.SetDataObject(this.PhoneNumber); break;
 
-                case "email": Clipboard.SetText(this.Email); break;
-                default:
-                    break;
+                    case "email": Clipboard.SetDataObject(this.Email); break;
+                    default:
+                        break;
+                }
             }
+            catch (Exception)
+            {
+
+            }
+           
         }
         public ICommand CopyToClipCommand
         {

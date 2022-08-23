@@ -1158,7 +1158,7 @@ namespace scraper.ViewModel
                     StartScrapingCommand.Execute(null);
                 
 
-            }, ".txt", "Select list source", "TXT File | *.txt | All Files | *");
+            }, ".txt", "Select list source", "Text File|*.txt|All Files|*");
         }
 
 
@@ -1168,7 +1168,7 @@ namespace scraper.ViewModel
         private void hndlDevGPCommand()
         {
 
-
+            throw new Exception("ehlhelz");
             return;
             CoreUtils.se();
             return;

@@ -247,7 +247,6 @@ namespace TwoGisPlugin
                 for (int cur_name_ix = 0; cur_name_ix < valid_names_count; cur_name_ix++)
                 {
                     string cur_name = valid_names[cur_name_ix];
-                    OnProgress(new DownloadingProg() { Total = valid_names_count, Current = cur_name_ix + 1 });
                     OnTaskDetailChanged($"{cur_name}/getting results..");
                     int elements_in_query = 1;
                     if (cur_name_ix == 0)
@@ -437,6 +436,8 @@ namespace TwoGisPlugin
                     CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
 
                     TaskStatsInfo.incElem(elements_in_query);
+                    OnProgress(new DownloadingProg() { Total = valid_names_count, Current = cur_name_ix + 1 });
+
                 }
 
 
@@ -631,7 +632,7 @@ namespace TwoGisPlugin
 
 
                         int i = 0;
-                        CoreUtils.WriteLine($"page started:{current_page}");
+                        CoreUtils.WriteLine($"page started [{DateTime.Now}]:{current_page}");
                         OnPageStarted($"page {current_page}");
 #if true
 

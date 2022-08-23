@@ -24,28 +24,42 @@ namespace scraper.Core.Utils
         {
             Debug.WriteLine("checking csv: " + path);
             //# validating header
-            using (var reader = new StreamReader(path))
-                try
+            try
+            {
+                using (var reader = new StreamReader(path))
                 {
-                    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                    try
                     {
-                        csv.Read();
-                        csv.ReadHeader();
-                        csv.ValidateHeader(plugin.ElementModelType);
-                        int vc = csv.GetRecords(plugin.ElementModelType).Count();
-                        validRowsCount = vc;
-                        rowsCount = vc;
-                        return true;
-                        
+                        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                        {
+                            csv.Read();
+                            csv.ReadHeader();
+                            csv.ValidateHeader(plugin.ElementModelType);
+                            int vc = csv.GetRecords(plugin.ElementModelType).Count();
+                            validRowsCount = vc;
+                            rowsCount = vc;
+                            return true;
+
+                        }
+                    }
+                    catch (Exception err) when (err is CsvHelper.ReaderException ||
+                    err is HeaderValidationException
+                    )
+                    {
+                        rowsCount = 0; validRowsCount = 0;
+                        return false;
                     }
                 }
-                catch (Exception err) when (err is CsvHelper.ReaderException ||
-                err is HeaderValidationException
-                )
-                {
-                    rowsCount = 0; validRowsCount = 0;
-                    return false;
-                }
+
+            }
+            catch (IOException err)
+            {
+                
+                Trace.Fail($"{err.Message}");
+                rowsCount = 0; validRowsCount = 0;
+                return false;
+            }
+            
         
             
             
