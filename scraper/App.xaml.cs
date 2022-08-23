@@ -42,6 +42,15 @@ namespace scraper
 
         private void HandleException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
+            var comException = e.Exception as System.Runtime.InteropServices.COMException;
+
+            if (comException != null && comException.ErrorCode == -2147221040)
+            {
+                e.Handled = true;
+                CoreUtils.WriteLine($"UnhandledeExpection [ignored][{DateTime.Now}]: { e?.Exception}");
+                return;
+            }
+
             scraper.View.UnhandledErrorWindow w = new View.UnhandledErrorWindow();
 
             var hvm = new scraper.ViewModel.UnhandledErrorWindowVM();
