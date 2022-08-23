@@ -670,8 +670,8 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="48"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition/>
+                                <RowDefinition Height="88"/>
+                                <RowDefinition Height="*"/>
                                 <RowDefinition Height="161"/>
                             </Grid.RowDefinitions>
                             <Grid x:Name="dragging_area_middle_Copy" Margin="234,0,0,0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" Grid.ColumnSpan="4" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown"/>
@@ -679,9 +679,9 @@
                             <Grid x:Name="controlPanel1" Margin="0,0,4,0" Grid.RowSpan="4" Background="#FF232323">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="48"/>
-                                    <RowDefinition/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="100"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="0"/>
                                 </Grid.RowDefinitions>
                                 <Button x:Name="add_csv_file"
 									Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
@@ -691,21 +691,21 @@
 										Height="24"
 										Width="24" />
                                 </Button>
-                                <Grid x:Name="head1" Margin="4,14,0,14" VerticalAlignment="Center">
+                                <Grid x:Name="header" Margin="4,14,0,14" VerticalAlignment="Center">
                                     <TextBlock x:Name="head_string1" HorizontalAlignment="Left" Margin="2,0,0,0"  Text="{Binding ElementNamePlural, FallbackValue=Scrap Elements, Mode=OneWay, StringFormat=Scrap \{0\}}" VerticalAlignment="Center" Style="{DynamicResource ViewHeaderStyle}" TextOptions.TextFormattingMode="Ideal"/>
                                 </Grid>
-                                <Grid Grid.Row="1" VerticalAlignment="Top" Height="24">
+                                <Grid x:Name="workspace_info" Grid.Row="1" VerticalAlignment="Top" Height="24">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="24"/>
                                         <ColumnDefinition Width="24"/>
                                     </Grid.ColumnDefinitions>
-                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}"  Grid.Column="2" Width="24" Height="24" Command="{Binding RefreshWorkspaceCommand}" >
+                                    <Button x:Name="refresh_button" Style="{StaticResource MaterialDesignIconForegroundButton}"  Grid.Column="2" Width="24" Height="24" Command="{Binding RefreshWorkspaceCommand}" ToolTip="Refresh" >
                                         <custom:PackIconMaterial Kind="Sync" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Button>
                                     <TextBlock  VerticalAlignment="Center" Text="{Binding CurrentWorkspaceName, Mode=OneWay, StringFormat=Workspace: \{0\}}" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource MaterialDesignBodyLight}" Margin="6,0,0,0" ToolTip="{Binding CurrentWorkspaceDirectory, Mode=OneWay, StringFormat=location: \{0\}}" FontSize="10.667" />
                                 </Grid>
-                                <ListBox x:Name="csvResourcesLB" materialDesign:ListBoxAssist.IsToggle="True" materialDesign:TransitionAssist.DisableTransitions="True"  materialDesign:RippleAssist.IsDisabled="True" Grid.Row="1" ItemsSource="{Binding CSVResourcesVMS}" AlternationCount="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top" Margin="0,24,0,0" SelectionMode="Multiple" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}">
+                                <ListBox x:Name="csvResourcesLB" materialDesign:ListBoxAssist.IsToggle="True" materialDesign:TransitionAssist.DisableTransitions="True"  materialDesign:RippleAssist.IsDisabled="True" Grid.Row="2" ItemsSource="{Binding CSVResourcesVMS}" AlternationCount="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Multiple" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}" Grid.RowSpan="2">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="ViewModel:CSVResourceVM">
                                             <Grid x:Name="grd1" Height="24">
@@ -817,88 +817,6 @@
 
                             </Grid>
                             <ListBox materialDesign:RippleAssist.IsDisabled="True" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="4" ItemsPanel="{DynamicResource ScrapingTaskListBoxItemsPanelStyle}" ItemTemplate="{DynamicResource ScrapingTasksListBoxItemTemplate}" ItemsSource="{Binding ScrapingTasksVMS}" ItemContainerStyle="{DynamicResource ListBoxItemStyle2}" Padding="0,0,0,10" />
-                            <Border Grid.ColumnSpan="3" Grid.Column="1" Margin="4,2" Grid.Row="3" Background="#FF232323" CornerRadius="10" Padding="2,8" VerticalAlignment="Center" Visibility="Collapsed">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid x:Name="statpanel1" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Center">
-                                        <Border Margin="6" Background="#FF343434" CornerRadius="8" Padding="6" Height="87" MinWidth="140">
-
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="20"/>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                                <TextBlock FontFamily="Roboto Medium" Text="targetwebsite.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
-                                                <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
-                                                    <Grid Height="27" Margin="0">
-                                                        <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
-                                                        <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019"><Run Text="624"/></TextBlock>
-                                                    </Grid>
-                                                    <Grid Height="27" Margin="0">
-                                                        <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
-                                                        <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="3"/>
-                                                    </Grid>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-
-
-                                    </Grid>
-                                    <Grid x:Name="statpanel1_Copy" Margin="0" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Center">
-                                        <Border Margin="6" Background="#FF343434" CornerRadius="8" Padding="6" Height="87" MinWidth="140">
-
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="20"/>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                                <TextBlock FontFamily="Roboto Medium" Text="amazon.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
-                                                <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
-                                                    <Grid Height="27" Margin="0">
-                                                        <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
-                                                        <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
-                                                    </Grid>
-                                                    <Grid Height="27" Margin="0">
-                                                        <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
-                                                        <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
-                                                    </Grid>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-
-
-
-                                    </Grid>
-                                    <Grid x:Name="statpanel1_Copy1" VerticalAlignment="Center" Grid.Column="2" Margin="0" HorizontalAlignment="Center">
-                                        <Border Margin="6" Background="#FF343434" CornerRadius="8" Padding="6" Height="87" MinWidth="140">
-
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="20"/>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                                <TextBlock FontFamily="Roboto Medium" Text="secondwebsite.com" FontSize="13.333" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
-                                                <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
-                                                    <Grid Height="27" Margin="0">
-                                                        <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="products"/>
-                                                        <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
-                                                    </Grid>
-                                                    <Grid Height="27" Margin="0">
-                                                        <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="categories"/>
-                                                        <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource AppImportantDataColor}" FontSize="18.667" FontFamily="Consolas" TextOptions.TextFormattingMode="Display" Margin="0,0.018,-0.28,-0.019" Text="0"/>
-                                                    </Grid>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-
-
-                                    </Grid>
-                                </Grid>
-                            </Border>
                             <TextBlock x:Name="taskDetailTb" Grid.ColumnSpan="3" Grid.Column="1" Margin="0,10,10,0" Grid.Row="3" TextWrapping="Wrap" Text="{Binding CurrentTaskDetail}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="#FF131313" Padding="2" FontSize="10.667" Visibility="{Binding CurrentTaskDetail, Converter={StaticResource VisibleIfNonNullOrEmptyString}}" TextTrimming="CharacterEllipsis" MaxHeight="19"/>
                             <Grid x:Name="dragging_area_right_Copy" Margin="0" Background="#00E41F1F" Height="48" VerticalAlignment="Top" MouseLeftButtonDown="dragging_area_right_MouseLeftButtonDown"/>
 
