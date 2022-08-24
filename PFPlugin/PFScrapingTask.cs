@@ -127,6 +127,7 @@ namespace PFPlugin
 
                 string pageLink = AppendPageNumToUrl(ClearPageNumFromUrl(rootPageUrl), pg);
                 string raw =  downloadOrRead(pageLink, Workspace.Current.TPFolder);
+                TaskStatsInfo.incSize(raw.Length);
                 HtmlDocument newDoc = new HtmlDocument();
                 newDoc.LoadHtml(raw);
                 yield return new Tuple<int, int, HtmlNode,string>(pg, max, newDoc.DocumentNode,raw);
@@ -285,7 +286,7 @@ namespace PFPlugin
                     foreach (var page in EnumeratePages(TargetPage))
                     {
 
-                        OnPageStarted($"page {page.Item1}/{page.Item2}");
+                        OnPageStarted($"p {page.Item1}/{page.Item2}");
                         OnTaskDetailChanged($"parsing page {page.Item1}");
                         Debug.WriteLine($"Enumerating CompactElements..");
                         Stopwatch sw = Stopwatch.StartNew();
@@ -296,7 +297,7 @@ namespace PFPlugin
                         int i = 0;
                         foreach (var item in compactElements)
                         {
-                            Task.Delay(40).GetAwaiter().GetResult();
+                            Task.Delay(4).GetAwaiter().GetResult();
                             if (ct.IsCancellationRequested)
                             {
                                 Debug.WriteLine("saving csv");
