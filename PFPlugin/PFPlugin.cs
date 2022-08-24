@@ -31,6 +31,46 @@ namespace PFPlugin
         {
             return true;
         }
+        public override IEnumerable<FilterComponenetDescription> FiltersDescription
+        {
+            get
+            {
+                return new FilterComponenetDescription[]
+                {
+                    new FilterComponenetDescription()
+                    {
+                         Header="Nationality",
+                         Type= FilterComponenetType.GroupFilter,
+                         PropertyName=nameof(Model.Agent.Nationality)
+                    },
+                    new FilterComponenetDescription()
+                    {
+                         Header="Trusted",
+                         Type= FilterComponenetType.GroupFilter,
+                         PropertyName=nameof(Model.Agent.isTrusted)
+                    },
+                    new FilterComponenetDescription()
+                    {
+                         Header="Total Properties",
+                         Type= FilterComponenetType.RangeFilter,
+                         PropertyName=nameof(Model.Agent.TotalProperties),
+
+                    },
+                    new FilterComponenetDescription()
+                    {
+                         Header="Response time",
+                         Type= FilterComponenetType.RangeFilter,
+                         PropertyName=nameof(Model.Agent.WhatsappResponseTime)
+                    },
+                    new FilterComponenetDescription()
+                    {
+                         Header="Experience",
+                         Type= FilterComponenetType.RangeFilter,
+                         PropertyName=nameof(Model.Agent.YearsOfExperience)
+                    }
+                };
+            }
+        }
 
         public override ScrapingTaskBase GetTask(string targetPage)
         {
