@@ -89,6 +89,7 @@
     <Compile Include="Plugin\Plugin.cs" />
     <Compile Include="Plugin\PluginScrapingTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Prompt.cs" />
     <Compile Include="Utils\CoreUtils.cs" />
     <Compile Include="Utils\CSVUtils.cs" />
     <Compile Include="Utils\PluginsManager.cs" />

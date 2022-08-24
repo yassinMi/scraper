@@ -12,6 +12,7 @@ using System.Collections;
 using System.IO;
 using System.Globalization;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace scraper.Services
 {
@@ -20,6 +21,20 @@ namespace scraper.Services
     public static class Utils
     {
 
+        public static MessageBoxImage PromptTypeToMsgBoxIcon(Core.UI.PromptType t)
+        {
+            switch (t)
+            {
+                case Core.UI.PromptType.Error:
+                    return MessageBoxImage.Error;
+                case Core.UI.PromptType.Warning:
+                    return MessageBoxImage.Warning;
+                case Core.UI.PromptType.Information:
+                    return MessageBoxImage.Information;
+                default:
+                    return MessageBoxImage.None;
+            }
+        }
 
         public static void CollectionShift<T>(int limit,  ObservableCollection<T> collection, T newObj)
         {

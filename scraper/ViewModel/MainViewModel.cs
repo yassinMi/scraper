@@ -133,6 +133,16 @@ namespace scraper.ViewModel
             };
             notif(nameof(HasCategoryPicker));
             notif(nameof(HasFromListPicker));
+            CoreUtils.PromptRequested += (s, p) =>
+            {
+                var r =MessageBox.Show(
+                    p.PromptContent.Message,
+                    p.PromptContent.Title,
+                     MessageBoxButton.OK,
+                     Utils.PromptTypeToMsgBoxIcon(p.PromptContent.Type)
+                     );
+                p.PromptResponseHandler(r.ToString());
+            };
             Debug.WriteLine("endof init");
 
         }

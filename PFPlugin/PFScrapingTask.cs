@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PFPlugin.Model;
+using scraper.Core.UI;
 
 namespace PFPlugin
 {
@@ -280,7 +281,10 @@ namespace PFPlugin
                     string outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName+ ".csv") ;
                     if (File.Exists(outputPath))
                     {
-                        Trace.Fail($"Warning{Environment.NewLine}csv file '{outputPath}' will be replaced, if you want to keep the old content please rename the file or make a copy of it before starting this task.{Environment.NewLine}Click 'ignore' to continue.", "");
+                        CoreUtils.RequestPrompt(new PromptContent($"CSV file '{outputPath}' is about to be erased.{Environment.NewLine}If you want to keep the old content please rename the file or make a copy of it before proceeding.{Environment.NewLine}Click OK to continue","Warning", new string[] { "OK" }, PromptType.Warning), r => {
+                            Debug.WriteLine(r);
+                        });
+
                     }
                     ActualOutputFile = DesiredOutputFile ?? outputPath;
                     foreach (var page in EnumeratePages(TargetPage))

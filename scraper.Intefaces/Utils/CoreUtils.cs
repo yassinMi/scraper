@@ -17,7 +17,7 @@ namespace scraper.Core.Utils
 {
 
     
-   
+  
 
     //@configurator way
     public class Synchronizer<T>
@@ -50,6 +50,20 @@ namespace scraper.Core.Utils
     }
     public static class CoreUtils
     {
+
+
+       
+        public static event EventHandler<UI.PromptRequestEventArgs> PromptRequested;
+
+        public static void RequestPrompt(UI.PromptContent promptContent, Action<string> responseHandler)
+        {
+            if (PromptRequested == null)
+            {
+                responseHandler("default");
+                return;
+            }
+            PromptRequested.Invoke(null, new UI.PromptRequestEventArgs(promptContent, responseHandler));
+        }
 
         const string AuxiliaryTask_Query_Separator = "`,";
         public static bool TryParseAuxiliaryTaskQuery(string q, out string header, out string[] parameters)
