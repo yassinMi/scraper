@@ -12,10 +12,14 @@ using scraper.Core.Workspace;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PFPlugin.Model;
 
 namespace PFPlugin
 {
-    public class PFScrapingTask : StaticScrapingTask
+    public class PFScrapingTask : ScrapingTaskBase
     {
         public PFScrapingTask(string tp)
         {
@@ -43,34 +47,172 @@ namespace PFPlugin
 
             }
         }
-        public override IEnumerable<T> EnumerateCompactElements<T>(HtmlNode pageNode)
+
+        string getJsonPayload(string doc)
         {
-            yield break;
+            //between  window.propertyfinder.settings.agent =  .. window.propertyfinder.settings.gtm 
+            string d1 = "window.propertyfinder.settings.agent =";
+            string d2 = "window.propertyfinder.settings.gtm";
+            var first_ix = doc.IndexOf(d1);
+            var last_ix = doc.IndexOf(d2);
+            string res = doc.Substring(first_ix + d1.Length, last_ix - (first_ix + d1.Length))
+                .Trim().Trim(';').Trim('{','}').Trim().TrimEnd(',').Substring(8);
+
+            Debug.WriteLine($"yass{res}yass");
+            return res;
+        }
+        public  IEnumerable<Model.Agent> EnumerateCompactElements(string doc)
+        {
+            var json = getJsonPayload(doc);
+            //var obj = JsonConvert.DeserializeObject<dynamic>(json);
+            JObject j = JObject.Parse(json);
+            var meta = j.SelectToken("$.meta");
+            Debug.WriteLine(meta);
+            var elems = j.SelectTokens("$.data[*]");
+            Debug.WriteLine(elems.Count());
+            var included_languages = j.SelectTokens("$.included[?(@.type=='language')]");
+            Debug.WriteLine(included_languages.Count());
+            var included_brokers = j.SelectTokens("$.included[?(@.type=='broker')]");
+            Debug.WriteLine(included_brokers.Count());
+            foreach (var agent in elems) {
+                Agent a = new Agent();
+                a.Name = agent.SelectToken("$.attributes.name").ToString();
+                a.BrokerName = agent.SelectToken("$.meta.broker_name").ToString();
+                a.Phone = agent.SelectToken("$.attributes.phone").ToString();
+                a.TotalProperties = agent.SelectToken("$.attributes.total_properties").ToString();
+                a.Nationality = agent.SelectToken("$.attributes.nationality").ToString();
+                a.position = agent.SelectToken("$.attributes.position").ToString(); //7
+                a.Image = agent.SelectToken("$.attributes.image_token").ToString();
+                a.Country = agent.SelectToken("$.attributes.country_name").ToString();
+                a.Company = "N/A";
+                a.isTrusted = agent.SelectToken("$.attributes.is_trusted").ToString();
+                a.WhatsappResponseTime = agent.SelectToken("$.attributes.whatsapp_response_time_readable").ToString();
+                a.YearsOfExperience = agent.SelectToken("$.attributes.years_of_experience").ToString();
+                a.LinkedinAddress= agent.SelectToken("$.attributes.linkedin_address").ToString();
+                Debug.WriteLine($"{a.Name},{a.BrokerName},{a.Phone},{a.TotalProperties},{a.Nationality},{a.position},{a.Country},{a.WhatsappResponseTime}");
+                yield return a;
+            }
+            
+
+            
+            
         }
 
-        public override IEnumerable<Tuple<int, int, HtmlNode>> EnumeratePages(string rootPageUrl)
+        public  IEnumerable<Tuple<int, int, HtmlNode,string>> EnumeratePages(string rootPageUrl)
         {
-            yield break;
+            string pageRaw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder);
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(pageRaw);
+            var pagination_container = doc.DocumentNode.SelectSingleNode("//div[@class='pagination__links']");
+
+            if ((isAgentsListings(doc.DocumentNode) == false) || (isNoneEmptyAgentsListings(doc.DocumentNode) == false))
+            {
+                yield break;
+            }
+
+            int min = 1;
+            int max = 1;
+            if (isMultiplePagesAgentsListings(doc.DocumentNode))
+            {
+                max = getLastPageNumber(pageRaw);
+            }
+            foreach (var pg in Enumerable.Range(min, max))
+            {
+
+                string pageLink = AppendPageNumToUrl(ClearPageNumFromUrl(rootPageUrl), pg);
+                string raw =  downloadOrRead(pageLink, Workspace.Current.TPFolder);
+                HtmlDocument newDoc = new HtmlDocument();
+                newDoc.LoadHtml(raw);
+                yield return new Tuple<int, int, HtmlNode,string>(pg, max, newDoc.DocumentNode,raw);
+            }
+
         }
 
-        public override string GetElementUniqueID(HtmlNode elementRootNode)
+        private string ClearPageNumFromUrl(string targetRootPage)
         {
-            throw new NotImplementedException();
+            Debug.WriteLine($"ClearPageNumFromUrl : '{targetRootPage}");
+            //https://www.propertyfinder.ae/en/find-agent/search?page=1
+            //https://www.propertyfinder.ae/en/find-agent/search?
+            //https://www.propertyfinder.ae/en/find-agent/search?category_id=1&order_by=-trusted_score
+            //https://www.propertyfinder.ae/en/find-agent/search?category_id=1&order_by=-trusted_score&page=2
+            string s1 = Regex.Replace(targetRootPage, @"&page=\d+", "");
+            string s2= Regex .Replace(s1, @"\?page=\d+$", "");
+            string res=  Regex.Replace(s2, @"page=\d+", "");
+            Debug.WriteLine($"res : '{res}");
+            return res;
+
         }
 
-        public override string GetElementUserID(HtmlNode elementRootNode)
+        private string AppendPageNumToUrl(string p, int pg)
         {
-            throw new NotImplementedException();
+            Debug.WriteLine($"AppendPageNumToUrl : '{p}");
+            string res;
+            Uri u;
+            Uri.TryCreate(p, UriKind.Absolute, out u);
+            if (string.IsNullOrWhiteSpace(u.Query ))
+            {
+                res= u.OriginalString + $"?page={pg}";
+            }
+            else
+            {
+                res= u.OriginalString+ $"&page={pg}";
+            }
+
+            Debug.WriteLine($"res : '{res}");
+            return res;
+
         }
 
-        public override string GetElementUserUniqueID(HtmlNode elementRootNode)
+        private int getLastPageNumber(string document)
         {
-            throw new NotImplementedException();
+            var m = Regex.Match(document, @"""page_count"":(\d+)");
+            if (m.Success == false)
+            {
+                throw new Exception("cound find last page");
+            }
+            return int.Parse(m.Groups[1].Value);
         }
 
-        public override bool HasElementsTBF(HtmlNode pageNode)
+        private bool isMultiplePagesAgentsListings(HtmlNode documentNode)
         {
-            throw new NotImplementedException();
+            return true;//todo
+        }
+
+        private bool isNoneEmptyAgentsListings(HtmlNode documentNode)
+        {
+            return true;
+        }
+
+        private bool isAgentsListings(HtmlNode documentNode)
+        {
+            return true;
+        }
+
+        public  string GetElementUniqueID(HtmlNode elementRootNode)
+        {
+            return "lk";
+        }
+
+        public  string GetElementUserID(HtmlNode elementRootNode)
+        {
+            return "k";
+        }
+
+        public  string GetElementUserUniqueID(HtmlNode elementRootNode)
+        {
+            return "oj";
+        }
+
+        public  string GetPageUniqueUserTitle(HtmlNode pageNode)
+        {
+            //main//div[@data-qs='agent-list']//h1
+            var h1 = pageNode.SelectSingleNode("//main//div[@data-qs='agent-list']//h1");
+            return h1.InnerText;
+        }
+
+        public  bool HasElementsTBF(HtmlNode pageNode)
+        {
+            return true;
         }
 
         public override void Pause()
@@ -78,10 +220,13 @@ namespace PFPlugin
             throw new NotImplementedException();
         }
 
-        public override void ResolveElement(object compactElement, out int bytes, out int obj_cc)
+        public  void ResolveElement(object compactElement, out int bytes, out int obj_cc)
         {
-            throw new NotImplementedException();
+            bytes = 0; obj_cc = 0;
+            return;
         }
+        protected  string TaskLockValue { get { return TargetPage; } }
+
 
         static Synchronizer<string> targetPageBasedLock = new Synchronizer<string>();
 
@@ -117,7 +262,7 @@ namespace PFPlugin
                 {
                     return;
                 }
-                ResolvedTitle = GetPageUniqueUserTitle(doc.DocumentNode) ?? GetPageUniqueID(doc.DocumentNode); ///+ ;
+                ResolvedTitle = GetPageUniqueUserTitle(doc.DocumentNode); ///+ ;
                 if (string.IsNullOrWhiteSpace(ResolvedTitle)) throw new Exception("couldn't resolve page title");
                 OnResolved(ResolvedTitle);
                 try
@@ -128,11 +273,13 @@ namespace PFPlugin
                     ActualOutputFile = DesiredOutputFile ?? outputPath;
                     foreach (var page in EnumeratePages(TargetPage))
                     {
+
                         OnPageStarted($"[page {page.Item1}/{page.Item2}]");
+                        Task.Delay(200).GetAwaiter().GetResult();
                         Debug.WriteLine($"Enumerating CompactElements..");
                         Stopwatch sw = Stopwatch.StartNew();
-                        var compactElements = EnumerateCompactElements<object>(page.Item3).ToList();
-                        List<object> resolvedElements = new List<object>(compactElements.Count);
+                        var compactElements = EnumerateCompactElements(page.Item4).ToList();
+                        List<Agent> resolvedElements = new List<Agent>(compactElements.Count);
                         var ect = sw.Elapsed;
                         Debug.WriteLine($"Enumerating CompactElements took {ect}");
                         int i = 0;
@@ -155,7 +302,7 @@ namespace PFPlugin
                             TaskStatsInfo.incElem(1);
                             i++;
                             OnProgress(new DownloadingProg() { Total = compactElements.Count, Current = i });
-                            OnTaskDetailChanged($"Collecting {"Element"} info: {GetElementTaskDetailHint(item)}");
+                            OnTaskDetailChanged($"Collecting {"Element"} info: ");
                         }
                         var rct = sw.Elapsed - ect;
                         Debug.WriteLine($"Resolving CompactElements took {rct}");
@@ -168,10 +315,11 @@ namespace PFPlugin
                     return;
 
                 }
-                catch
+                catch (Exception err)
                 {
+                    CoreUtils.WriteLine($"unknown error [{DateTime.Now}]{Environment.NewLine} {err}");
                     OnStageChanged(ScrapTaskStage.Failed);
-                    OnError("Network Error");
+                    OnError("Unknows Error");
                     return;
                 }
 

@@ -27,6 +27,10 @@ namespace PFPlugin
 
         public override string ElementNamePlural { get { return "Agents"; } }
         public override Version Version { get { return new Version(1, 0, 0); } }
+        public override bool ValidateTargetPageInputQuery(string input)
+        {
+            return true;
+        }
 
         public override ScrapingTaskBase GetTask(string targetPage)
         {

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PFPlugin.Model
 {
+    /// <summary>
+    /// has 13 props
+    /// </summary>
     public class Agent
     {
         public string Name { get; set; }
