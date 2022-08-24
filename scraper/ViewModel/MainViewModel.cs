@@ -131,6 +131,8 @@ namespace scraper.ViewModel
                 if(canExecuteStartScrapingCommand())
                 StartScrapingCommand.Execute(null);
             };
+            notif(nameof(HasCategoryPicker));
+            notif(nameof(HasFromListPicker));
             Debug.WriteLine("endof init");
 
         }
@@ -621,6 +623,20 @@ namespace scraper.ViewModel
 
 
         public MainWindow mw { get; set; } = null;
+
+        /// <summary>
+        /// whether the crrent plugin supports this feature, used to show or hid the UI parts
+        /// </summary>
+        public bool  HasCategoryPicker
+        {
+            get { return MainPlugin==null? false : MainPlugin.ListOfCapabilities.Contains("categoryPicker"); }
+        }
+
+
+        public bool HasFromListPicker
+        {
+            get { return MainPlugin == null ? false : MainPlugin.ListOfCapabilities.Contains("fromListAuxiliaryTask"); }
+        }
 
 
         public string CurrentWorkspaceDirectory

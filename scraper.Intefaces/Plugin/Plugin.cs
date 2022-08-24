@@ -27,6 +27,10 @@ namespace scraper.Core
         public virtual string ElementName { get; } = "Element";
         public virtual string ElementNamePlural { get; } = "Elements";
         private ElementDescription _ElementDescription;
+        /// <summary>
+        /// like "categoryPicker", "fromListAuxiliaryTask", used to djust UI parts accordngly (temporary approach)
+        /// </summary>
+        public virtual string[] ListOfCapabilities { get; } = new string[]{};
         public virtual IEnumerable<FilterComponenetDescription> FiltersDescription { get;}
         public virtual ElementDescription ElementDescription
         {

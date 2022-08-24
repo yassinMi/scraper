@@ -776,30 +776,40 @@
                                                 <RowDefinition Height="24"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                <Button x:Name="helpButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0" Width="16" Height="16" Padding="0" Command="{Binding OpenHelpPopupCommand, Mode=OneWay}" ToolTip="show supported pages">
-                                                    <custom:PackIconMaterial Height="12" Width="12" Kind="Help"/>
-                                                </Button>
-                                                <Button x:Name="pickButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0" Width="16" Height="16" Padding="0" Command="{Binding OpenCategoryPickerPopupCommand, Mode=OneWay}" ToolTip="Pick a category page">
-                                                    <custom:PackIconMaterial Height="12" Width="12" Kind="AutoFix"/>
-                                                </Button>
-                                                <Button x:Name="fromListButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0" Width="16" Height="16" Padding="0" Command="{Binding StartTaskFromFile2gis, Mode=OneWay}" ToolTip="From list of search queries">
-                                                    <Image Height="12" Width="12" Source="media/img/list-file-12-white.png"/>
-                                                </Button>
-                                            </StackPanel>
-                                            
 
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                </Grid.ColumnDefinitions>
 
-                                            <TextBox materialDesign:ColorZoneAssist.Mode="Standard"
+                                                <TextBox materialDesign:ColorZoneAssist.Mode="Standard"
 												materialDesign:TextFieldAssist.LeadingIcon="Globe"
 												materialDesign:TextFieldAssist.HasLeadingIcon="True"
 												materialDesign:HintAssist.Hint="Target page URL"
 												materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-												FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" Margin="0,0,52,0" KeyDown="TextBox_KeyDown" >
-                                                <TextBox.InputBindings>
-                                                    <KeyBinding Command="{Binding StartScrapingCommand}" Key="Return"/>
-                                                </TextBox.InputBindings>
-                                            </TextBox>
+												FontSize="16" MinWidth="100" FontFamily="Roboto Light" Text="{Binding TargetPageQueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFF3F3F3" KeyDown="TextBox_KeyDown" >
+                                                    <TextBox.InputBindings>
+                                                        <KeyBinding Command="{Binding StartScrapingCommand}" Key="Return"/>
+                                                    </TextBox.InputBindings>
+                                                </TextBox>
+
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" Margin="4,0,0,0">
+                                                    <Button x:Name="helpButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0" Width="16" Height="16" Padding="0" Command="{Binding OpenHelpPopupCommand, Mode=OneWay}" ToolTip="show supported pages">
+                                                        <custom:PackIconMaterial Height="12" Width="12" Kind="Help"/>
+                                                    </Button>
+                                                    <Button x:Name="pickButt"  Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0" Width="16" Height="16" Padding="0" Command="{Binding OpenCategoryPickerPopupCommand, Mode=OneWay}" ToolTip="Pick a category page" Visibility="{Binding HasCategoryPicker, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                        <custom:PackIconMaterial Height="12" Width="12" Kind="AutoFix"/>
+                                                    </Button>
+                                                    <Button x:Name="fromListButt" Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0" Width="16" Height="16" Padding="0" Command="{Binding StartTaskFromFile2gis, Mode=OneWay}" ToolTip="From list of search queries" Visibility="{Binding HasFromListPicker, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                        <Image Height="12" Width="12" Source="media/img/list-file-12-white.png"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Grid>
+                                            
+                                            
+
+
                                             <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0,0,16,0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task" ToolTip="Start scraping the target page"/>
                                             <StackPanel  Orientation="Horizontal"   Grid.Row="1">
                                                 <TextBlock Foreground="{StaticResource MaterialDesignBodyLight}"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" Margin="0,0,6,0" ><Run Text="Using plugin:"/><Run Foreground="{StaticResource SecondaryHueMidBrush}" Text="{Binding CurrentPluginName, FallbackValue=null, Mode=OneWay, StringFormat=\{0\}}"/></TextBlock>
