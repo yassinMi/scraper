@@ -52,17 +52,24 @@ namespace scraper.Core.Utils
     {
 
 
-       
-        public static event EventHandler<UI.PromptRequestEventArgs> PromptRequested;
-
+        //i needed this backing delegate to alter the default event behaviour preventing accidentaly adding more than one subscriber
+        //it's always only one subscriber: for tests a dummy one,
+        //at runtime a real subscriper is added and is performing the UI interactions.
+        private static EventHandler<UI.PromptRequestEventArgs> promptRequested;
+        
+        public static event EventHandler<UI.PromptRequestEventArgs> PromptRequested {
+            add { promptRequested = value; }
+            remove { promptRequested = null; }
+        }
+        
         public static void RequestPrompt(UI.PromptContent promptContent, Action<string> responseHandler)
         {
-            if (PromptRequested == null)
+            if (promptRequested == null)
             {
                 responseHandler("default");
                 return;
             }
-            PromptRequested.Invoke(null, new UI.PromptRequestEventArgs(promptContent, responseHandler));
+            promptRequested.Invoke(null, new UI.PromptRequestEventArgs(promptContent, responseHandler));
         }
 
         const string AuxiliaryTask_Query_Separator = "`,";

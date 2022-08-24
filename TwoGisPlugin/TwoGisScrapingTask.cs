@@ -17,6 +17,7 @@ using System.IO;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
+using scraper.Core.UI;
 
 namespace TwoGisPlugin
 {
@@ -708,7 +709,9 @@ namespace TwoGisPlugin
 
                                 if (File.Exists(ActualOutputFile))
                                 {
-                                    Trace.Fail($"Starting this task will replace an existing scv file '{ActualOutputFile}' {Environment.NewLine} if you don't want to lose the old file rename it or make a copy of it, then click 'ignore' to continue");
+                                    CoreUtils.RequestPrompt(new PromptContent($"CSV file '{ActualOutputFile}' is about to be erased.{Environment.NewLine}If you want to keep the old content please rename the file or make a copy of it before proceeding.{Environment.NewLine}Click OK to continue", "Warning", new string[] { "OK" }, PromptType.Warning), r => {
+                                        Debug.WriteLine(r);
+                                    });
                                 }
                             }
                             Debug.WriteLine("getting categories_welements_wrapper..");
