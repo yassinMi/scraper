@@ -242,6 +242,7 @@ namespace PFPlugin
             {
                 TaskStatsInfo.Reset();
                 OnStageChanged(ScrapTaskStage.DownloadingData);
+                OnTaskDetailChanged("Getting page..");
                 string raw;
                 try
                 {
@@ -274,13 +275,18 @@ namespace PFPlugin
                 try
                 {
                     int global_couner = 0;
-                    string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle) + ".csv";
-                    var outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName);
+                    string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle);
+                    string outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName+ ".csv") ;
+                    if (File.Exists(outputPath))
+                    {
+                        Trace.Fail($"Warning{Environment.NewLine}csv file '{outputPath}' will be replaced, if you want to keep the old content please rename the file or make a copy of it before starting this task.{Environment.NewLine}Click 'ignore' to continue.", "");
+                    }
                     ActualOutputFile = DesiredOutputFile ?? outputPath;
                     foreach (var page in EnumeratePages(TargetPage))
                     {
 
                         OnPageStarted($"page {page.Item1}/{page.Item2}");
+                        OnTaskDetailChanged($"parsing page {page.Item1}");
                         Debug.WriteLine($"Enumerating CompactElements..");
                         Stopwatch sw = Stopwatch.StartNew();
                         var compactElements = EnumerateCompactElements(page.Item4).ToList();
@@ -291,7 +297,6 @@ namespace PFPlugin
                         foreach (var item in compactElements)
                         {
                             Task.Delay(40).GetAwaiter().GetResult();
-
                             if (ct.IsCancellationRequested)
                             {
                                 Debug.WriteLine("saving csv");
@@ -311,7 +316,6 @@ namespace PFPlugin
                             i++;
                             global_couner++;
                             OnProgress(new DownloadingProg() { Total = total_count, Current = global_couner });
-                            OnTaskDetailChanged($"Collecting {"Element"} info: ");
                         }
                         var rct = sw.Elapsed - ect;
                         Debug.WriteLine($"Resolving CompactElements took {rct}");
@@ -319,7 +323,7 @@ namespace PFPlugin
                         CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
                         Debug.WriteLine("saved current page conent:" + outputPath);
                     }
-
+                    OnTaskDetailChanged(null);
                     OnStageChanged(ScrapTaskStage.Success);
                     return;
 
