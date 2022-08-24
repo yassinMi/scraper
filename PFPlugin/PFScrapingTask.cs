@@ -61,12 +61,18 @@ namespace PFPlugin
             Debug.WriteLine($"yass{res}yass");
             return res;
         }
+        int total_count = 0;
         public  IEnumerable<Model.Agent> EnumerateCompactElements(string doc)
         {
             var json = getJsonPayload(doc);
             //var obj = JsonConvert.DeserializeObject<dynamic>(json);
             JObject j = JObject.Parse(json);
             var meta = j.SelectToken("$.meta");
+            if (total_count == 0)
+            {
+                int.TryParse(meta.SelectToken("$.total_count").ToString(), out total_count);
+
+            }
             Debug.WriteLine(meta);
             var elems = j.SelectTokens("$.data[*]");
             Debug.WriteLine(elems.Count());
@@ -267,15 +273,14 @@ namespace PFPlugin
                 OnResolved(ResolvedTitle);
                 try
                 {
-
+                    int global_couner = 0;
                     string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle) + ".csv";
                     var outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName);
                     ActualOutputFile = DesiredOutputFile ?? outputPath;
                     foreach (var page in EnumeratePages(TargetPage))
                     {
 
-                        OnPageStarted($"[page {page.Item1}/{page.Item2}]");
-                        Task.Delay(200).GetAwaiter().GetResult();
+                        OnPageStarted($"page {page.Item1}/{page.Item2}");
                         Debug.WriteLine($"Enumerating CompactElements..");
                         Stopwatch sw = Stopwatch.StartNew();
                         var compactElements = EnumerateCompactElements(page.Item4).ToList();
@@ -285,6 +290,8 @@ namespace PFPlugin
                         int i = 0;
                         foreach (var item in compactElements)
                         {
+                            Task.Delay(40).GetAwaiter().GetResult();
+
                             if (ct.IsCancellationRequested)
                             {
                                 Debug.WriteLine("saving csv");
@@ -294,6 +301,7 @@ namespace PFPlugin
                                 OnStageChanged(Stage);
                                 return;
                             }
+
                             int objs, bytes = 0;
                             ResolveElement(item, out bytes, out objs);
                             resolvedElements.Add(item);
@@ -301,7 +309,8 @@ namespace PFPlugin
                             TaskStatsInfo.incSize(bytes);
                             TaskStatsInfo.incElem(1);
                             i++;
-                            OnProgress(new DownloadingProg() { Total = compactElements.Count, Current = i });
+                            global_couner++;
+                            OnProgress(new DownloadingProg() { Total = total_count, Current = global_couner });
                             OnTaskDetailChanged($"Collecting {"Element"} info: ");
                         }
                         var rct = sw.Elapsed - ect;
