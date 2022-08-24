@@ -54,19 +54,66 @@ namespace PFPlugin
                          Header="Total Properties",
                          Type= FilterComponenetType.RangeFilter,
                          PropertyName=nameof(Model.Agent.TotalProperties),
-
+                         MinMaxValidator= (inp)=> {
+                             int inp_;
+                             if(!int.TryParse(inp,out inp_)) return new Tuple<bool, string>(false,"not a number!");
+                             return new Tuple<bool, string>(true, null);
+                         }, 
+                         IsInRange=(min,max,obj)=>
+                         {
+                             int min_,max_;
+                             if(!int.TryParse(min,out min_)) return true;
+                             if(!int.TryParse(max,out max_)) return true;
+                             if ((obj as Agent)==null) return true;
+                             int v;
+                             if(!int.TryParse((obj as Agent).TotalProperties,out v)) return false;
+                             return (v<=max_)
+                             &&(v>=min_);
+                         }
                     },
                     new FilterComponenetDescription()
                     {
                          Header="Response time",
                          Type= FilterComponenetType.RangeFilter,
-                         PropertyName=nameof(Model.Agent.WhatsappResponseTime)
+                         PropertyName=nameof(Model.Agent.WhatsappResponseTime),
+                         MinMaxValidator= (inp)=> {
+                             int inp_;
+                             if(!int.TryParse(inp,out inp_)) return new Tuple<bool, string>(false,"not a number!");
+                             return new Tuple<bool, string>(true, null);
+                         },
+                         IsInRange=(min,max,obj)=>
+                         {
+                             int min_,max_;
+                             if(!int.TryParse(min,out min_)) return true;
+                             if(!int.TryParse(max,out max_)) return true;
+                             if ((obj as Agent)==null) return true;
+                             int v;
+                             if(!int.TryParse((obj as Agent).WhatsappResponseTime,out v)) return false;
+                             return (v<=max_)
+                             &&(v>=min_);
+                         }
                     },
                     new FilterComponenetDescription()
                     {
                          Header="Experience",
                          Type= FilterComponenetType.RangeFilter,
-                         PropertyName=nameof(Model.Agent.YearsOfExperience)
+                         PropertyName=nameof(Model.Agent.YearsOfExperience),
+                         MinMaxValidator= (inp)=> {
+                             int inp_;
+                             if(!int.TryParse(inp,out inp_)) return new Tuple<bool, string>(false,"not a number!");
+                             return new Tuple<bool, string>(true, null);
+                         },
+                         IsInRange=(min,max,obj)=>
+                         {
+                             int min_,max_;
+                             if(!int.TryParse(min,out min_)) return true;
+                             if(!int.TryParse(max,out max_)) return true;
+                             if ((obj as Agent)==null) return true;
+                             int v;
+                             if(!int.TryParse((obj as Agent).YearsOfExperience,out v)) return false;
+                             return (v<=max_)
+                             &&(v>=min_);
+                         }
                     }
                 };
             }
