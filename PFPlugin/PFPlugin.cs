@@ -29,7 +29,39 @@ namespace PFPlugin
         public override Version Version { get { return new Version(1, 0, 0); } }
         public override bool ValidateTargetPageInputQuery(string input)
         {
+            //https://www.propertyfinder.ae/en/find-agent/search
+            Uri uri;
+            if (Uri.TryCreate(input, UriKind.Absolute, out uri) == false)
+            {
+                return false;
+            }
+            string website = uri.Host.ToLower();
+            if (!((website == TargetHost))) return false;
+            if (!input.Contains("/en/find-agent/search")) return false;
             return true;
+        }
+        public override PluginUsageInfo UsageInfo
+        {
+            get
+            {
+                return new PluginUsageInfo()
+                {
+                    UsageInfoViewHeader = "Supported URL's:",
+                    UseCases = new TargetPageUrlUseCaseHelp[]
+                      {
+                          new TargetPageUrlUseCaseHelp()
+                          {
+                               Description="Agents Search Results",
+                               ExampleUrls = new string[]
+                               {
+                                   "https://www.propertyfinder.ae/en/find-agent/search",
+                                   "https://www.propertyfinder.ae/en/find-agent/search?page=340",
+                                   "https://www.propertyfinder.ae/en/find-agent/search?location_id=3&order_by=-trusted_score&text=Ras%20Al%20Khaimah",
+                               }
+                          }
+                      }
+                };
+            }
         }
         public override IEnumerable<FilterComponenetDescription> FiltersDescription
         {
