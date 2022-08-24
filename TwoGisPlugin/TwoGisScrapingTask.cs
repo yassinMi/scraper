@@ -660,10 +660,14 @@ namespace TwoGisPlugin
                     }
                     bool should_scrape_next_page = false;
                     int current_page = tryGetPageNumFromUrl(TargetPage);
+                    int desired_initial_page = current_page;
+                    bool first_take = true;//n th next do loop
                     do
                     {
                         try
                         {
+                            
+                            
                             //# wait for elements visibility
                             OnTaskDetailChanged("waiting for elemetns_content");
                             WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
@@ -691,7 +695,17 @@ namespace TwoGisPlugin
                             {
                                 titleHasBeenResolved = true;
                                 OnResolved(mainWebDriver.Title ?? "title error");
-                                ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
+                                if (desired_initial_page != 1)
+                                {
+                                    ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) +$"-from-page-{desired_initial_page}"+ ".csv");
+
+                                }
+                                else
+                                {
+                                    ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
+
+                                }
+
                                 if (File.Exists(ActualOutputFile))
                                 {
                                     Trace.Fail($"Starting this task will replace an existing scv file '{ActualOutputFile}' {Environment.NewLine} if you don't want to lose the old file rename it or make a copy of it, then click 'ignore' to continue");
@@ -718,6 +732,44 @@ namespace TwoGisPlugin
                         }
 
                         tryHideFooter();
+                        //#skipnig to the required page
+                        if (first_take && desired_initial_page != 1)
+                        {
+                            OnTaskDetailChanged("skipnig to the required page number");
+                            skipToPage(list_wrapper_rnd, desired_initial_page);
+                            OnTaskDetailChanged("waiting for elemetns_content");
+                            WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(130));
+                            w.Until((e) =>
+                            {
+                                try
+                                {
+                                    return e.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
+                                }
+                                catch (StaleElementReferenceException err)
+                                {
+                                    return false;
+                                }
+                                catch (NoSuchElementException err)
+                                {
+                                    return false;
+                                }
+                                catch (Exception err)
+                                {
+                                    CoreUtils.WriteLine($"Until: unknown error {err}");
+                                    return false;
+                                }
+                            });
+                            Debug.WriteLine("getting categories_welements_wrapper..");
+                            //# listing
+                            //elems_content is _z72pvu ([2nd]after filr) o>  _3zzdxk o> _1667t0u o> _1rkbbi0x o> _15gu4wr 
+                            //list is: div[2rd] no class o> _awwm2v
+                            //currentlyusing .//div[@class='_z72pvu']//div[@class='_1667t0u']
+                            list_wrapper_rnd = mainWebDriver.FindElement(
+                                By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']"));
+                            list__ = list_wrapper_rnd.FindElement(By.XPath(".//div[@class='_awwm2v']"));
+
+                        }
+
                         // By.XPath("/*[@class='Sidebar__Container-gs0c67-0 bXQeSB sidebar']"));
                         Debug.WriteLine($"enumerating categories_welements.. is null {list__.GetDomProperty("innerHTML")}");
                         var elements_divs = list__.FindElements(By.XPath($"./div[not(@class='_106bqvr')]"));//_106bqvr is advertisement class
@@ -818,7 +870,7 @@ namespace TwoGisPlugin
                             Trace.Fail( $"Expected current page num to be '{current_page}', parser returned '{curr_page_num}'");
                         }
                         current_page++;
-
+                        first_take = false;
                     } while (should_scrape_next_page);
 
                     
@@ -830,6 +882,40 @@ namespace TwoGisPlugin
 
             }
         }
+
+        private void skipToPage(IWebElement elems_conts, int desired_initial_page)
+        {
+            Debug.WriteLine($"skipToPage: {desired_initial_page}");
+            IWebElement next = null, prev;
+            IWebElement[] pages_butts = null;
+            bool isNextEnabled = false, exists_next_page = false;
+            int curr_page_num = 0;
+            exists_next_page = resolvePagination(elems_conts, out pages_butts, out next, out prev, out isNextEnabled, out curr_page_num) && isNextEnabled;
+            bool atDesiredPage = curr_page_num == desired_initial_page;
+            while (!atDesiredPage)
+            {
+                CoreUtils.WriteLine($"it:  curr_page_num:'{curr_page_num}',isNextEnabled:'{isNextEnabled}',pages_buttons:'{ (pages_butts == null ? "null" : string.Join(",", pages_butts.Select(b => b.Text)))}'");
+
+                var maybe_dpb = pages_butts.FirstOrDefault(p => getElementText(p) == $"{desired_initial_page}");
+                if (maybe_dpb != null)
+                {
+                    maybe_dpb.Click();
+                    return;
+                }
+                else 
+                {
+                    IWebElement highest_visible = pages_butts
+                        .OrderByDescending((p) =>int.Parse(getElementText(p))).First();
+                    Debug.WriteLine($"highest page button {getElementText(highest_visible)}");
+                    highest_visible.Click();
+                }
+                exists_next_page = resolvePagination(elems_conts, out pages_butts, out next, out prev, out isNextEnabled, out curr_page_num) && isNextEnabled;
+                atDesiredPage = curr_page_num == desired_initial_page;
+
+            }
+            return;
+        }
+
         /// <summary>
         /// excractes page from url, returns 1 as fallback
         /// </summary>

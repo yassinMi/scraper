@@ -92,6 +92,13 @@ namespace TwoGisPlugin
                 return _ElementDescription;
             }
         }
+        public override string[] ListOfCapabilities
+        {
+            get
+            {
+                return new string[] { "categoryPicker", "fromListAuxiliaryTask" };
+            }
+        }
         public override string TargetHost
         {
             get
