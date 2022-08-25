@@ -243,6 +243,7 @@ namespace TwoGisPlugin
         /// exceptions are handeled so you don't need handele them in the conditin
         /// wats and returns false if times out or on unknow exceptions (gets reported)
         /// uses the main wabdriver
+        /// normal timeout filure isn't reported, others are
         /// </summary>
         /// <param name="wd"></param>
         /// <param name="by"></param>
@@ -333,6 +334,10 @@ namespace TwoGisPlugin
                 if(silent==false)
                 CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{"no companies were collected."}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
             }
+            CoreUtils.WriteLine($"t lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
+            CoreUtils.WriteLine($"p lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
+            CoreUtils.WriteLine($"e lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
+            OnTaskDetailChanged(null);
             OnError(hint);
             OnStageChanged(ScrapTaskStage.Failed);
 
@@ -590,7 +595,11 @@ namespace TwoGisPlugin
 
 
 
-
+        bool IsStale(IWebElement e)
+        {
+            try { bool en = e.Enabled; return false; }
+            catch (StaleElementReferenceException) { return true; }
+        }
 
 
 
@@ -642,8 +651,13 @@ namespace TwoGisPlugin
 
 
 
-
-
+        /// <summary>
+        /// used to add inpfo specific to the current scraping context so that when an error happen it can be dumped to logs file
+        /// purpose:  avoid wrting to logs file too frequently, and too much unecessary details. 
+        /// </summary>
+        StringBuilder ReportBuilderTaskLevel = new StringBuilder();
+        StringBuilder ReportBuilderPageLevel = new StringBuilder();
+        StringBuilder ReportBuilderElementLevel = new StringBuilder();
 
         public override async Task RunScraper(CancellationToken ct)
         {
@@ -669,8 +683,12 @@ namespace TwoGisPlugin
             };
             //# normal task start
             CoreUtils.WriteLine($"RunScraper.. [{DateTime.Now}], {TargetPage}");
+            //# startof rb:task lvl
+            ReportBuilderTaskLevel.Clear();
+            ReportBuilderTaskLevel.AppendLine($"tp:'{TargetPage}'");
             lock (_lock[TargetPage])
             {
+                
                 List<Company> list = new List<Company>();
                 if (Workspace.Current?.CSVOutputFolder == null) Debug.WriteLine("null ws");
                 IWebElement list__; //last wrapper that ahs divs directly
@@ -679,6 +697,7 @@ namespace TwoGisPlugin
                 lock (_lock)//concurrent tasks can'y run this part of code simultaneously
                 {
                     //#instantate wd
+                    OnTaskDetailChanged(null);
                     start:
                     if (!tryInstantiateWebDriver()) return;
                     Debug.WriteLine("url driver");
@@ -720,10 +739,10 @@ namespace TwoGisPlugin
                     bool first_take = true;//n th next do loop
                     do
                     {
+                        //# startof rb:page lvl
+                        ReportBuilderPageLevel.Clear();
                         try
                         {
-                            
-                            
                             //# wait for elements visibility
                             OnTaskDetailChanged("waiting for elemetns_content");
                             WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
@@ -783,7 +802,6 @@ namespace TwoGisPlugin
                         }
                         catch (Exception err)
                         {
-
                             abortTask(err.Message, list, desired_initial_page, current_page);
                             return;
                         }
@@ -792,7 +810,8 @@ namespace TwoGisPlugin
                         //#skipnig to the required page
                         if (first_take && desired_initial_page != 1)
                         {
-                            OnTaskDetailChanged("skipnig to the required page number");
+                            OnTaskDetailChanged($"skipnig to the required page number '{desired_initial_page}'");
+                            ReportBuilderTaskLevel.AppendLine($"skipnig to the required page number '{desired_initial_page}'");
                             try
                             {
                                 skipToPage(list_wrapper_rnd, desired_initial_page);
@@ -800,38 +819,23 @@ namespace TwoGisPlugin
                             catch
                             {
                                 CoreUtils.WriteLine($"unknow exception at skipToPage, crr_page: [{current_page}] tp: {TargetPage }");
-                                abortTask("an error occured.", list, desired_initial_page, current_page,true);
+                                abortTask("an error occured.", list, desired_initial_page, current_page, true);
                                 return;
                             }
-                            OnTaskDetailChanged("waiting for elemetns_content");
-                            WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(130));
+                            OnTaskDetailChanged("waiting for elemetns content");
+                            ReportBuilderTaskLevel.AppendLine($"waiting for elemetns content @ftdip");
                             string something_went_wrong_div_locator_x = "//div[contains(@class,'4wr')]//div[.//h1[text()='Something went wrong']]";
-                            bool has_found_something_went_wrong_div_instead=false;
-                            w.Until((e) =>
+                            bool has_found_something_went_wrong_div_instead = false;
+                            WaitForCond(mainWebDriver, TimeSpan.FromSeconds(130), isc =>
                             {
-                                try
+                                if (isFindElementSafeReturn(isc, sc => sc.FindElement(By.XPath(something_went_wrong_div_locator_x)) != null))
                                 {
-                                    if (isFindElementSafeReturn(e, sc => sc.FindElement(By.XPath(something_went_wrong_div_locator_x)) != null))
-                                    {
-                                        has_found_something_went_wrong_div_instead = true;
-                                        return true;
-                                    }
+                                    has_found_something_went_wrong_div_instead = true;
+                                    return true;
+                                }
 
-                                    return e.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
-                                }
-                                catch (StaleElementReferenceException err)
-                                {
-                                    return false;
-                                }
-                                catch (NoSuchElementException err)
-                                {
-                                    return false;
-                                }
-                                catch (Exception err)
-                                {
-                                    CoreUtils.WriteLine($"Until: unknown error {err}");
-                                    return false;
-                                }
+                                return isc.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
+
                             });
                             if (has_found_something_went_wrong_div_instead)
                             {
@@ -863,9 +867,12 @@ namespace TwoGisPlugin
                         OnPageStarted($"page {current_page}");
 #if true
 
-
+                        OnIsStopEnabledd(true);
                         foreach (var div in elements_divs)
                         {
+                            ReportBuilderElementLevel.Clear();
+                            ReportBuilderElementLevel.AppendLine($"i: {i}");
+                            ReportBuilderElementLevel.AppendLine($"div: {(div==null? "null":IsStale(div)?"stale":div.GetAttribute("outerHTML")) }{Environment.NewLine}");
                             var act = new OpenQA.Selenium.Interactions.Actions(mainWebDriver);
                             try
                             {
@@ -875,31 +882,34 @@ namespace TwoGisPlugin
                             catch (Exception err)
                             {
                                 CoreUtils.WriteLine($"act.Perform failed: crr_page: [{current_page}] tp: {TargetPage } {Environment.NewLine} {err} , ");
-                                abortTask("an attempt to interact with an elemnt failed. this error can be caused by manual inreaction withthe browser", list, desired_initial_page, current_page);
+                                abortTask("an attempt to interact with an element failed. this can be caused by manual inreactions with the browser or other issues", list, desired_initial_page, current_page);
                                 return;
                             }
+                            Company new_cmp_elem = new Company();
+                            Task.Delay(80).GetAwaiter().GetResult();
+                            i++;
+                            Debug.WriteLine($"creating new comp_elem ..");
                             try
                             {
-                                Task.Delay(80).GetAwaiter().GetResult();
-                                i++;
-                                Company new_cmp_elem = new Company();
-                                Debug.WriteLine($"creating new comp_elem ..");
                                 var element_component = div.FindElement(By.XPath("./div"));
                                 new_cmp_elem.companyName = getName(element_component);
                                 OnTaskDetailChanged($"{new_cmp_elem.companyName}/location");
+                                ReportBuilderElementLevel.AppendLine($"{new_cmp_elem.companyName}/location");
                                 new_cmp_elem.location = getLocation(element_component);
                                 OnTaskDetailChanged($"{new_cmp_elem.companyName}/branches");
+                                ReportBuilderElementLevel.AppendLine($"{new_cmp_elem.companyName}/branches");
                                 new_cmp_elem.branches = getBranchesNum(element_component);
                                 OnTaskDetailChanged($"{new_cmp_elem.companyName}/category");
+                                ReportBuilderElementLevel.AppendLine($"{new_cmp_elem.companyName}/category");
                                 new_cmp_elem.category = getCategory(element_component);
                                 OnTaskDetailChanged($"{new_cmp_elem.companyName}/link");
+                                ReportBuilderElementLevel.AppendLine($"{new_cmp_elem.companyName}/link");
                                 new_cmp_elem.link = getLink(element_component);
                                 ResolveElementDynamic2(new_cmp_elem, element_component);
                                 TaskStatsInfo.incElem(1);
                                 Debug.WriteLine($"delaying ..");
                                 Task.Delay(20).GetAwaiter().GetResult();
                                 list.Add(new_cmp_elem);
-                                OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
                             }
                             catch (Exception err)
                             {
@@ -907,7 +917,7 @@ namespace TwoGisPlugin
                                 abortTask("an operation failed. task must abort :(", list, desired_initial_page, current_page);
                                 return;
                             }
-                            
+                            OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
                             if (ct.IsCancellationRequested) {
                                 if (IsStopRequested == false)
                                 {
@@ -917,6 +927,7 @@ namespace TwoGisPlugin
                                 break;
                             }
                         }
+                        ReportBuilderPageLevel.AppendLine($"saving: {list.Count} elements");
                         CSVUtils.CSVWriteRecords(ActualOutputFile, list, false);
 #endif
                         IWebElement next=null, prev;
@@ -930,6 +941,7 @@ namespace TwoGisPlugin
                             abortTask("an error occured.", list, desired_initial_page, current_page);
                             return;
                         }
+                        ReportBuilderPageLevel.AppendLine($"resolving pagination");
                         try
                         {
                             exists_next_page = resolvePagination(list_wrapper_rnd, out pages_butts, out next, out prev, out isNextEnabled, out curr_page_num) && isNextEnabled;
@@ -940,13 +952,14 @@ namespace TwoGisPlugin
                             abortTask("an error occured.", list, desired_initial_page, current_page);
                             return;
                         }
-                        CoreUtils.WriteLine($"exists_next_page result : {should_scrape_next_page}, curr_page_num:'{curr_page_num}',isNextEnabled:'{isNextEnabled}',pages_buttons:'{ (pages_butts == null ? "null" : string.Join(",", pages_butts.Select(b => b.Text)))}'");
+                        ReportBuilderPageLevel.AppendLine($"exists_next_page result : {should_scrape_next_page}, curr_page_num:'{curr_page_num}',isNextEnabled:'{isNextEnabled}',pages_buttons:'{ (pages_butts == null ? "null" : string.Join(",", pages_butts.Select(b => b.Text)))}'");
 
                         if (ct.IsCancellationRequested)
                         {
                             if (IsStopRequested == false)
                             {
                                 OnIsStopRequestedChanged(true);
+                                ReportBuilderTaskLevel.AppendLine("OnIsStopRequestedChanged");
                                 CoreUtils.WriteLine($"canceled at page {current_page}");
                             }
                             should_scrape_next_page = false;
@@ -956,11 +969,10 @@ namespace TwoGisPlugin
                         {
                             should_scrape_next_page = exists_next_page;
                         }
-                        Debug.WriteLine($"at page {current_page} calling it.");
-
                         if (should_scrape_next_page)
                         {
                             //#clicking next page
+                            ReportBuilderPageLevel.AppendLine("clicking next page");
                             try
                             {
                                 next?.Click();
@@ -977,6 +989,7 @@ namespace TwoGisPlugin
                             CoreUtils.WriteLine($"Expected current page num to be '{current_page}', parser returned '{curr_page_num}'");
                             Trace.Fail( $"Expected current page num to be '{current_page}', parser returned '{curr_page_num}'");
                         }
+                        ReportBuilderPageLevel.AppendLine("increasing current page");
                         current_page++;
                         first_take = false;
                     } while (should_scrape_next_page);

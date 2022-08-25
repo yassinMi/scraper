@@ -36,7 +36,10 @@ namespace scraper.ViewModel
                 this.CurrentTaskDetail = err;
                 this.FailingReason = err;
             };
-            m.StageChanged += (s, newStage) => { notif(nameof(CurrentScrapTaskStage)); };
+            m.StageChanged += (s, newStage) => {
+                notif(nameof(CurrentScrapTaskStage));
+                notif(nameof(IsStopeButtonVisible));
+            };
             m.PageDone+=(s,p)=> {
                 CurrentPage = p;
                 notif(nameof(CurrentPage)); };
@@ -44,6 +47,8 @@ namespace scraper.ViewModel
             {
                 this.BrowserWindowsCount = cc;
             };
+            
+            m.IsStopEnabledValuehanged += (s, e) => { notif(nameof(IsStopeButtonVisible)); };
 
         }
         public ScrapingTaskVM()
@@ -127,6 +132,14 @@ namespace scraper.ViewModel
         {
             set { _BrowserWindowsCount = value; notif(nameof(BrowserWindowsCount)); }
             get { return _BrowserWindowsCount; }
+        }
+
+
+        public bool IsStopeButtonVisible
+        {
+            get { return( Model!=null) &&  Model.IsStopeEnabled 
+                    && ((Model.Stage== ScrapTaskStage.DownloadingData)
+                    || (Model.Stage == ScrapTaskStage.Delaying)); }
         }
 
 

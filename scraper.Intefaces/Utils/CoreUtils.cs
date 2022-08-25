@@ -71,6 +71,7 @@ namespace scraper.Core.Utils
             }
             promptRequested.Invoke(null, new UI.PromptRequestEventArgs(promptContent, responseHandler));
         }
+        
 
         const string AuxiliaryTask_Query_Separator = "`,";
         public static bool TryParseAuxiliaryTaskQuery(string q, out string header, out string[] parameters)

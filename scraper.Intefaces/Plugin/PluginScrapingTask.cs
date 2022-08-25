@@ -37,6 +37,7 @@ namespace scraper.Core
         public event EventHandler<ScrapTaskStage> StageChanged; //stdout prints something like P: [4/35]
         public event EventHandler<int> BrowserWindowsCountChanged; //
         public event EventHandler<bool> IsStopRequestedValueChanged; //
+        public event EventHandler<bool> IsStopEnabledValuehanged; //
 
 
 
@@ -84,6 +85,11 @@ namespace scraper.Core
             IsStopRequested = val;
             IsStopRequestedValueChanged?.Invoke(this, IsStopRequested);
         }
+        protected void OnIsStopEnabledd(bool val)
+        {
+            IsStopeEnabled = val;
+            IsStopEnabledValuehanged?.Invoke(this, IsStopRequested);
+        }
         /// <summary>
         /// downloads the raw objects containing the required flieds, saves them under workspace/raw or workspace/{ElementName}-raw
         /// </summary>
@@ -121,6 +127,10 @@ namespace scraper.Core
         /// used for feedback to disabe Stop button as the stoping process is carried out
         /// </summary>
         public bool IsStopRequested { get; internal set; }
+        /// <summary>
+        /// similar to IsStopRequested but causes the button to be hidden
+        /// </summary>
+        public bool IsStopeEnabled { get; internal set; }
         public string Page { get; internal set; }
         /// <summary>
         /// pause the task
