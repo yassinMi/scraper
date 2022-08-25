@@ -156,7 +156,7 @@ namespace scraper.ViewModel
             notif(nameof(ElementName));
             notif(nameof(CurrentPluginTargetHost));
             Debug.WriteLine("endof init");
-
+            CoreUtils.WriteLine($"INIT: ws:'{MainWorkspace.Directory}', plugin:'{MainPlugin.Name} ({MainPlugin.Version})'");
         }
 
 

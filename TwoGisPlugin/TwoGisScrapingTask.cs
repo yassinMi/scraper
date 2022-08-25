@@ -191,8 +191,17 @@ namespace TwoGisPlugin
                     {
                         return false;
                     }
+                    catch (WebDriverException err)
+                    {
+                        if (err.Message.Contains("chrome not reachable") || err.Message.Contains("Could not connect to the remote WebDriver server for URL"))
+                        {
+                            throw;
+                        }
+                        return false;
+                    }
                     catch (Exception err)
                     {
+
                         CoreUtils.WriteLine($"WaitFor:Until: unknown error: {Environment.NewLine} {err}");
                         return false;
                     }
@@ -295,8 +304,40 @@ namespace TwoGisPlugin
         static Synchronizer<string> _lock = new Synchronizer<string>();
         bool titleHasBeenResolved = false;
 
+        /// <summary>
+        /// handle all fatal error by calling this, it will dump file, and warn the user and set task status.
+        /// </summary>
+        /// <param name="dump"></param>
+        /// <param name="silent">not saving dump and not showing message box,</param>
+        private void abortTask(string hint, List<Company> dump, int start_page, int end_page,bool silent =false)
+        {
+            if (dump.Count > 0)
+            {
+                int p_from = start_page;
+                int p_to = end_page;
+                string saved_pages_range_str = (p_to == p_from ? $"page {p_from}" : $"pages {p_from}-{p_to}");
+                string dump_file = ActualOutputFile.Substring(0, ActualOutputFile.Length - 4);//removing extesntion .csv
+                dump_file = dump_file + " (" + saved_pages_range_str + ").csv";
+                if(silent==false)
+                CSVUtils.CSVWriteRecords(Path.GetFileName(dump_file), dump, false);
+                CoreUtils.WriteLine($"aborted: [{DateTime.Now}], {saved_pages_range_str}, count: {dump.Count} ");
+                if(silent==false)
+                CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{dump.Count} companies records at {saved_pages_range_str} are saved here:{dump_file}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
+
+            }
+
+            else
+            {
+                //# nothing to save
+                CoreUtils.WriteLine($"aborted: [{DateTime.Now}], with no records");
+                if(silent==false)
+                CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{"no companies were collected."}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
+            }
+            OnError(hint);
+            OnStageChanged(ScrapTaskStage.Failed);
 
 
+        }
 
 
 
@@ -638,6 +679,7 @@ namespace TwoGisPlugin
                 lock (_lock)//concurrent tasks can'y run this part of code simultaneously
                 {
                     //#instantate wd
+                    start:
                     if (!tryInstantiateWebDriver()) return;
                     Debug.WriteLine("url driver");
                     OnStageChanged(ScrapTaskStage.DownloadingData);
@@ -649,14 +691,27 @@ namespace TwoGisPlugin
                         mainWebDriver.SwitchTo().NewWindow(WindowType.Tab);
                         OnBrowserWindowsCountChanged(++BrowserWindowsCount);
                         mainWebDriver.Url = TargetPage;
-                       CoreUtils.WriteLine("Navigate()..");
+                        CoreUtils.WriteLine("Navigate()..");
                         mainWebDriver.Navigate();
+                    }
+                    catch ( WebDriverException err)
+                    {
+                        CoreUtils.WriteLine($"couldnt navigate :WebDriverException {err}");
+                        if (err.Message.Contains("chrome not reachable")||err.Message.Contains("Could not connect to the remote WebDriver server for URL"))
+                        {
+                            //# must reset the mainDriver;
+                            try { mainWebDriver.Quit(); } catch { }
+                            mainWebDriver = null;
+                            if (!tryInstantiateWebDriver()) return;
+                            goto start;
+                        }
+                        abortTask(err.Message, new List<Company>(), 0, 0,true);
+                        return;
                     }
                     catch (Exception err)
                     {
                         CoreUtils.WriteLine($"couldnt navigate :unknown error {err}");
-                        OnError(err.Message);
-                        OnStageChanged(ScrapTaskStage.Failed);
+                        abortTask(err.Message, new List<Company>(), 0, 0,true);
                         return;
                     }
                     bool should_scrape_next_page = false;
@@ -729,8 +784,7 @@ namespace TwoGisPlugin
                         catch (Exception err)
                         {
 
-                            OnError(err.Message);
-                            OnStageChanged(ScrapTaskStage.Failed);
+                            abortTask(err.Message, list, desired_initial_page, current_page);
                             return;
                         }
 
@@ -739,13 +793,30 @@ namespace TwoGisPlugin
                         if (first_take && desired_initial_page != 1)
                         {
                             OnTaskDetailChanged("skipnig to the required page number");
-                            skipToPage(list_wrapper_rnd, desired_initial_page);
+                            try
+                            {
+                                skipToPage(list_wrapper_rnd, desired_initial_page);
+                            }
+                            catch
+                            {
+                                CoreUtils.WriteLine($"unknow exception at skipToPage, crr_page: [{current_page}] tp: {TargetPage }");
+                                abortTask("an error occured.", list, desired_initial_page, current_page,true);
+                                return;
+                            }
                             OnTaskDetailChanged("waiting for elemetns_content");
                             WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(130));
+                            string something_went_wrong_div_locator_x = "//div[contains(@class,'4wr')]//div[.//h1[text()='Something went wrong']]";
+                            bool has_found_something_went_wrong_div_instead=false;
                             w.Until((e) =>
                             {
                                 try
                                 {
+                                    if (isFindElementSafeReturn(e, sc => sc.FindElement(By.XPath(something_went_wrong_div_locator_x)) != null))
+                                    {
+                                        has_found_something_went_wrong_div_instead = true;
+                                        return true;
+                                    }
+
                                     return e.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
                                 }
                                 catch (StaleElementReferenceException err)
@@ -762,6 +833,13 @@ namespace TwoGisPlugin
                                     return false;
                                 }
                             });
+                            if (has_found_something_went_wrong_div_instead)
+                            {
+                                CoreUtils.WriteLine($"has_found_something_went_wrong_div_instead");
+                                //# must abort
+                                abortTask("Something went wrong :(", list, desired_initial_page, current_page);
+                                return;
+                            }
                             Debug.WriteLine("getting categories_welements_wrapper..");
                             //# listing
                             //elems_content is _z72pvu ([2nd]after filr) o>  _3zzdxk o> _1667t0u o> _1rkbbi0x o> _15gu4wr 
@@ -796,29 +874,40 @@ namespace TwoGisPlugin
                             }
                             catch (Exception err)
                             {
-                                CoreUtils.WriteLine($"act.Perform failed: {err}");
-                                Trace.Fail("act.Perform failed", err.ToString());
+                                CoreUtils.WriteLine($"act.Perform failed: crr_page: [{current_page}] tp: {TargetPage } {Environment.NewLine} {err} , ");
+                                abortTask("an attempt to interact with an elemnt failed. this error can be caused by manual inreaction withthe browser", list, desired_initial_page, current_page);
+                                return;
                             }
-                            Task.Delay(80).GetAwaiter().GetResult();
-                            i++;
-                            Company new_cmp_elem = new Company();
-                            Debug.WriteLine($"creating new comp_elem ..");
-                            var element_component = div.FindElement(By.XPath("./div"));
-                            new_cmp_elem.companyName = getName(element_component);
-                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/location");
-                            new_cmp_elem.location = getLocation(element_component);
-                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/branches");
-                            new_cmp_elem.branches = getBranchesNum(element_component);
-                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/category");
-                            new_cmp_elem.category = getCategory(element_component);
-                            OnTaskDetailChanged($"{new_cmp_elem.companyName}/link");
-                            new_cmp_elem.link = getLink(element_component);
-                            ResolveElementDynamic2(new_cmp_elem, element_component);
-                            TaskStatsInfo.incElem(1);
-                            Debug.WriteLine($"delaying ..");
-                            Task.Delay(20).GetAwaiter().GetResult();
-                            list.Add(new_cmp_elem);
-                            OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
+                            try
+                            {
+                                Task.Delay(80).GetAwaiter().GetResult();
+                                i++;
+                                Company new_cmp_elem = new Company();
+                                Debug.WriteLine($"creating new comp_elem ..");
+                                var element_component = div.FindElement(By.XPath("./div"));
+                                new_cmp_elem.companyName = getName(element_component);
+                                OnTaskDetailChanged($"{new_cmp_elem.companyName}/location");
+                                new_cmp_elem.location = getLocation(element_component);
+                                OnTaskDetailChanged($"{new_cmp_elem.companyName}/branches");
+                                new_cmp_elem.branches = getBranchesNum(element_component);
+                                OnTaskDetailChanged($"{new_cmp_elem.companyName}/category");
+                                new_cmp_elem.category = getCategory(element_component);
+                                OnTaskDetailChanged($"{new_cmp_elem.companyName}/link");
+                                new_cmp_elem.link = getLink(element_component);
+                                ResolveElementDynamic2(new_cmp_elem, element_component);
+                                TaskStatsInfo.incElem(1);
+                                Debug.WriteLine($"delaying ..");
+                                Task.Delay(20).GetAwaiter().GetResult();
+                                list.Add(new_cmp_elem);
+                                OnProgress(new DownloadingProg() { Current = i, Total = elements_divs.Count });
+                            }
+                            catch (Exception err)
+                            {
+                                CoreUtils.WriteLine($"failed at one of the parsing functions: crr_page: [{current_page}] tp: {TargetPage } {Environment.NewLine} {err}");
+                                abortTask("an operation failed. task must abort :(", list, desired_initial_page, current_page);
+                                return;
+                            }
+                            
                             if (ct.IsCancellationRequested) {
                                 if (IsStopRequested == false)
                                 {
@@ -834,7 +923,23 @@ namespace TwoGisPlugin
                         IWebElement[] pages_butts=null;
                         bool isNextEnabled=false, exists_next_page=false;
                         int curr_page_num=0;
-                        exists_next_page = resolvePagination(list_wrapper_rnd, out pages_butts, out next, out prev, out isNextEnabled, out curr_page_num) && isNextEnabled;
+
+                        if (!(list_wrapper_rnd.Displayed))
+                        {
+                            CoreUtils.WriteLine($"list_wrapper_rnd not displayed ");
+                            abortTask("an error occured.", list, desired_initial_page, current_page);
+                            return;
+                        }
+                        try
+                        {
+                            exists_next_page = resolvePagination(list_wrapper_rnd, out pages_butts, out next, out prev, out isNextEnabled, out curr_page_num) && isNextEnabled;
+                        }
+                        catch
+                        {
+                            CoreUtils.WriteLine($"unknow exception at resolvePagination, crr_page: [{current_page}] tp: {TargetPage }");
+                            abortTask("an error occured.", list, desired_initial_page, current_page);
+                            return;
+                        }
                         CoreUtils.WriteLine($"exists_next_page result : {should_scrape_next_page}, curr_page_num:'{curr_page_num}',isNextEnabled:'{isNextEnabled}',pages_buttons:'{ (pages_butts == null ? "null" : string.Join(",", pages_butts.Select(b => b.Text)))}'");
 
                         if (ct.IsCancellationRequested)
@@ -1597,7 +1702,7 @@ namespace TwoGisPlugin
 
         }
         /// <summary>
-        /// es
+        /// es (except when passing stale eelemnt, so must be wraped in try)
         /// retirns a value indicating wither the pagination footer exists
         /// </summary>
         /// <param name="elems_content"></param>
