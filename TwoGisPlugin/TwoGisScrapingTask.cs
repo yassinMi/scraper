@@ -299,6 +299,7 @@ namespace TwoGisPlugin
 
         const string _elems_content_x = ".//div[@class='_1xzra4e']/div[@class='_1g0w9mx']/div[@class='_jcreqo']/div[@class='_1tdquig']/div[@class='_z72pvu']/div[@class='_3zzdxk']/div[@class='_1667t0u']/div[@class='_1rkbbi0x']/div[@class='_15gu4wr']";
         const string _details_section_x = ".//div[@class='_r47nf']//div[@class='_18lzknl']"; //works from doc level
+        const string something_went_wrong_div_locator_x = "//div[contains(@class,'4wr')]//div[.//h1[text()='Something went wrong']]"; //in list of elements (not tested somewhere else)
 
         const string ELEMENTS_WRAPPER_CLASS = "_z72pvu";
         static WebDriver mainWebDriver { get; set; } = null;
@@ -334,9 +335,11 @@ namespace TwoGisPlugin
                 if(silent==false)
                 CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{"no companies were collected."}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
             }
+            CoreUtils.WriteLine($"[REPORT][{DateTime.Now}]");
             CoreUtils.WriteLine($"t lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
-            CoreUtils.WriteLine($"p lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
-            CoreUtils.WriteLine($"e lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
+            CoreUtils.WriteLine($"p lvl report: {Environment.NewLine}{ReportBuilderPageLevel.ToString()}");
+            CoreUtils.WriteLine($"e lvl report: {Environment.NewLine}{ReportBuilderElementLevel.ToString()}");
+            CoreUtils.WriteLine("[ENDOF REPORT]");
             OnTaskDetailChanged(null);
             OnError(hint);
             OnStageChanged(ScrapTaskStage.Failed);
@@ -741,31 +744,32 @@ namespace TwoGisPlugin
                     {
                         //# startof rb:page lvl
                         ReportBuilderPageLevel.Clear();
+                        ReportBuilderPageLevel.AppendLine($"page lvl, current_page= {current_page}");
                         try
                         {
                             //# wait for elements visibility
-                            OnTaskDetailChanged("waiting for elemetns_content");
+                            OnTaskDetailChanged("waiting for elemetns content");
+                            ReportBuilderPageLevel.AppendLine($"waiting for elemetns content , 1");
                             WebDriverWait w = new WebDriverWait(mainWebDriver, TimeSpan.FromSeconds(30));
-                            w.Until((e) =>
+                            bool has_found_something_went_wrong_div_instead = false;
+                            WaitForCond(mainWebDriver, TimeSpan.FromSeconds(130), isc =>
                             {
-                                try
+                                if (isFindElementSafeReturn(isc, sc => sc.FindElement(By.XPath(something_went_wrong_div_locator_x)) != null))
                                 {
-                                    return e.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
+                                    has_found_something_went_wrong_div_instead = true;
+                                    return true;
                                 }
-                                catch (StaleElementReferenceException err)
-                                {
-                                    return false;
-                                }
-                                catch (NoSuchElementException err)
-                                {
-                                    return false;
-                                }
-                                catch (Exception err)
-                                {
-                                    CoreUtils.WriteLine($"Until: unknown error {err}");
-                                    return false;
-                                }
+
+                                return isc.FindElement(By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']//div[@class='_awwm2v']")) != null;
+
                             });
+                            if (has_found_something_went_wrong_div_instead)
+                            {
+                                CoreUtils.WriteLine($"has_found_something_went_wrong_div_instead [{DateTime.Now}], 1");
+                                //# must abort
+                                abortTask("Something went wrong :(", list, desired_initial_page, current_page);
+                                return;
+                            }
                             if (titleHasBeenResolved == false)
                             {
                                 titleHasBeenResolved = true;
@@ -773,14 +777,11 @@ namespace TwoGisPlugin
                                 if (desired_initial_page != 1)
                                 {
                                     ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) +$"-from-page-{desired_initial_page}"+ ".csv");
-
                                 }
                                 else
                                 {
                                     ActualOutputFile = Path.Combine(Workspace.Current.CSVOutputFolder, CoreUtils.SanitizeFileName(mainWebDriver.Title) + ".csv");
-
                                 }
-
                                 if (File.Exists(ActualOutputFile))
                                 {
                                     CoreUtils.RequestPrompt(new PromptContent($"CSV file '{ActualOutputFile}' is about to be erased.{Environment.NewLine}If you want to keep the old content please rename the file or make a copy of it before proceeding.{Environment.NewLine}Click OK to continue", "Warning", new string[] { "OK" }, PromptType.Warning), r => {
@@ -793,9 +794,11 @@ namespace TwoGisPlugin
                             //elems_content is _z72pvu ([2nd]after filr) o>  _3zzdxk o> _1667t0u o> _1rkbbi0x o> _15gu4wr 
                             //list is: div[2rd] no class o> _awwm2v
                             //currentlyusing .//div[@class='_z72pvu']//div[@class='_1667t0u']
+                            ReportBuilderPageLevel.AppendLine($"locating list_wrapper_rnd");
                             list_wrapper_rnd = mainWebDriver.FindElement(
                                 By.XPath(".//div[@class='_z72pvu']//div[@class='_1667t0u']"));
                             list__ = list_wrapper_rnd.FindElement(By.XPath(".//div[@class='_awwm2v']"));
+                            ReportBuilderPageLevel.AppendLine($"list_wrapper_rnd outerHTML: {list_wrapper_rnd.GetAttribute("outerHTML")}");
                             //var scrollView = list_wrapper_rnd.FindElement(By.ClassName("_1rkbbi0x"));
                             //mainWebDriver.ExecuteScript("document.getElementsByClassName(\"_1rkbbi0x\")[2].scrollTo(0,50000)");
 
@@ -824,7 +827,6 @@ namespace TwoGisPlugin
                             }
                             OnTaskDetailChanged("waiting for elemetns content");
                             ReportBuilderTaskLevel.AppendLine($"waiting for elemetns content @ftdip");
-                            string something_went_wrong_div_locator_x = "//div[contains(@class,'4wr')]//div[.//h1[text()='Something went wrong']]";
                             bool has_found_something_went_wrong_div_instead = false;
                             WaitForCond(mainWebDriver, TimeSpan.FromSeconds(130), isc =>
                             {
@@ -863,7 +865,7 @@ namespace TwoGisPlugin
 
 
                         int i = 0;
-                        CoreUtils.WriteLine($"page started [{DateTime.Now}]:{current_page}");
+                        CoreUtils.WriteLine($"page started {current_page} : [{DateTime.Now}] ");
                         OnPageStarted($"page {current_page}");
 #if true
 
@@ -1015,7 +1017,7 @@ namespace TwoGisPlugin
             bool atDesiredPage = curr_page_num == desired_initial_page;
             while (!atDesiredPage)
             {
-                CoreUtils.WriteLine($"it:  curr_page_num:'{curr_page_num}',isNextEnabled:'{isNextEnabled}',pages_buttons:'{ (pages_butts == null ? "null" : string.Join(",", pages_butts.Select(b => b.Text)))}'");
+                ReportBuilderTaskLevel.AppendLine($"skip:  curr_page_num:'{curr_page_num}',isNextEnabled:'{isNextEnabled}',pages_buttons:'{ (pages_butts == null ? "null" : string.Join(",", pages_butts.Select(b => b.Text)))}'");
 
                 var maybe_dpb = pages_butts.FirstOrDefault(p => getElementText(p) == $"{desired_initial_page}");
                 if (maybe_dpb != null)
@@ -1076,8 +1078,7 @@ namespace TwoGisPlugin
             }
             catch(NoSuchElementException)
             {
-                CoreUtils.WriteLine($"tryHideFooter: NoSuchElementException");
-
+                ReportBuilderPageLevel.AppendLine("tryHideFooter: NoSuchElementException");
                 return;
             }
             catch (Exception err)
