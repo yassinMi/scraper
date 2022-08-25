@@ -370,7 +370,7 @@
 					
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Height="64" FontFamily="Roboto" Width="64">
                 <TabItem.Header >
-                    <Grid HorizontalAlignment="Center" ToolTip="View products">
+                    <Grid HorizontalAlignment="Center" ToolTip="{Binding ElementNamePlural, FallbackValue=Scrap Elements, Mode=OneWay, StringFormat=View \{0\}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="32"/>
                             <RowDefinition Height="Auto"/>
@@ -629,7 +629,7 @@
             <TabItem x:Name="database"  
 				Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="64" FontFamily="Roboto" Height="64">
                 <TabItem.Header>
-                    <materialDesign:Badged HorizontalAlignment="Stretch" BadgeColorZoneMode="Inverted" VerticalAlignment="Stretch" Height="32" Width="32" materialDesign:BadgedAssist.IsMiniBadge="True" ToolTip="Scrap products">
+                    <materialDesign:Badged HorizontalAlignment="Stretch" BadgeColorZoneMode="Inverted" VerticalAlignment="Stretch" Height="32" Width="32" materialDesign:BadgedAssist.IsMiniBadge="True" ToolTip="{Binding ElementNamePlural, FallbackValue=Scrap Elements, Mode=OneWay, StringFormat=Scrap \{0\}}">
                         <materialDesign:Badged.Badge  >
                             <Border CornerRadius="4 4 4 4" Height="16" Padding="2,0">
                                 <TextBlock  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="9.333" Text="{Binding TotalRecordsCountString}" FontWeight="Bold"/>

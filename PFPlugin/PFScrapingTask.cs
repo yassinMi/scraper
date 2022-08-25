@@ -84,19 +84,29 @@ namespace PFPlugin
             foreach (var agent in elems) {
                 Agent a = new Agent();
                 a.Name = agent.SelectToken("$.attributes.name").ToString();
-                a.BrokerName = agent.SelectToken("$.meta.broker_name").ToString();
+                a.CompanyName = agent.SelectToken("$.meta.broker_name").ToString();
                 a.Phone = agent.SelectToken("$.attributes.phone").ToString();
                 a.TotalProperties = agent.SelectToken("$.attributes.total_properties").ToString();
-                a.Nationality = agent.SelectToken("$.attributes.nationality").ToString();
+                //a.Nationality = agent.SelectToken("$.attributes.nationality").ToString();
                 a.position = agent.SelectToken("$.attributes.position").ToString(); //7
                 a.Image = agent.SelectToken("$.attributes.image_token").ToString();
                 a.Country = agent.SelectToken("$.attributes.country_name").ToString();
-                a.Company = "N/A";
-                a.isTrusted = agent.SelectToken("$.attributes.is_trusted").ToString();
-                a.WhatsappResponseTime = agent.SelectToken("$.attributes.whatsapp_response_time_readable").ToString();
+                //a.Company = "N/A";
+                //a.isTrusted = agent.SelectToken("$.attributes.is_trusted").ToString();
+                //a.WhatsappResponseTime = agent.SelectToken("$.attributes.whatsapp_response_time_readable").ToString();
                 a.YearsOfExperience = agent.SelectToken("$.attributes.years_of_experience").ToString();
                 a.LinkedinAddress= agent.SelectToken("$.attributes.linkedin_address").ToString();
-                Debug.WriteLine($"{a.Name},{a.BrokerName},{a.Phone},{a.TotalProperties},{a.Nationality},{a.position},{a.Country},{a.WhatsappResponseTime}");
+                string brokey_id = agent.SelectToken("$.meta.broker_id").ToString();
+                Debug.WriteLine(brokey_id);
+                try
+                {
+                    a.CompanyAddress = j.SelectToken($"$.included[?(@.type=='broker' && @.id=='{brokey_id}')].attributes.address").ToString().Replace("\r\n",", ");
+                }
+                catch 
+                {      
+                                  
+                }
+                Debug.WriteLine($"{a.Name},{a.CompanyName},{a.Phone},{a.TotalProperties},{a.Country},{a.position},{a.Country}");
                 yield return a;
             }
             
@@ -337,7 +347,7 @@ namespace PFPlugin
                 {
                     CoreUtils.WriteLine($"unknown error [{DateTime.Now}]{Environment.NewLine} {err}");
                     OnStageChanged(ScrapTaskStage.Failed);
-                    OnError("Unknows Error");
+                    OnError($"Error: '{err.Message}'");
                     return;
                 }
 

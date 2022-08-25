@@ -836,8 +836,12 @@ namespace scraper.ViewModel
 
         private void handleCloseWindowCommand()
         {
-            if (mw!=null)
-            mw.Close();
+            if (mw != null)
+            {
+                CoreUtils.WriteLine($"scraper closed [{DateTime.Now}]");
+                mw.Close();
+            }
+            
         }
         public ICommand CloseWindowCommand { get { return new MICommand(handleCloseWindowCommand); } }
 

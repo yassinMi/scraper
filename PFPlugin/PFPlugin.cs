@@ -26,7 +26,7 @@ namespace PFPlugin
         public override string ElementName { get { return "Agent"; } }
 
         public override string ElementNamePlural { get { return "Agents"; } }
-        public override Version Version { get { return new Version(1, 0, 0); } }
+        public override Version Version { get { return new Version(1, 0, 1); } }
         public override bool ValidateTargetPageInputQuery(string input)
         {
             //https://www.propertyfinder.ae/en/find-agent/search
@@ -69,18 +69,8 @@ namespace PFPlugin
             {
                 return new FilterComponenetDescription[]
                 {
-                    new FilterComponenetDescription()
-                    {
-                         Header="Nationality",
-                         Type= FilterComponenetType.GroupFilter,
-                         PropertyName=nameof(Model.Agent.Nationality)
-                    },
-                    new FilterComponenetDescription()
-                    {
-                         Header="Trusted",
-                         Type= FilterComponenetType.GroupFilter,
-                         PropertyName=nameof(Model.Agent.isTrusted)
-                    },
+                    
+                    
                     new FilterComponenetDescription()
                     {
                          Header="Total Properties",
@@ -103,28 +93,7 @@ namespace PFPlugin
                              &&(v>=min_);
                          }
                     },
-                    new FilterComponenetDescription()
-                    {
-                         Header="Response time",
-                         Type= FilterComponenetType.RangeFilter,
-                         PropertyName=nameof(Model.Agent.WhatsappResponseTime),
-                         MinMaxValidator= (inp)=> {
-                             int inp_;
-                             if(!int.TryParse(inp,out inp_)) return new Tuple<bool, string>(false,"not a number!");
-                             return new Tuple<bool, string>(true, null);
-                         },
-                         IsInRange=(min,max,obj)=>
-                         {
-                             int min_,max_;
-                             if(!int.TryParse(min,out min_)) return true;
-                             if(!int.TryParse(max,out max_)) return true;
-                             if ((obj as Agent)==null) return true;
-                             int v;
-                             if(!int.TryParse((obj as Agent).WhatsappResponseTime,out v)) return false;
-                             return (v<=max_)
-                             &&(v>=min_);
-                         }
-                    },
+                   
                     new FilterComponenetDescription()
                     {
                          Header="Experience",
@@ -150,6 +119,7 @@ namespace PFPlugin
                 };
             }
         }
+        
 
         public override ScrapingTaskBase GetTask(string targetPage)
         {
