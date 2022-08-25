@@ -23,6 +23,8 @@ namespace scraper
         public Dictionary<string, string> CommandLineArgsDict { get; set; } = new Dictionary<string, string>();
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            CoreUtils.WriteLine($"scraper started [{DateTime.Now}]");
+
             Current.DispatcherUnhandledException += HandleException;
             AppDomain.CurrentDomain.AssemblyResolve += FindPluginAsm;
             int argc = e.Args.Count();
