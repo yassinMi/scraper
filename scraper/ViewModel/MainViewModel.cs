@@ -153,6 +153,8 @@ namespace scraper.ViewModel
                      );
                 p.PromptResponseHandler(r.ToString());
             };
+            notif(nameof(ElementName));
+            notif(nameof(CurrentPluginTargetHost));
             Debug.WriteLine("endof init");
 
         }

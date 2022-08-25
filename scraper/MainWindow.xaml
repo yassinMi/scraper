@@ -529,7 +529,7 @@
                                                 <RowDefinition Height="20"/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock FontFamily="Roboto" FontWeight="Bold" Text="{Binding CurrentPluginTargetHost}" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                                            <TextBlock x:Name="website" FontFamily="Roboto" FontWeight="Bold" Text="{Binding CurrentPluginTargetHost}" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
                                             <StackPanel Margin="0,1,0,0" Orientation="Vertical" Grid.Row="1">
                                                 <Grid Height="27" Margin="0">
                                                     <TextBlock  Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13.333" FontFamily="Roboto" TextOptions.TextFormattingMode="Display" Margin="0" Text="{Binding ElementNamePlural}"/>
