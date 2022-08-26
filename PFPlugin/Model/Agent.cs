@@ -19,6 +19,7 @@ namespace PFPlugin.Model
         public string position { get; set; }
         public string CompanyName { get; set; }
         public string CompanyAddress { get; set; }
+        public string Areas { get; set; }
         public string LinkedinAddress {get;set;}
         public string Image { get; set; }
 

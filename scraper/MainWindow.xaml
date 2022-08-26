@@ -660,8 +660,8 @@
                                 <View:HelpView DataContext="{Binding PluginHelpVM}"/>
                             </Grid>
                         </-->
-                        
-                        
+
+
                         <Grid x:Name="content_database" Margin="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="329*"/>
@@ -723,7 +723,7 @@
                                                             </Storyboard>
                                                         </VisualState>
                                                         <VisualState x:Name="Deactivated">
-                                                            
+
                                                         </VisualState>
                                                         <VisualState x:Name="ErrorState"/>
                                                     </VisualStateGroup>
@@ -807,8 +807,8 @@
                                                     </Button>
                                                 </StackPanel>
                                             </Grid>
-                                            
-                                            
+
+
 
 
                                             <Button x:Name="button1" Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"  HorizontalAlignment="Right" Height="32" Margin="0,0,16,0" Grid.Column="1" Command="{Binding StartScrapingCommand}" VerticalAlignment="Center" Grid.Row="1" Content="Start new task" ToolTip="Start scraping the target page"/>
@@ -852,21 +852,26 @@
                 </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="48"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"   Padding="16,6" VerticalContentAlignment="Center" Command="{Binding ExitWorkspaceCommand}"  Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,0,0,0" Content="EXIT WORKSPACE" />
-                    <StackPanel Orientation="Vertical" d:LayoutOverrides="Height" DataContext="{StaticResource ApplicationInfo}" VerticalAlignment="Top" Margin="10,0,0,0" Grid.IsSharedSizeScope="True" Grid.Row="1" Grid.RowSpan="2">
+                    <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}" materialDesign:ColorZoneAssist.Foreground="White" materialDesign:ColorZoneAssist.Mode="SecondaryDark"  materialDesign:ButtonAssist.CornerRadius="3"   Padding="16,6" VerticalContentAlignment="Center" Command="{Binding ExitWorkspaceCommand}"  Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="EXIT WORKSPACE" />
+                    <StackPanel x:Name="header1" Orientation="Vertical" DataContext="{StaticResource ApplicationInfo}" VerticalAlignment="Top" Margin="10,10,0,0" Grid.IsSharedSizeScope="True">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBlock Text="{Binding APP_TITLE}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" />
                             <TextBlock Text="{Binding APP_VERSION}" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="6,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                         </StackPanel>
                         <StackPanel Margin="0,0,0,10">
                             <TextBlock Text="{Binding APP_SHORT_DESCRIPTION}" Foreground="{StaticResource MaterialDesignBody}" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                            <TextBlock Text="{Binding APP_VERSION_NOTE}" Foreground="{StaticResource MaterialDesignBodyLight}" VerticalAlignment="Center" HorizontalAlignment="Left" />
                         </StackPanel>
-                        <Grid Margin="0,3">
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" d:LayoutOverrides="Height" DataContext="{StaticResource ApplicationInfo}" VerticalAlignment="Top" Margin="10,10,0,0" Grid.IsSharedSizeScope="True" Grid.Row="1">
+                        <Grid x:Name="info_separator" Margin="0,3">
+
+                            <TextBlock Text="Info" FontSize="16" FontWeight="Bold" />
+                        </Grid>
+                        <Grid x:Name="version" Margin="0,3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
                                 <ColumnDefinition Width="*"/>
@@ -874,7 +879,7 @@
                             <TextBlock Text="Version"/>
                             <TextBlock Text="{Binding APP_VERSION}" Grid.Column="1" Margin="6,0,0,0" HorizontalAlignment="Left"/>
                         </Grid>
-                        <Grid Margin="0,3">
+                        <Grid x:Name="contactme" Margin="0,3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
                                 <ColumnDefinition Width="*"/>
@@ -882,13 +887,28 @@
                             <TextBlock Text="Contact developer:" />
                             <TextBlock Text="{Binding APP_DEVELOPER_EMAIL}" Grid.Column="1" Margin="6,0,0,0" Foreground="#FF4EB6E6" Cursor="Hand" ToolTip="Click to copy" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" HorizontalAlignment="Left"/>
                         </Grid>
-                        <Grid Margin="0,3" Visibility="Collapsed">
+                        <Grid x:Name="contribute" Margin="0,3" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Report issues &amp; Contribute:"/>
                             <TextBlock Grid.Column="1" Margin="6,0,0,0" ><Hyperlink  Style="{StaticResource MaterialDesignCaptionHyperlink}"><Run Text="{Binding APP_GITHUB_URL}" /></Hyperlink></TextBlock>
+                        </Grid>
+                        <Grid x:Name="settings_separator" Margin="0,10,0,3">
+
+                            <TextBlock Text="Settings" FontSize="16" FontWeight="Bold"/>
+                        </Grid>
+                        <Grid x:Name="tls_version" Margin="0,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Security protocol" Margin="0,0,6,0"/>
+                            <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                <RadioButton GroupName="SecurityProtocolType" IsChecked="True" Content="Default" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" />
+                                <RadioButton GroupName="SecurityProtocolType" IsChecked="False" Content="Tls 1.2" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" />
+                            </StackPanel>
                         </Grid>
                         <Grid Margin="0,3" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
@@ -897,6 +917,18 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="none:"/>
                             <TextBlock Text="" Grid.Column="1" Margin="6,0,0,0"/>
+                        </Grid>
+                        <Grid x:Name="use_cached_tps" Margin="0,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Use cached pages" Margin="0,0,6,0" ToolTip="Cache options (for plugins that support it)"/>
+                            <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                <RadioButton GroupName="cachedTps" IsChecked="True" Content="Yes (default)" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="scraper will not fetch the same resource twice from the website.&#xA;this means subsequent tasks that requires pre-downloaded rsources will run faster. at the cost of data being possibly out of date." />
+                                <RadioButton GroupName="cachedTps" IsChecked="True" Content="No" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="always makes web requests.&#xA;subsequent tasks will run as slow as the first ones, data is always up to date" />
+                                <RadioButton GroupName="cachedTps" IsChecked="True" Content="Elemenets only" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="elements details pages are cached, while listings pages are kept up to date" />
+                            </StackPanel>
                         </Grid>
                     </StackPanel>
                     <Grid x:Name="dragging_area_middle_Copy1" Margin="0" Background="#00E41F1F" MouseDown="Grid_MouseDown_1" Height="48" VerticalAlignment="Top" PreviewMouseLeftButtonDown="dragging_area_PreviewMouseLeftButtonDown"/>

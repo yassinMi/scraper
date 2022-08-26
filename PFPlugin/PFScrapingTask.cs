@@ -48,12 +48,16 @@ namespace PFPlugin
 
             }
         }
-
-        string getJsonPayload(string doc)
+        /// <summary>
+        /// agents listing payload
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        string getJsonAgentsListingPayload(string doc)
         {
             //between  window.propertyfinder.settings.agent =  .. window.propertyfinder.settings.gtm 
             string d1 = "window.propertyfinder.settings.agent =";
-            string d2 = "window.propertyfinder.settings.gtm";
+            string d2 = "window.propertyfinder.settings.gtm =";
             var first_ix = doc.IndexOf(d1);
             var last_ix = doc.IndexOf(d2);
             string res = doc.Substring(first_ix + d1.Length, last_ix - (first_ix + d1.Length))
@@ -62,10 +66,35 @@ namespace PFPlugin
             Debug.WriteLine($"yass{res}yass");
             return res;
         }
-        int total_count = 0;
-        public  IEnumerable<Model.Agent> EnumerateCompactElements(string doc)
+        /// <summary>
+        /// agent details payload
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        string getJsonAgentDetailsPayload(string doc)
         {
-            var json = getJsonPayload(doc);
+            string d1 = "window.propertyfinder.settings.property = {";
+            string d2 = " form: ";
+            var first_ix = doc.IndexOf(d1);
+            var last_ix = doc.IndexOf(d2);
+            string res = doc.Substring(first_ix + d1.Length, last_ix - (first_ix + d1.Length))
+                .Trim().TrimEnd(',');
+            string d1_ = "payload: ";
+            var first_ix_ = res.IndexOf(d1_);
+            res = res.Substring(first_ix_ + d1_.Length);
+            Debug.WriteLine($"yass{res}yass");
+            return res;
+        }
+        int total_count = 0;
+        /// <summary>
+        /// tuple: agent compact, profle like, since we're not having links as model fields
+        /// links are made absolute 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        public  IEnumerable<Tuple<Agent,string>> EnumerateCompactElements(string doc)
+        {
+            var json = getJsonAgentsListingPayload(doc);
             //var obj = JsonConvert.DeserializeObject<dynamic>(json);
             JObject j = JObject.Parse(json);
             var meta = j.SelectToken("$.meta");
@@ -98,6 +127,9 @@ namespace PFPlugin
                 a.LinkedinAddress= agent.SelectToken("$.attributes.linkedin_address").ToString();
                 string brokey_id = agent.SelectToken("$.meta.broker_id").ToString();
                 Debug.WriteLine(brokey_id);
+                string profile_link = agent.SelectToken("$.links.profile").ToString();
+                string absolute_profile_link = "https://www.propertyfinder.ae" + profile_link;
+
                 try
                 {
                     a.CompanyAddress = j.SelectToken($"$.included[?(@.type=='broker' && @.id=='{brokey_id}')].attributes.address").ToString().Replace("\r\n",", ");
@@ -107,7 +139,7 @@ namespace PFPlugin
                                   
                 }
                 Debug.WriteLine($"{a.Name},{a.CompanyName},{a.Phone},{a.TotalProperties},{a.Country},{a.position},{a.Country}");
-                yield return a;
+                yield return new Tuple<Agent, string>(a, absolute_profile_link);
             }
             
 
@@ -238,9 +270,28 @@ namespace PFPlugin
             throw new NotImplementedException();
         }
 
-        public  void ResolveElement(object compactElement, out int bytes, out int obj_cc)
+
+        public string getAreas(JObject j)
         {
-            bytes = 0; obj_cc = 0;
+
+
+            var locations_comunity = j.SelectTokens("$.included[?(@.type=='location' && @.attributes.location_type=='COMMUNITY')].attributes.name");
+            return string.Join(" • ", locations_comunity.Select(l => l.ToString()));
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="compactElement">string being absolute profile link</param>
+        /// <param name="bytes"></param>
+        /// <param name="obj_cc"></param>
+        public  void ResolveElement(Tuple<Agent,string> compactElement, out int bytes, out int obj_cc)
+        {
+            string raw_profile = downloadOrRead(compactElement.Item2, Workspace.Current.HtmlObjectsFolder);
+            var json = getJsonAgentDetailsPayload(raw_profile);
+            JObject j = JObject.Parse(json);
+
+            compactElement.Item1.Areas = getAreas(j);
+            bytes = raw_profile.Length; obj_cc = 1;
             return;
         }
         protected  string TaskLockValue { get { return TargetPage; } }
@@ -297,6 +348,8 @@ namespace PFPlugin
 
                     }
                     ActualOutputFile = DesiredOutputFile ?? outputPath;
+                    OnIsStopEnabledd(true);
+                    
                     foreach (var page in EnumeratePages(TargetPage))
                     {
 
@@ -323,8 +376,9 @@ namespace PFPlugin
                             }
 
                             int objs, bytes = 0;
+                            OnTaskDetailChanged($"{item.Item1.Name}/downloading details page");
                             ResolveElement(item, out bytes, out objs);
-                            resolvedElements.Add(item);
+                            resolvedElements.Add(item.Item1);
                             TaskStatsInfo.incObject(objs);
                             TaskStatsInfo.incSize(bytes);
                             TaskStatsInfo.incElem(1);
