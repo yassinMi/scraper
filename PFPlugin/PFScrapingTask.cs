@@ -237,6 +237,7 @@ namespace PFPlugin
             if (isMultiplePagesAgentsListings(doc.DocumentNode))
             {
                 max = getLastPageNumber(pageRaw);
+                CoreUtils.WriteLine($"max page:" + max);
             }
             foreach (var pg in Enumerable.Range(min, max))
             {
@@ -244,7 +245,7 @@ namespace PFPlugin
                 string raw;
                 try
                 {
-                    raw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy == CachePolicy.ElementsPagesOnly) || (UserSettings.Current.CachePolicy == CachePolicy.None));
+                    raw = downloadOrRead(pageLink, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy == CachePolicy.ElementsPagesOnly) || (UserSettings.Current.CachePolicy == CachePolicy.None));
                 }
                 catch (Exception err)
                 {
