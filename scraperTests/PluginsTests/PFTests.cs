@@ -38,9 +38,11 @@ namespace scraperTests.PluginsTests
         [TestMethod]
         public void exctractsAgentDetailsJson()
         {
-            string res = getJsonAgentsListingPayload(File.ReadAllText(@"F:\epicMyth-tmp-6-2022\freelancing\projects\pf\Daniela Giannone - Find 25 properties _ Property Finder UAE.html"));
-            Assert.IsTrue(res.StartsWith("{\"data\""));
-            Assert.IsTrue(res.EndsWith("\"per_page\":20}}"));
+            scraper.Core.Utils.CoreUtils.getUniqueLinkHash("https://www.propertyfinder.ae/en/find-agent/search");
+            scraper.Core.Utils.CoreUtils.getUniqueLinkHash("https://www.propertyfinder.ae/en/find-agent/search?page=1");
+            //string res = getJsonAgentsListingPayload(File.ReadAllText(@"F:\epicMyth-tmp-6-2022\freelancing\projects\pf\Daniela Giannone - Find 25 properties _ Property Finder UAE.html"));
+            //Assert.IsTrue(res.StartsWith("{\"data\""));
+            //Assert.IsTrue(res.EndsWith("\"per_page\":20}}"));
    
         }
 
