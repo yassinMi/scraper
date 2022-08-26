@@ -27,11 +27,11 @@ namespace PFPlugin
             TargetPage = tp;
         }
 
-        public static string downloadOrRead(string pageLink, string folder)
+        public static string downloadOrRead(string pageLink, string folder, bool force_update=false)
         {
             Debug.WriteLine($"downloadOrRead '{pageLink}'");
             string uniqueFilename = Path.Combine(folder, CoreUtils.getUniqueLinkHash(pageLink) + ".html");
-            if (File.Exists(uniqueFilename)) { return File.ReadAllText(uniqueFilename); }
+            if (force_update ==false &&File.Exists(uniqueFilename)) { return File.ReadAllText(uniqueFilename); }
             else
             {
                 int retry_count = 0;
@@ -214,7 +214,7 @@ namespace PFPlugin
             retry:
             try
             {
-                pageRaw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder);
+                pageRaw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy== CachePolicy.ElementsPagesOnly)|| (UserSettings.Current.CachePolicy== CachePolicy.None));
                 doc.LoadHtml(pageRaw);
             }
             catch (Exception err)
@@ -244,7 +244,7 @@ namespace PFPlugin
                 string raw;
                 try
                 {
-                    raw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder);
+                    raw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy == CachePolicy.ElementsPagesOnly) || (UserSettings.Current.CachePolicy == CachePolicy.None));
                 }
                 catch (Exception err)
                 {
@@ -374,7 +374,7 @@ namespace PFPlugin
         /// <param name="obj_cc"></param>
         public  void ResolveElement(Tuple<Agent,string> compactElement, out int bytes, out int obj_cc)
         {
-            string raw_profile = downloadOrRead(compactElement.Item2, Workspace.Current.HtmlObjectsFolder);
+            string raw_profile = downloadOrRead(compactElement.Item2, Workspace.Current.HtmlObjectsFolder,  UserSettings.Current.CachePolicy == CachePolicy.None);
             var json = getJsonAgentDetailsPayload(raw_profile);
             JObject j = JObject.Parse(json);
 
@@ -398,7 +398,7 @@ namespace PFPlugin
                 string raw;
                 try
                 {
-                    raw = downloadOrRead(TargetPage, Workspace.Current.TPFolder);
+                    raw = downloadOrRead(TargetPage, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy == CachePolicy.ElementsPagesOnly) || (UserSettings.Current.CachePolicy == CachePolicy.None));
                     TaskStatsInfo.incSize(raw.Length);
                 }
                 catch (HttpRequestException)
