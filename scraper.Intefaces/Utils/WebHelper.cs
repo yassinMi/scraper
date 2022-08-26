@@ -29,8 +29,21 @@ namespace scraper.Core.Utils
                 if (_instance == null)
                 {
                     _instance = new WebHelper();
-                    ServicePointManager.Expect100Continue = true;
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    if(UserSettings.Current.WebClientProtocol== WebClientProtocol.Tls)
+                    {
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11| SecurityProtocolType.Tls12;
+                    }
+                    if (UserSettings.Current.WebClientProtocol == WebClientProtocol.Tls12)
+                    {
+                        ServicePointManager.Expect100Continue = true;
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    }
+                    else if (UserSettings.Current.WebClientProtocol == WebClientProtocol.Default)
+                    {
+
+                    }
+                    
+
                     //DefaultRequestHeaders.UserAgent.Clear();
                     if (_instance.DefaultRequestHeaders.UserAgent.TryParseAdd(UA2))
                     {

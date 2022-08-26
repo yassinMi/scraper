@@ -93,6 +93,7 @@
     <Compile Include="Utils\CoreUtils.cs" />
     <Compile Include="Utils\CSVUtils.cs" />
     <Compile Include="Utils\PluginsManager.cs" />
+    <Compile Include="Utils\UserSettings.cs" />
     <Compile Include="Utils\WebHelper.cs" />
     <Compile Include="Workspace\CSVResource.cs" />
     <Compile Include="Workspace\Workspace.cs" />

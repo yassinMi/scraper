@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 namespace scraper.Core.UI
 {
 
-    public enum PromptType { Error, Warning, Information}
+    public enum PromptType { Error, Warning, Information,
+        Question
+    }
     /// <summary>
     /// describes the required information to show a dlg window or message box on the scrpare assembly.
     /// this allows invoking prompts from core or plugin assemblies independent of the imlementation details at scraper.exe

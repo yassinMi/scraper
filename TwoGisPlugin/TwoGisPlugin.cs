@@ -65,6 +65,7 @@ namespace TwoGisPlugin
                 };
             }
         }
+        public override Version Version { get { return new Version(1, 0, 1); } }
 
         private ElementDescription _ElementDescription = null;
         public override ElementDescription ElementDescription

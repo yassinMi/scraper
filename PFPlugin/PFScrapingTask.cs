@@ -34,6 +34,9 @@ namespace PFPlugin
             if (File.Exists(uniqueFilename)) { return File.ReadAllText(uniqueFilename); }
             else
             {
+                int retry_count = 0;
+                retry:
+                retry_count++;
                 try
                 {
                     string rawElementPage = WebHelper.instance.GetPageTextSync(pageLink);
@@ -43,11 +46,64 @@ namespace PFPlugin
                 catch (Exception err)
                 {
                     Debug.WriteLine($"downloadOrRead throw {err.Message}");
-                    throw;
+                    //string u_response = "CANCEl";
+                    /*CoreUtils.RequestPrompt(new PromptContent($"Couldn't fetch resource '' because of a network error{Environment.NewLine}press Ok to retry{Environment.NewLine}Press Cancel to abort task", "error", new string[] { "OK", "CANCEL" }, PromptType.Error),
+                        (response) => {
+                            Debug.WriteLine("resp:" + response);
+                            u_response = response;
+                        });
+                    if (u_response == "OK") goto retry;*/
+                    if (retry_count > 5) throw;
+                    else goto retry;
                 }
-
             }
         }
+
+        StringBuilder ReportBuilderTaskLevel = new StringBuilder();
+        StringBuilder ReportBuilderPageLevel = new StringBuilder();
+        StringBuilder ReportBuilderElementLevel = new StringBuilder();
+
+        /// <summary>
+        /// handle all fatal error by calling this, it will dump file, and warn the user and set task status.
+        /// </summary>
+        /// <param name="dump"></param>
+        /// <param name="silent">not saving dump and not showing message box,</param>
+        private void abortTask(string hint, List<Agent> dump, int start_page, int end_page, bool silent = false)
+        {
+            if (dump.Count > 0)
+            {
+                int p_from = start_page;
+                int p_to = end_page;
+                string saved_pages_range_str = (p_to == p_from ? $"page {p_from}" : $"pages {p_from}-{p_to}");
+                string dump_file = ActualOutputFile.Substring(0, ActualOutputFile.Length - 4);//removing extesntion .csv
+                dump_file = dump_file + " (" + saved_pages_range_str + ").csv";
+                if (silent == false)
+                    CSVUtils.CSVWriteRecords(Path.GetFileName(dump_file), dump, false);
+                CoreUtils.WriteLine($"aborted: [{DateTime.Now}], {saved_pages_range_str}, count: {dump.Count} ");
+                if (silent == false)
+                    CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{dump.Count} agents records at {saved_pages_range_str} are saved here:{dump_file}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
+
+            }
+
+            else
+            {
+                //# nothing to save
+                CoreUtils.WriteLine($"aborted: [{DateTime.Now}], with no records");
+                if (silent == false)
+                    CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{"no agents records were collected."}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
+            }
+            CoreUtils.WriteLine($"[REPORT][{DateTime.Now}]");
+            CoreUtils.WriteLine($"t lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
+            CoreUtils.WriteLine($"p lvl report: {Environment.NewLine}{ReportBuilderPageLevel.ToString()}");
+            CoreUtils.WriteLine($"e lvl report: {Environment.NewLine}{ReportBuilderElementLevel.ToString()}");
+            CoreUtils.WriteLine("[ENDOF REPORT]");
+            OnTaskDetailChanged(null);
+            OnError(hint);
+            OnStageChanged(ScrapTaskStage.Failed);
+
+
+        }
+
         /// <summary>
         /// agents listing payload
         /// </summary>
@@ -146,19 +202,36 @@ namespace PFPlugin
             
             
         }
-
+        /// <summary>
+        /// can throw exception when user don't press retry
+        /// </summary>
+        /// <param name="rootPageUrl"></param>
+        /// <returns></returns>
         public  IEnumerable<Tuple<int, int, HtmlNode,string>> EnumeratePages(string rootPageUrl)
         {
-            string pageRaw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder);
+            string pageRaw;
             HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(pageRaw);
-            var pagination_container = doc.DocumentNode.SelectSingleNode("//div[@class='pagination__links']");
-
-            if ((isAgentsListings(doc.DocumentNode) == false) || (isNoneEmptyAgentsListings(doc.DocumentNode) == false))
+            retry:
+            try
             {
-                yield break;
+                pageRaw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder);
+                doc.LoadHtml(pageRaw);
             }
+            catch (Exception err)
+            {
 
+                string u_response = "CANCEl";
+                CoreUtils.WriteLine($"EnumeratePages: [{DateTime.Now}] {rootPageUrl}, {err}");
+                CoreUtils.RequestPrompt(new PromptContent($"Couldn't fetch page '{rootPageUrl}', '{err.Message}'{Environment.NewLine}press Ok to retry{Environment.NewLine}Press Cancel to abort task", "error", new string[] { "OK", "CANCEL" }, PromptType.Error),
+                    (response) => {
+                        Debug.WriteLine("resp:" + response);
+                        u_response = response;
+                    });
+                if (u_response == "OK") goto retry;
+                else throw;
+            }
+           
+            
             int min = 1;
             int max = 1;
             if (isMultiplePagesAgentsListings(doc.DocumentNode))
@@ -167,9 +240,24 @@ namespace PFPlugin
             }
             foreach (var pg in Enumerable.Range(min, max))
             {
-
                 string pageLink = AppendPageNumToUrl(ClearPageNumFromUrl(rootPageUrl), pg);
-                string raw =  downloadOrRead(pageLink, Workspace.Current.TPFolder);
+                string raw;
+                try
+                {
+                    raw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder);
+                }
+                catch (Exception err)
+                {
+                    string u_response = "CANCEl";
+                    CoreUtils.WriteLine($"EnumeratePages: [{DateTime.Now}] {pageLink}, {err}");
+                    CoreUtils.RequestPrompt(new PromptContent($"Couldn't fetch page '{pageLink}', '{err.Message}'{Environment.NewLine}press Ok to retry{Environment.NewLine}Press Cancel to abort task", "error", new string[] { "OK", "CANCEL" }, PromptType.Error),
+                        (response) => {
+                            Debug.WriteLine("resp:" + response);
+                            u_response = response;
+                        });
+                    if (u_response == "OK") goto retry;
+                    else throw;
+                }
                 TaskStatsInfo.incSize(raw.Length);
                 HtmlDocument newDoc = new HtmlDocument();
                 newDoc.LoadHtml(raw);
@@ -303,6 +391,7 @@ namespace PFPlugin
         {
             lock (targetPageBasedLock[TaskLockValue])
             {
+                ReportBuilderTaskLevel.Clear();
                 TaskStatsInfo.Reset();
                 OnStageChanged(ScrapTaskStage.DownloadingData);
                 OnTaskDetailChanged("Getting page..");
@@ -352,7 +441,7 @@ namespace PFPlugin
                     
                     foreach (var page in EnumeratePages(TargetPage))
                     {
-
+                        ReportBuilderPageLevel.Clear();
                         OnPageStarted($"p {page.Item1}/{page.Item2}");
                         OnTaskDetailChanged($"parsing page {page.Item1}");
                         Debug.WriteLine($"Enumerating CompactElements..");
@@ -364,6 +453,8 @@ namespace PFPlugin
                         int i = 0;
                         foreach (var item in compactElements)
                         {
+                            ReportBuilderElementLevel.Clear();
+                            ReportBuilderElementLevel.AppendLine($"element: i={i}, profile={item.Item2} name= { item.Item1.Name }, comp_name= { item.Item1.CompanyName }, phone= { item.Item1.Phone }");
                             Task.Delay(4).GetAwaiter().GetResult();
                             if (ct.IsCancellationRequested)
                             {
@@ -375,9 +466,41 @@ namespace PFPlugin
                                 return;
                             }
 
-                            int objs, bytes = 0;
+                            int objs=0, bytes = 0;
                             OnTaskDetailChanged($"{item.Item1.Name}/downloading details page");
-                            ResolveElement(item, out bytes, out objs);
+                            retry_resolving:
+                            bool should_retry = false;
+                            try
+                            {
+                                ResolveElement(item, out bytes, out objs);
+                            }
+                            catch (Exception)
+                            {
+                                string user_res = "CANCEL";
+                                CoreUtils.RequestPrompt(new PromptContent($"The field(s) '{(nameof(Agent.Areas))}' could not be resolved for agent '{item.Item1.Name}', profile link '{item.Item2}'{Environment.NewLine}Do you want to skip them?{Environment.NewLine}press 'Yes' to continue (leaving the mentioned fields empty){Environment.NewLine}press 'No' to retry{Environment.NewLine}press 'Cancel' to abort the task ({global_couner} out of {total_count} agents will be saved)"
+                                    , "warning", new string[] { "YES", "NO", "CANCEL" }, PromptType.Question),
+                                    res =>
+                                    {
+                                        user_res = res;
+                                    });
+                                if (user_res.ToLower() == "cancel")
+                                {
+                                    CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
+                                    abortTask("task was ended", new List<Agent>(),1,page.Item2,true);
+                                    return;
+                                }
+                                else if(user_res.ToLower() == "yes")
+                                {
+                                    //skip
+                                    should_retry = false;
+                                }
+                                else if (user_res.ToLower() == "no")
+                                {
+                                    should_retry = true;
+                                }
+                            }
+                            if (should_retry) goto retry_resolving;
+                            
                             resolvedElements.Add(item.Item1);
                             TaskStatsInfo.incObject(objs);
                             TaskStatsInfo.incSize(bytes);

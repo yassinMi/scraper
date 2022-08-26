@@ -138,21 +138,15 @@ namespace scraper.ViewModel
                 var r =MessageBox.Show(
                     p.PromptContent.Message,
                     p.PromptContent.Title,
-                     MessageBoxButton.OK,
+                     p.PromptContent.Buttons.Contains("OK")&& p.PromptContent.Buttons.Contains("CANCEL")? MessageBoxButton.OKCancel
+                     : p.PromptContent.Buttons.Contains("YES") && p.PromptContent.Buttons.Contains("NO") && p.PromptContent.Buttons.Contains("CANCEL") ?  MessageBoxButton.YesNoCancel
+                     :p.PromptContent.Buttons.Contains("YES") && p.PromptContent.Buttons.Contains("NO")? MessageBoxButton.YesNo
+                     : MessageBoxButton.OK,
                      Utils.PromptTypeToMsgBoxIcon(p.PromptContent.Type)
                      );
                 p.PromptResponseHandler(r.ToString());
             };
-            CoreUtils.PromptRequested += (s, p) =>
-            {
-                var r = MessageBox.Show(
-                    p.PromptContent.Message,
-                    p.PromptContent.Title,
-                     MessageBoxButton.OK,
-                     Utils.PromptTypeToMsgBoxIcon(p.PromptContent.Type)
-                     );
-                p.PromptResponseHandler(r.ToString());
-            };
+            
             notif(nameof(ElementName));
             notif(nameof(CurrentPluginTargetHost));
             Debug.WriteLine("endof init");
@@ -253,6 +247,14 @@ namespace scraper.ViewModel
 
             get { return MainPlugin?.TargetHost; }
         }
+
+
+
+        public UserSettings CurrentUserSettings
+        {
+            get { return UserSettings.Current; }
+        }
+
 
 
         public IEnumerable<RecentWorkspaceVM> RecentlyOpenedWorkspaces { get {

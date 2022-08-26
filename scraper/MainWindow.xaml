@@ -8,6 +8,7 @@
         xmlns:A="clr-namespace:scraper.Attached"
         xmlns:common="clr-namespace:Mi.Common"
                  xmlns:TemplateSelectors="clr-namespace:scraper.View.TemplateSelectors"
+        xmlns:scraperUtils="clr-namespace:scraper.Core.Utils;assembly=scraper.Core"
 
         xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -29,6 +30,7 @@
         
         >
     <Window.Resources>
+        <Converters:RadioValueToIsCheckedConverter x:Key="RadioValueToIsCheckedConverter"/>
         <Converters:LargeNumberFormatter x:Key="LargeNumberFormatter"/>
         <Converters:VisibleIfNonNullOrEmptyString x:Key="VisibleIfNonNullOrEmptyString"/>
         <materialDesign:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -36,6 +38,7 @@
         <Converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
         <common:ApplicationInfo x:Key="ApplicationInfo"/>
+        
 
         <DataTemplate DataType="{x:Type ViewModel:HelpVM}">
             <Grid>
@@ -866,12 +869,12 @@
                             <TextBlock Text="{Binding APP_SHORT_DESCRIPTION}" Foreground="{StaticResource MaterialDesignBody}" VerticalAlignment="Center" HorizontalAlignment="Left" />
                         </StackPanel>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" d:LayoutOverrides="Height" DataContext="{StaticResource ApplicationInfo}" VerticalAlignment="Top" Margin="10,10,0,0" Grid.IsSharedSizeScope="True" Grid.Row="1">
+                    <StackPanel Orientation="Vertical" d:LayoutOverrides="Height" VerticalAlignment="Top" Margin="10,10,0,0" Grid.IsSharedSizeScope="True" Grid.Row="1">
                         <Grid x:Name="info_separator" Margin="0,3">
 
                             <TextBlock Text="Info" FontSize="16" FontWeight="Bold" />
                         </Grid>
-                        <Grid x:Name="version" Margin="0,3">
+                        <Grid x:Name="version"  DataContext="{StaticResource ApplicationInfo}" Margin="0,3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
                                 <ColumnDefinition Width="*"/>
@@ -879,7 +882,7 @@
                             <TextBlock Text="Version"/>
                             <TextBlock Text="{Binding APP_VERSION}" Grid.Column="1" Margin="6,0,0,0" HorizontalAlignment="Left"/>
                         </Grid>
-                        <Grid x:Name="contactme" Margin="0,3">
+                        <Grid x:Name="contactme"  DataContext="{StaticResource ApplicationInfo}" Margin="0,3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
                                 <ColumnDefinition Width="*"/>
@@ -899,15 +902,16 @@
 
                             <TextBlock Text="Settings" FontSize="16" FontWeight="Bold"/>
                         </Grid>
-                        <Grid x:Name="tls_version" Margin="0,3">
+                        <Grid x:Name="tls_version"  Margin="0,3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Security protocol" Margin="0,0,6,0"/>
                             <StackPanel Orientation="Horizontal" Grid.Column="1">
-                                <RadioButton GroupName="SecurityProtocolType" IsChecked="True" Content="Default" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" />
-                                <RadioButton GroupName="SecurityProtocolType" IsChecked="False" Content="Tls 1.2" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" />
+                                <RadioButton GroupName="SecurityProtocolType" IsChecked="{Binding CurrentUserSettings.WebClientProtocol, ConverterParameter=Default, Converter={StaticResource RadioValueToIsCheckedConverter}}" Content="Default" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" />
+                                <RadioButton GroupName="SecurityProtocolType" IsChecked="{Binding CurrentUserSettings.WebClientProtocol, ConverterParameter=Tls, Converter={StaticResource RadioValueToIsCheckedConverter}}" Content="Tls" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" />
+                                <RadioButton GroupName="SecurityProtocolType" IsChecked="{Binding CurrentUserSettings.WebClientProtocol, ConverterParameter=Tls12, Converter={StaticResource RadioValueToIsCheckedConverter}}" Content="Tls12" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" />
                             </StackPanel>
                         </Grid>
                         <Grid Margin="0,3" Visibility="Collapsed">
@@ -918,16 +922,16 @@
                             <TextBlock Text="none:"/>
                             <TextBlock Text="" Grid.Column="1" Margin="6,0,0,0"/>
                         </Grid>
-                        <Grid x:Name="use_cached_tps" Margin="0,3">
+                        <Grid x:Name="use_cached_tps"  Margin="0,3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" SharedSizeGroup="key"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Use cached pages" Margin="0,0,6,0" ToolTip="Cache options (for plugins that support it)"/>
                             <StackPanel Orientation="Horizontal" Grid.Column="1">
-                                <RadioButton GroupName="cachedTps" IsChecked="True" Content="Yes (default)" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="scraper will not fetch the same resource twice from the website.&#xA;this means subsequent tasks that requires pre-downloaded rsources will run faster. at the cost of data being possibly out of date." />
-                                <RadioButton GroupName="cachedTps" IsChecked="True" Content="No" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="always makes web requests.&#xA;subsequent tasks will run as slow as the first ones, data is always up to date" />
-                                <RadioButton GroupName="cachedTps" IsChecked="True" Content="Elemenets only" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="elements details pages are cached, while listings pages are kept up to date" />
+                                <RadioButton GroupName="cachedTps" IsChecked="{Binding CurrentUserSettings.CachePolicy, ConverterParameter=All, Converter={StaticResource RadioValueToIsCheckedConverter}}" Content="Yes (default)" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="scraper will not fetch the same resource twice from the website.&#xA;this means subsequent tasks that requires pre-downloaded rsources will run faster. at the cost of data being possibly out of date." />
+                                <RadioButton GroupName="cachedTps" IsChecked="{Binding CurrentUserSettings.CachePolicy, ConverterParameter=None, Converter={StaticResource RadioValueToIsCheckedConverter}}" Content="No" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="always makes web requests.&#xA;subsequent tasks will run as slow as the first ones, data is always up to date" />
+                                <RadioButton GroupName="cachedTps" IsChecked="{Binding CurrentUserSettings.CachePolicy, ConverterParameter=ElementsPagesOnly, Converter={StaticResource RadioValueToIsCheckedConverter}}" Content="Elemenets only" Style="{StaticResource MaterialDesignAccentRadioButton}" Margin="0,0,20,0" ToolTip="elements details pages are cached, while listings pages are kept up to date" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>

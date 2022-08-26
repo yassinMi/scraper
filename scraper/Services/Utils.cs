@@ -31,6 +31,8 @@ namespace scraper.Services
                     return MessageBoxImage.Warning;
                 case Core.UI.PromptType.Information:
                     return MessageBoxImage.Information;
+                case Core.UI.PromptType.Question:
+                    return MessageBoxImage.Question;
                 default:
                     return MessageBoxImage.None;
             }

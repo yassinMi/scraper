@@ -26,7 +26,7 @@ namespace PFPlugin
         public override string ElementName { get { return "Agent"; } }
 
         public override string ElementNamePlural { get { return "Agents"; } }
-        public override Version Version { get { return new Version(1, 0, 1); } }
+        public override Version Version { get { return new Version(1, 0, 2); } }
         public override bool ValidateTargetPageInputQuery(string input)
         {
             //https://www.propertyfinder.ae/en/find-agent/search
