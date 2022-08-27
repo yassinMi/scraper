@@ -35,6 +35,7 @@ namespace PFPlugin
             if (force_update ==false &&File.Exists(uniqueFilename)) { return File.ReadAllText(uniqueFilename); }
             else
             {
+                Task.Delay(4).GetAwaiter().GetResult();//todo make specified as arg
                 int retry_count = 0;
                 retry:
                 retry_count++;
@@ -462,7 +463,6 @@ namespace PFPlugin
                         {
                             ReportBuilderElementLevel.Clear();
                             ReportBuilderElementLevel.AppendLine($"element: i={i}, profile={item.Item2} name= { item.Item1.Name }, comp_name= { item.Item1.CompanyName }, phone= { item.Item1.Phone }");
-                            Task.Delay(4).GetAwaiter().GetResult();
                             if (ct.IsCancellationRequested)
                             {
                                 Debug.WriteLine("saving csv");
