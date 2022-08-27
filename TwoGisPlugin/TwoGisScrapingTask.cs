@@ -784,9 +784,11 @@ namespace TwoGisPlugin
                                 }
                                 if (File.Exists(ActualOutputFile))
                                 {
-                                    CoreUtils.RequestPrompt(new PromptContent($"CSV file '{ActualOutputFile}' is about to be erased.{Environment.NewLine}If you want to keep the old content please rename the file or make a copy of it before proceeding.{Environment.NewLine}Click OK to continue", "Warning", new string[] { "OK" }, PromptType.Warning), r => {
-                                        Debug.WriteLine(r);
-                                    });
+                                    CoreUtils.RequestPrompt(new PromptContent($"file: '{Path.GetFileName(ActualOutputFile)}' {Environment.NewLine}{Environment.NewLine}If you want to preserve the old content please rename the file or make a copy of it."
+                            , $"CSV file will be replaced!"
+                            , new string[] { "Continue" }, PromptType.Warning), r => {
+                                Debug.WriteLine(r);
+                            });
                                 }
                             }
                             Debug.WriteLine("getting categories_welements_wrapper..");
