@@ -1,0 +1,67 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:scraper.View"
+        xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.View.PromptWindow"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Display" 
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="Roboto"
+        mc:Ignorable="d"
+        Title="Error" Width="358" WindowStartupLocation="CenterOwner" 
+    ResizeMode="NoResize" 
+     
+    VerticalAlignment="Center" d:DesignHeight="181" SizeToContent="Height" d:DataContext="{d:DesignData /SampleData/PromptWindowSampleData.xaml}" WindowStyle="None" ShowInTaskbar="False">
+    <Window.Resources>
+        <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+        <materialDesign:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <TextElement.Foreground>
+        <StaticResource ResourceKey="MaterialDesignBody"/>
+    </TextElement.Foreground>
+    <Window.Background>
+        <StaticResource ResourceKey="MaterialDesignPaper"/>
+    </Window.Background>
+    <Border BorderBrush="#FF666666" BorderThickness="1">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="63*"/>
+                <ColumnDefinition Width="25*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="header" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding PromptContent.Title}" VerticalAlignment="Center" Margin="8,0,0,4" FontWeight="Bold"/>
+
+            <custom:PackIconFontAwesome Kind="ExclamationTriangleSolid" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48" Foreground="#FFF3F3F3" Margin="0,0,0,16"/>
+            <TextBox Text="{Binding PromptContent.Message}" IsReadOnly="True" materialDesign:TextFieldAssist.UnderlineBrush="Transparent" x:Name="message" Margin="8,4,4,16" Grid.Row="1"  BorderThickness="0" TextWrapping="Wrap"/>
+            <Grid Background="#FF606061" Height="1" Grid.Row="2" VerticalAlignment="Top" Margin="16,0" Grid.ColumnSpan="2"/>
+            <ItemsControl ItemsSource="{Binding Buttons}" Grid.Row="2" Margin="0,0,16,0" HorizontalAlignment="Right" Grid.ColumnSpan="2" VerticalAlignment="Center" AlternationCount="{Binding Buttons.Length, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel  Orientation="Horizontal" IsItemsHost="True" FlowDirection="RightToLeft"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Name="butt" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{StaticResource MaterialDesignBody}" CommandParameter="{Binding}" Command="{Binding DataContext.ClickButtonCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PromptWindow}}}" Content="{Binding}" HorizontalAlignment="Center" Margin="0,0,4,0" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display"/>
+                        <DataTemplate.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                <Setter TargetName="butt" Property="IsDefault" Value="True"/>
+                                <!--Setter TargetName="butt" Property="Style" Value="{StaticResource MaterialDesignFlatDarkBgButton}" /-->
+                            </Trigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </Grid>
+    </Border>
+</Window>

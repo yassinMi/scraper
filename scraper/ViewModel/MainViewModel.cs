@@ -135,6 +135,20 @@ namespace scraper.ViewModel
             notif(nameof(HasFromListPicker));
             CoreUtils.PromptRequested += (s, p) =>
             {
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    var w = new View.PromptWindow();
+                    w.Owner = App.Current.MainWindow;
+                     PromptWindowVM pwvm = new PromptWindowVM(p.PromptContent);
+                    w.DataContext = pwvm;
+                    w.ShowDialog();
+                    Debug.WriteLine("nvokde");
+                    p.PromptResponseHandler(pwvm.Result);
+                    //(App.Current.MainWindow as MainWindow).InvokePrompt();
+
+                });
+                
+                return;
                 var r =MessageBox.Show(
                     p.PromptContent.Message,
                     p.PromptContent.Title,
@@ -1212,6 +1226,12 @@ namespace scraper.ViewModel
         private void hndlDevGPCommand()
         {
 
+
+            CoreUtils.RequestPrompt(new Core.UI.PromptContent($"This isa long promt message to test the prompt window ui{Environment.NewLine}Click 'Ok' to continue{Environment.NewLine}Click 'Retry' to retry{Environment.NewLine}Click 'Cancel' to abort the task", "Couldn't get page from the website :(", new string[] { "Ok", "Retry", "Cancel" }, Core.UI.PromptType.Question),
+                r => {
+                    Debug.WriteLine(r);
+                });
+            return;
             throw new Exception("ehlhelz");
             return;
             CoreUtils.se();

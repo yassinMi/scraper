@@ -110,6 +110,17 @@ namespace scraper
         Point _startPosition;
         bool _isResizing = false;
 
+        public void InvokePrompt()
+        {
+            Dispatcher.Invoke(() => {
+                //var w = new View.PromptWindow();
+                // PromptWindowVM pwvm = new PromptWindowVM(new Core.UI.PromptContent("ljk"));
+                //w.DataContext = pwvm;
+                //w.ShowDialog();
+                Debug.WriteLine("nvokde");
+                //p.PromptResponseHandler(pwvm.Result);
+            });
+        }
        
 
         private void resizeGrip_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

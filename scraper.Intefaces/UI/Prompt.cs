@@ -18,6 +18,10 @@ namespace scraper.Core.UI
     /// </summary>
     public class PromptContent
     {
+        public PromptContent()
+        {
+            //for design data
+        }
         public PromptContent(string message, string title, string [] buttons, PromptType type)
         {
             Type = type;

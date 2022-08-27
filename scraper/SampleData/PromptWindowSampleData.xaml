@@ -1,0 +1,15 @@
+﻿<ViewModel:PromptWindowVM  xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Core="clr-namespace:scraper.Core;assembly=scraper.Core" xmlns:coreui="clr-namespace:scraper.Core.UI;assembly=scraper.Core"  xmlns:Threading="clr-namespace:System.Threading;assembly=mscorlib"    >
+
+    <ViewModel:PromptWindowVM.Buttons>
+
+        <System:String>Retry</System:String>
+        <System:String>Skip page 500</System:String>
+        <System:String>Abort task</System:String>
+        
+    </ViewModel:PromptWindowVM.Buttons>
+    <ViewModel:PromptWindowVM.PromptContent>
+        <coreui:PromptContent Message="hey" Title="simlml">
+
+        </coreui:PromptContent>
+    </ViewModel:PromptWindowVM.PromptContent>
+</ViewModel:PromptWindowVM>
