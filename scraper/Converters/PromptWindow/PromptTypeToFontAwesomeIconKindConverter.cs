@@ -30,7 +30,7 @@ namespace Converters
                 case scraper.Core.UI.PromptType.Error:
                     return PackIconFontAwesomeKind.SadTearSolid;
                 case scraper.Core.UI.PromptType.Warning:
-                    return PackIconFontAwesomeKind.ExclamationCircleSolid;
+                    return PackIconFontAwesomeKind.ExclamationTriangleSolid;
                 case scraper.Core.UI.PromptType.Information:
                     return PackIconFontAwesomeKind.InfoCircleSolid;
                 case scraper.Core.UI.PromptType.Question:

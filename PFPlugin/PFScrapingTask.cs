@@ -1,4 +1,4 @@
-﻿#define LOOP_IN_FIRST_PAGE
+﻿//#define LOOP_IN_FIRST_PAGE
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -144,6 +144,7 @@ namespace PFPlugin
             return res;
         }
         int total_count = 0;
+        int global_couner = 0;
         /// <summary>
         /// tuple: agent compact, profle like, since we're not having links as model fields
         /// links are made absolute 
@@ -206,6 +207,8 @@ namespace PFPlugin
         }
         /// <summary>
         /// can throw exception when user don't press retry
+        /// 
+        /// int curr, int count, node , string raw page
         /// </summary>
         /// <param name="rootPageUrl"></param>
         /// <returns></returns>
@@ -213,7 +216,9 @@ namespace PFPlugin
         {
             string pageRaw;
             HtmlDocument doc = new HtmlDocument();
-            retry:
+            bool should_ask_skip_page = true;
+
+                retry:
             try
             {
                 pageRaw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy== CachePolicy.ElementsPagesOnly)|| (UserSettings.Current.CachePolicy== CachePolicy.None));
@@ -221,15 +226,17 @@ namespace PFPlugin
             }
             catch (Exception err)
             {
-
                 string u_response = "CANCEl";
                 CoreUtils.WriteLine($"EnumeratePages: [{DateTime.Now}] {rootPageUrl}, {err}");
-                CoreUtils.RequestPrompt(new PromptContent($"Couldn't fetch page '{rootPageUrl}', '{err.Message}'{Environment.NewLine}press Ok to retry{Environment.NewLine}Press Cancel to abort task", "error", new string[] { "OK", "CANCEL" }, PromptType.Error),
+                CoreUtils.RequestPrompt(new PromptContent($"Page: {rootPageUrl}{Environment.NewLine}{Environment.NewLine}Error details: '{err.Message}"
+                    , $"Could not fetch the first page!"
+                    , new string[] { "Retry", "Cancel task" }, PromptType.Error),
                     (response) => {
                         Debug.WriteLine("resp:" + response);
                         u_response = response;
                     });
-                if (u_response == "OK") goto retry;
+                if (u_response.ToLower() == "retry") goto retry;
+                else if (u_response.ToLower() == "cancel task") throw;
                 else throw;
             }
            
@@ -245,6 +252,7 @@ namespace PFPlugin
             {
                 string pageLink = AppendPageNumToUrl(ClearPageNumFromUrl(rootPageUrl), pg);
                 string raw;
+                retry_sebsequent:
                 try
                 {
 #if LOOP_IN_FIRST_PAGE //looping at the first page only (where elements are pre dowloaded in the test ws
@@ -256,15 +264,21 @@ namespace PFPlugin
                 }
                 catch (Exception err)
                 {
-                    string u_response = "CANCEl";
+                    string u_response = "skip page"; //default
                     CoreUtils.WriteLine($"EnumeratePages: [{DateTime.Now}] {pageLink}, {err}");
-                    CoreUtils.RequestPrompt(new PromptContent($"Couldn't fetch page '{pageLink}', '{err.Message}'{Environment.NewLine}press Ok to retry{Environment.NewLine}Press Cancel to abort task", "error", new string[] { "OK", "CANCEL" }, PromptType.Error),
-                        (response) => {
-                            Debug.WriteLine("resp:" + response);
-                            u_response = response;
-                        });
-                    if (u_response == "OK") goto retry;
-                    else throw;
+                    if (should_ask_skip_page)
+                        CoreUtils.RequestPrompt(new PromptContent($"Page url: {pageLink}{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} agents will be saved){Environment.NewLine}Error details: '{err.Message}"
+                    , $"Could not fetch page ({pg})!"
+                    , new string[] { "Retry", "Skip","Skip all", "Stop task" }, PromptType.Error),
+                    (response) => {
+                        Debug.WriteLine("resp:" + response);
+                        u_response = response;
+                    });
+                    if (u_response.ToLower() == "retry") goto retry_sebsequent;
+                    else if (u_response.ToLower() == "skip") continue;
+                    else if (u_response.ToLower() == "skip all") { should_ask_skip_page = false; continue; }
+                    else if (u_response.ToLower() == "stop task") throw;
+                    else continue;
                 }
                 TaskStatsInfo.incSize(raw.Length);
                 HtmlDocument newDoc = new HtmlDocument();
@@ -434,21 +448,21 @@ namespace PFPlugin
                 OnResolved(ResolvedTitle);
                 try
                 {
-                    int global_couner = 0;
+                    global_couner = 0;
                     string uniqueOutputFileName = CoreUtils.SanitizeFileName(this.ResolvedTitle);
                     string outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName+ ".csv") ;
                     if (File.Exists(outputPath))
                     {
-                        CoreUtils.RequestPrompt(new PromptContent($"If you want to preserve the old content rename the file or make a copy of it."
-                            , $"CSV file '{Path.GetFileName(outputPath)}' will be erased!"
-                            , new string[] { "Override" }, PromptType.Warning), r => {
+                        CoreUtils.RequestPrompt(new PromptContent($"file: '{Path.GetFileName(outputPath)}' {Environment.NewLine}{Environment.NewLine}If you want to preserve the old content please rename the file or make a copy of it."
+                            , $"CSV file will be replaced!"
+                            , new string[] { "Continue" }, PromptType.Warning), r => {
                             Debug.WriteLine(r);
                         });
 
                     }
                     ActualOutputFile = DesiredOutputFile ?? outputPath;
                     OnIsStopEnabledd(true);
-                    
+                    bool should_skip_areas_without_asking = false;
                     foreach (var page in EnumeratePages(TargetPage))
                     {
                         ReportBuilderPageLevel.Clear();
@@ -483,11 +497,13 @@ namespace PFPlugin
                             {
                                 ResolveElement(item, out bytes, out objs);
                             }
-                            catch (Exception)
+                            catch (Exception err)
                             {
-                                string user_res = "CANCEL";
-                                CoreUtils.RequestPrompt(new PromptContent($"Do you want to skip it?{Environment.NewLine}{Environment.NewLine}(if you stop {global_couner} of {total_count} agents will be saved)"
-                                    , $"{(nameof(Agent.Areas))} could not be resolved for '{item.Item1.Name}'" , new string[] { "Skip", "Retry", "Stop task" },
+                                string user_res = "Skip";
+                                if(should_skip_areas_without_asking==false)
+                                CoreUtils.RequestPrompt(new PromptContent($"Do you want to skip it?{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} agents will be saved){Environment.NewLine}Error detail: '{err.Message}'"
+                                    , $"{(nameof(Agent.Areas))} could not be resolved for '{item.Item1.Name}'" 
+                                    , new string[] { "Retry","Skip","Skip all", "Stop task" },
                                     PromptType.Question),
                                     res =>
                                     {
@@ -503,6 +519,12 @@ namespace PFPlugin
                                 {
                                     //skip
                                     should_retry = false;
+                                }
+                                else if (user_res.ToLower() == "skip all")
+                                {
+                                    //skip and never ask again
+                                    should_retry = false;
+                                    should_skip_areas_without_asking = true;
                                 }
                                 else if (user_res.ToLower() == "retry")
                                 {
