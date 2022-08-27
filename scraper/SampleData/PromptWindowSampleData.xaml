@@ -8,7 +8,7 @@
         
     </ViewModel:PromptWindowVM.Buttons>
     <ViewModel:PromptWindowVM.PromptContent>
-        <coreui:PromptContent Message="hey" Title="simlml">
+        <coreui:PromptContent Message="heyn this is  a khdui iuysdo ish lhsdl lksdhl hjhsdjl hljsdh jlhsljdh lj" Title="simlml">
 
         </coreui:PromptContent>
     </ViewModel:PromptWindowVM.PromptContent>

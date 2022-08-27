@@ -1227,7 +1227,34 @@ namespace scraper.ViewModel
         {
 
 
-            CoreUtils.RequestPrompt(new Core.UI.PromptContent($"This isa long promt message to test the prompt window ui{Environment.NewLine}Click 'Ok' to continue{Environment.NewLine}Click 'Retry' to retry{Environment.NewLine}Click 'Cancel' to abort the task", "Couldn't get page from the website :(", new string[] { "Ok", "Retry", "Cancel" }, Core.UI.PromptType.Question),
+            CoreUtils.RequestPrompt(new Core.UI.PromptContent($"This isa long promt message to test the prompt window ui{Environment.NewLine}Click 'Ok' to continue{Environment.NewLine}Click 'Retry' to retry{Environment.NewLine}Click 'Cancel' to abort the task"
+                , "Succesfully saved"
+                , new string[] { "Ok", "Retry", "Cancel" }
+            , Core.UI.PromptType.Information),
+                r => {
+                    Debug.WriteLine(r);
+                });
+
+            CoreUtils.RequestPrompt(new Core.UI.PromptContent($"This isa long promt message to test the prompt window ui{Environment.NewLine}Click 'Ok' to continue{Environment.NewLine}Click 'Retry' to retry{Environment.NewLine}Click 'Cancel' to abort the task"
+                , "Cache policy"
+                , new string[] { "Ok", "Retry", "Cancel" }
+            , Core.UI.PromptType.Question),
+                r => {
+                    Debug.WriteLine(r);
+                });
+
+            CoreUtils.RequestPrompt(new Core.UI.PromptContent($"This isa long promt message to test the prompt window ui{Environment.NewLine}Click 'Ok' to continue{Environment.NewLine}Click 'Retry' to retry{Environment.NewLine}Click 'Cancel' to abort the task"
+                , null
+                , new string[] { "Ok", "Retry", "Cancel" }
+            , Core.UI.PromptType.Warning),
+                r => {
+                    Debug.WriteLine(r);
+                });
+
+            CoreUtils.RequestPrompt(new Core.UI.PromptContent($"We couldn't identify the problem, please check logs file."
+                , "Something went wrong :("
+                , new string[] { "Ok", "Retry", "Cancel" }
+            , Core.UI.PromptType.Error),
                 r => {
                     Debug.WriteLine(r);
                 });

@@ -439,7 +439,9 @@ namespace PFPlugin
                     string outputPath = Path.Combine(Workspace.Current.CSVOutputFolder, uniqueOutputFileName+ ".csv") ;
                     if (File.Exists(outputPath))
                     {
-                        CoreUtils.RequestPrompt(new PromptContent($"CSV file '{outputPath}' is about to be erased.{Environment.NewLine}If you want to keep the old content please rename the file or make a copy of it before proceeding.{Environment.NewLine}Click OK to continue","Warning", new string[] { "OK" }, PromptType.Warning), r => {
+                        CoreUtils.RequestPrompt(new PromptContent($"If you want to preserve the old content rename the file or make a copy of it."
+                            , $"CSV file '{Path.GetFileName(outputPath)}' will be erased!"
+                            , new string[] { "Override" }, PromptType.Warning), r => {
                             Debug.WriteLine(r);
                         });
 
@@ -484,24 +486,25 @@ namespace PFPlugin
                             catch (Exception)
                             {
                                 string user_res = "CANCEL";
-                                CoreUtils.RequestPrompt(new PromptContent($"The field(s) '{(nameof(Agent.Areas))}' could not be resolved for agent '{item.Item1.Name}', profile link '{item.Item2}'{Environment.NewLine}Do you want to skip them?{Environment.NewLine}press 'Yes' to continue (leaving the mentioned fields empty){Environment.NewLine}press 'No' to retry{Environment.NewLine}press 'Cancel' to abort the task ({global_couner} out of {total_count} agents will be saved)"
-                                    , "warning", new string[] { "YES", "NO", "CANCEL" }, PromptType.Question),
+                                CoreUtils.RequestPrompt(new PromptContent($"Do you want to skip it?{Environment.NewLine}{Environment.NewLine}(if you stop {global_couner} of {total_count} agents will be saved)"
+                                    , $"{(nameof(Agent.Areas))} could not be resolved for '{item.Item1.Name}'" , new string[] { "Skip", "Retry", "Stop task" },
+                                    PromptType.Question),
                                     res =>
                                     {
                                         user_res = res;
                                     });
-                                if (user_res.ToLower() == "cancel")
+                                if (user_res.ToLower() == "stop task")
                                 {
                                     CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
                                     abortTask("task was ended", new List<Agent>(),1,page.Item2,true);
                                     return;
                                 }
-                                else if(user_res.ToLower() == "yes")
+                                else if(user_res.ToLower() == "skip")
                                 {
                                     //skip
                                     should_retry = false;
                                 }
-                                else if (user_res.ToLower() == "no")
+                                else if (user_res.ToLower() == "retry")
                                 {
                                     should_retry = true;
                                 }

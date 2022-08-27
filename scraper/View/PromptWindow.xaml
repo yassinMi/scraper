@@ -18,6 +18,8 @@
      
     VerticalAlignment="Center" d:DesignHeight="181" SizeToContent="Height" d:DataContext="{d:DesignData /SampleData/PromptWindowSampleData.xaml}" WindowStyle="None" ShowInTaskbar="False">
     <Window.Resources>
+        <Converters:VisibleIfNonNullOrEmptyString x:Key="VisibleIfNonNullOrEmptyString"/>
+        <Converters:PromptTypeToFontAwesomeIconKindConverter x:Key="PromptTypeToFontAwesomeIconKindConverter"/>
         <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
         <materialDesign:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
@@ -27,21 +29,23 @@
     <Window.Background>
         <StaticResource ResourceKey="MaterialDesignPaper"/>
     </Window.Background>
-    <Border BorderBrush="#FF666666" BorderThickness="1">
+    <Border BorderBrush="#FF666666" BorderThickness="1" Background="#FF252525">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="63*"/>
                 <ColumnDefinition Width="25*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="header" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding PromptContent.Title}" VerticalAlignment="Center" Margin="8,0,0,4" FontWeight="Bold"/>
+            <TextBlock x:Name="header" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding PromptContent.Title}" VerticalAlignment="Center" Margin="8,12,0,2" FontWeight="Bold" Visibility="{Binding PromptContent.Title, Converter={StaticResource VisibleIfNonNullOrEmptyString}}" Grid.ColumnSpan="2"/>
 
-            <custom:PackIconFontAwesome Kind="ExclamationTriangleSolid" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48" Foreground="#FFF3F3F3" Margin="0,0,0,16"/>
-            <TextBox Text="{Binding PromptContent.Message}" IsReadOnly="True" materialDesign:TextFieldAssist.UnderlineBrush="Transparent" x:Name="message" Margin="8,4,4,16" Grid.Row="1"  BorderThickness="0" TextWrapping="Wrap"/>
+            <custom:PackIconFontAwesome  Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48" Foreground="#FFF3F3F3" Margin="0,12,0,16" Kind="{Binding PromptContent.Type, Converter={StaticResource PromptTypeToFontAwesomeIconKindConverter}}"/>
+            <!--TextBox Text="{Binding PromptContent.Message}" IsReadOnly="True" materialDesign:TextFieldAssist.UnderlineBrush="Transparent" x:Name="message" Margin="8,4,4,16" Grid.Row="1"  BorderThickness="0" TextOptions.TextFormattingMode="Display"/-->
+            <TextBlock   Text="{Binding PromptContent.Message}"  materialDesign:TextFieldAssist.UnderlineBrush="Transparent" x:Name="message" Margin="8,12,4,16" Grid.Row="1"   TextOptions.TextFormattingMode="Display" TextWrapping="WrapWithOverflow"/>
+
             <Grid Background="#FF606061" Height="1" Grid.Row="2" VerticalAlignment="Top" Margin="16,0" Grid.ColumnSpan="2"/>
             <ItemsControl ItemsSource="{Binding Buttons}" Grid.Row="2" Margin="0,0,16,0" HorizontalAlignment="Right" Grid.ColumnSpan="2" VerticalAlignment="Center" AlternationCount="{Binding Buttons.Length, Mode=OneWay}">
                 <ItemsControl.ItemsPanel>
