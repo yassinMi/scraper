@@ -9,7 +9,7 @@ using scraper.Core.Utils;
 using scraper.Core.Workspace;
 using System.Text.RegularExpressions;
 
-[assembly:CoreAPIVersion("0.1.2")]
+[assembly:CoreAPIVersion("0.1.3")]
 
 namespace TwoGisPlugin
 {
