@@ -11,7 +11,7 @@ using scraper.Core.Utils;
 using System.Collections;
 using HtmlAgilityPack;
 
-[assembly:scraper.Core.Attributes.CoreAPIVersion("0.1.2")]
+[assembly:scraper.Core.Attributes.CoreAPIVersion("0.1.3")]
 
 namespace FakePluginExternal
 {
@@ -102,7 +102,8 @@ namespace FakePluginExternal
                               Description="it will generate fake task & elements based on the url:",
                               ExampleUrls = new string[]
                               {
-                                  "fake.com/?title=All%20Monitors&pages=9&prodectsPerPage=45&delayms=5",
+                                  "https://fake.com/?title=All%20Monitors&pages=9&productsPerPage=45&delayms=5",
+                                  "https://fake.com/?title=All%20Monitors&pages=512&productsPerPage=20&delayms=1&basis=t",
                               }
                          }
                      }
@@ -144,20 +145,24 @@ namespace FakePluginExternal
             int delayms = 200;
             int productsPerPage = 100;
             title = coll["title"] ?? title;
+            bool isBasisTotal = false; //progress info has total elements instead of per page totals
             if (coll["pages"] != null) pages = int.Parse(coll["pages"]);
             if (coll["delayms"] != null) delayms = int.Parse(coll["delayms"]);
             if (coll["productsPerPage"] != null) productsPerPage = int.Parse(coll["productsPerPage"]);
+            if (coll["basis"] != null) isBasisTotal = (coll["basis"]=="t");
             ResolvedTitle = $"{title}";
             OnResolved(ResolvedTitle);
             Stage = ScrapTaskStage.DownloadingData;
             OnStageChanged(Stage);
+            int total_elems = pages * productsPerPage;
+            int global_count = 0;
             foreach (var item in Enumerable.Range(0, pages))
             {
                 OnPageStarted($"[page {item+1}/{pages}]");
-                for (int i = 0; i < productsPerPage; i++)
+                for (int i = 0; i < productsPerPage; i++ , global_count++)
                 {
                     await Task.Delay(delayms);
-                    OnProgress(new DownloadingProg() {  Total = productsPerPage, Current = i });
+                    OnProgress(new DownloadingProg() {  Total = isBasisTotal?total_elems: productsPerPage, Current = isBasisTotal?global_count: i });
                     OnTaskDetailChanged($"fake download: file{i + 1}.zip");
                     this.TaskStatsInfo.incObject(2, 454257);
                     TaskStatsInfo.incElem(1);

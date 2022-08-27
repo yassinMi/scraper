@@ -9,8 +9,9 @@
             xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="scraper.View.ScrapingActionCardView"
              mc:Ignorable="d"
              FontFamily="Roboto"
-             d:DesignHeight="170.391" d:DesignWidth="343.456" d:DataContext="{d:DesignInstance {x:Type ViewModel:ScrapingTaskVM}, IsDesignTimeCreatable=True}" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" SnapsToDevicePixels="True">
+             d:DesignHeight="170.391" d:DesignWidth="343.456" d:DataContext="{d:DesignData /SampleData/ScrapingTaskVMSampleData.xaml}" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" SnapsToDevicePixels="True">
     <UserControl.Resources>
+        <Converters:LargeNumberFormatter x:Key="LargeNumberFormatter"/>
         <materialDesign:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <materialDesign:NotZeroToVisibilityConverter x:Key="NotZeroToVisibilityConverter"/>
         <Converters:ScrapingTaskStageToUIString x:Key="ScrapingTaskStageToUIString"/>
@@ -59,7 +60,9 @@
                         <ProgressBar 
 							Style="{StaticResource MaterialDesignCircularProgressBar}"
 							Value="{Binding DownloadProgress.Percentage, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="58" Height="58" Foreground="{DynamicResource AppImportantDataColor}" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData\,Delaying, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" />
-                        <TextBlock x:Name="progTB" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="{Binding DownloadProgress}" VerticalAlignment="Center" Foreground="{DynamicResource AppImportantDataColor}" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData\,Delaying, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontWeight="Bold" FontSize="13.333"/>
+                        <TextBlock x:Name="progTB" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="{DynamicResource AppImportantDataColor}" Visibility="{Binding CurrentScrapTaskStage, ConverterParameter=DownloadingData\,Delaying, Converter={StaticResource VisibleIfEnumValueMatchesStringParam}, Mode=OneWay}" FontWeight="Bold">
+                            <Run Text="{Binding DownloadProgress.Current, ConverterParameter=v1, Converter={StaticResource LargeNumberFormatter}}"/>/<Run Text="{Binding DownloadProgress.Total, ConverterParameter=v1, Converter={StaticResource LargeNumberFormatter}}"/>
+                        </TextBlock>
                     </Grid>
                 </materialDesign:Card>
                 <TextBlock x:Name="TitleTB" Margin="0,6" TextWrapping="Wrap"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2">

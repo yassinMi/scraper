@@ -1,0 +1,21 @@
+﻿<ViewModel:ScrapingTaskVM xmlns:ViewModel="clr-namespace:scraper.ViewModel" xmlns:Core="clr-namespace:scraper.Core;assembly=scraper.Core" xmlns:Threading="clr-namespace:System.Threading;assembly=mscorlib" BrowserWindowsCount="71" CurrentScrapTaskStage="DownloadingData" CurrentTaskDetail="Accumsan aliquam phasellus sed" CurrentPage="Maecenas nam praesent aenean" FailingReason="Class curabitur" IsStopeButtonVisible="True" Info="Integer curae cras" Title="Bibendum donec dictumst">
+	<ViewModel:ScrapingTaskVM.DownloadProgress>
+		<Core:DownloadingProg PercentageNormalized="0.75" Percentage="75" Total="11548"  Current="8500"/>
+	</ViewModel:ScrapingTaskVM.DownloadProgress>
+	<ViewModel:ScrapingTaskVM.Model>
+		<Core:ScrapingTaskBase ActualOutputFile="Fusce hac lorem eleifend nullam" BrowserWindowsCount="61" DesiredOutputFile="Etiam dignissim quisque amet" IsStopRequested="False" IsStopeEnabled="True" Page="Vestibulum facilisi arcu diam" ResolvedTitle="Duis vestibulum adipiscing dis nunc" Stage="DownloadingData" TargetPage="Consequat est mauris convallis" TaskDetail="Parturient ante">
+			<Core:ScrapingTaskBase.DownloadingProgress>
+                <Core:DownloadingProg PercentageNormalized="0.75" Percentage="75" Total="11548"  Current="8500"/>
+			</Core:ScrapingTaskBase.DownloadingProgress>
+			<Core:ScrapingTaskBase.TaskStatsInfo>
+				<Core:TaskStatsInfo Elements="11000" Objects="47000" StartTime="08/27/2022 07:34:39" TotalSize="84400000000"/>
+			</Core:ScrapingTaskBase.TaskStatsInfo>
+		</Core:ScrapingTaskBase>
+	</ViewModel:ScrapingTaskVM.Model>
+	<ViewModel:ScrapingTaskVM.StatsInfo>
+        <Core:TaskStatsInfo Elements="11000" Objects="47000" StartTime="08/27/2022 07:34:39" TotalSize="84400005000"/>
+	</ViewModel:ScrapingTaskVM.StatsInfo>
+	<ViewModel:ScrapingTaskVM.currentCTS>
+		<Threading:CancellationTokenSource/>
+	</ViewModel:ScrapingTaskVM.currentCTS>
+</ViewModel:ScrapingTaskVM>

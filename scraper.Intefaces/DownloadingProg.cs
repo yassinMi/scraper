@@ -8,7 +8,8 @@ namespace scraper.Core
 {
     public struct DownloadingProg
     {
-        public int Total, Current;
+        public int Total { get; set; }
+        public int Current { get; set; }
         public double PercentageNormalized { get { return (double)Current / Total; } }
         public double Percentage { get { return 100d * (double)Current / Total; } }
         public override string ToString()

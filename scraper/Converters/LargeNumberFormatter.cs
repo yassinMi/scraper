@@ -11,7 +11,31 @@ namespace Converters
 {
 
     /// <summary>
+    /// if no param, defaults to v3.1
+    /// 
+    /// param = v3
+    /// 1 523 000 1.52M
+    /// 152 500=> 152k
     /// 11 500 => 11.5k
+    /// 8 520  => 8.52k
+    /// 8 520  => 8520    (param = v3.1) 
+    /// 520    => 520 
+    /// 
+    /// param = v2
+    /// 1 523 000 1.5M
+    /// 152 500=> 152k   
+    /// 11 500 => 11k
+    /// 8 520  => 8.5k
+    /// 8 520  => 8520    (param = v2.1)
+    /// 520    => 520     
+    /// 
+    /// /// param = v1
+    /// 1 523 000 1M
+    /// 152 500=> 152k   
+    /// 11 500 => 11k
+    /// 8 520  => 8k
+    /// 8 520  => 8520    (param = v1.1)
+    /// 520    => 520     
     /// NOTE the default param value is zero if not specfied
     /// </summary>
     [ValueConversion(typeof(int),typeof(string))]
@@ -21,15 +45,20 @@ namespace Converters
         {
             int? inp = (value as int?);
             if (inp.HasValue == false) return "";
+            string v = (parameter as string);
+            if (string.IsNullOrWhiteSpace(v)) v = "v3.1";
             float i = inp.Value;
             string res = "";
             string ci = "kMG";
             int ci_ix = -1;
-            if (i <= 9999)
+            
+            int threshold = v.EndsWith(".1") ? 9999 : 999;
+            char G = v[1];
+            if (i <= threshold)
             {
                 return inp.Value.ToString();
             }
-            while (i>9999)
+            while (i> threshold)
             {
                 i = i / 1000;
                 ci_ix++;
@@ -38,7 +67,7 @@ namespace Converters
             {
                 return inp.Value.ToString();
             }
-            return $"{string.Format("{0:G3}", i)}{ci[ci_ix]}" ;
+            return $"{(i>Math.Pow(10, G=='1'?1:G=='2'?2:3)?Math.Ceiling(i).ToString():string.Format("{0:G"+ G+"}", i))}{ci[ci_ix]}" ;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

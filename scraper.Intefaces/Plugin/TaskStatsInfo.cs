@@ -21,7 +21,7 @@ namespace scraper.Core
         /// <summary>
         /// approxmiated total size of the local saved objects + target pages files (for user information)
         /// </summary>
-        public int TotalSize { get; set; }
+        public long TotalSize { get; set; }
 
         public DateTime StartTime { get; set; }
 
@@ -32,12 +32,12 @@ namespace scraper.Core
 
         }
 
-        public void incObject(int newObjects, int newBytes = 0)
+        public void incObject(int newObjects, long newBytes = 0)
         {
             Objects += newObjects;
             TotalSize += newBytes;
         }
-        public void incSize(int newBytes)
+        public void incSize(long newBytes)
         {
             TotalSize += newBytes;
         }
