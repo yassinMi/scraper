@@ -9,7 +9,7 @@ using scraper.Core.Attributes;
 using scraper.Core.Utils;
 using scraper.Core.Workspace;
 using PFPlugin.Model;
-[assembly:CoreAPIVersion("0.1.2")]
+[assembly:CoreAPIVersion("0.1.3")]
 namespace PFPlugin
 {
     public class PFPlugin : Plugin
