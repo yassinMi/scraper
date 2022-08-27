@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define LOOP_IN_FIRST_PAGE
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -245,7 +246,12 @@ namespace PFPlugin
                 string raw;
                 try
                 {
+#if LOOP_IN_FIRST_PAGE //looping at the first page only (where elements are pre dowloaded in the test ws
+                    raw = downloadOrRead(rootPageUrl, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy == CachePolicy.ElementsPagesOnly) || (UserSettings.Current.CachePolicy == CachePolicy.None));
+#else
                     raw = downloadOrRead(pageLink, Workspace.Current.TPFolder, (UserSettings.Current.CachePolicy == CachePolicy.ElementsPagesOnly) || (UserSettings.Current.CachePolicy == CachePolicy.None));
+#endif
+
                 }
                 catch (Exception err)
                 {
