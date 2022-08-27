@@ -1,4 +1,6 @@
 ﻿//#define LOOP_IN_FIRST_PAGE
+//#define DONT_RESOLVE
+//#define SKIP_PAGES_IN_THE_MIDDLE
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -250,6 +252,9 @@ namespace PFPlugin
             }
             foreach (var pg in Enumerable.Range(min, max))
             {
+#if SKIP_PAGES_IN_THE_MIDDLE
+                if (pg < 430 && pg > 14) continue;
+#endif
                 string pageLink = AppendPageNumToUrl(ClearPageNumFromUrl(rootPageUrl), pg);
                 string raw;
                 retry_sebsequent:
@@ -396,6 +401,9 @@ namespace PFPlugin
         /// <param name="obj_cc"></param>
         public  void ResolveElement(Tuple<Agent,string> compactElement, out int bytes, out int obj_cc)
         {
+#if DONT_RESOLVE
+            bytes = 0; obj_cc = 0; return;
+#endif
             string raw_profile = downloadOrRead(compactElement.Item2, Workspace.Current.HtmlObjectsFolder,  UserSettings.Current.CachePolicy == CachePolicy.None);
             var json = getJsonAgentDetailsPayload(raw_profile);
             JObject j = JObject.Parse(json);
