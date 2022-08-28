@@ -159,7 +159,7 @@ namespace BayutPlugin
             Debug.WriteLine($"ClearPageNumFromUrl : '{targetRootPage}");
             //https://www.bayut.com/to-rent/property/dubai/page-5
             //https://www.bayut.com/to-rent/offices/dubai/page-2/?furnishing_status=furnished
-            return Regex.Replace(targetRootPage, @"/page=\d+", "");
+            return Regex.Replace(targetRootPage, @"/page-\d+", "");
 
         }
 
@@ -230,7 +230,24 @@ namespace BayutPlugin
         {
             string raw_first;
             bool should_ask_skip_page = true;
-
+            int desiredStartingPage = 1;
+            int startingUrlPageNum = getPageNumberFromUrl(startingPageUrl);
+            Debug.WriteLine($"staring page:{startingUrlPageNum}");
+            if (startingUrlPageNum != 1)
+            {
+                //# propmt for starting page
+                Func<int, string> format_page_range_str = (int start_p) => {
+                    int length = start_p - 1;
+                    return $"{(length > 1 ? "pages" : "page")} {(length > 1 ? $"(1-{start_p - 1})" : "1")}";
+                };
+                string p_s_resp = "";
+                CoreUtils.RequestPrompt(new PromptContent($"Do you want to skip elements from {format_page_range_str(startingUrlPageNum)} and start from page {startingUrlPageNum}?"
+                    , $"Start from page {startingUrlPageNum}?"
+                    , new string[] { "Yes", "Start from page 1" }, PromptType.Question),
+                    (response) => {p_s_resp = response;});
+                if (p_s_resp.ToLower() == "yes") desiredStartingPage = startingUrlPageNum;
+                else desiredStartingPage = 1;
+            }
             retry:
             try
             {
@@ -261,6 +278,7 @@ namespace BayutPlugin
                 max = getLastPageNumberFromJson(full);
                 CoreUtils.WriteLine($"max page:" + max);
             }
+            min = Math.Min(desiredStartingPage, max);//todo warn about no pages to scrap and break
             foreach (var pg in Enumerable.Range(min, max))
             {
                 OnTaskDetailChanged($"Downloading page {pg}..");
@@ -310,8 +328,23 @@ namespace BayutPlugin
             }
 
         }
+        /// <summary>
+        /// extracts page number from url for bayut
+        /// </summary>
+        /// <param name="Url"></param>
+        /// <returns></returns>
+        private int getPageNumberFromUrl(string Url)
+        {
+            //https://www.bayut.com/to-rent/property/dubai/page-5
+            //https://www.bayut.com/to-rent/offices/dubai/page-2/?furnishing_status=furnished
+            var m = Regex.Match(Url, @"/page-(\d+)");
+            if (!m.Success) return 1;
+            int p;
+            if (!int.TryParse(m.Groups[1].Value, out p)) return 1;
+            return p;
+        }
 
-       
+
 
 
 
@@ -356,7 +389,7 @@ namespace BayutPlugin
 
         void ResolveElement(JToken prop, BProperty p , out int obj_cc, out long bytes )
         {
-            p.agencyName = prop.SelectToken("$.agency.name").ToString();
+            p.agencyName = prop.SelectToken("$.agency.name")?.ToString()??"";
             Debug.WriteLine("1");
             p.area = transformAreaToftsq(prop.SelectToken("area")?.ToString());
             p.baths = prop.SelectToken("$.baths")?.ToString() ?? "N/A";
