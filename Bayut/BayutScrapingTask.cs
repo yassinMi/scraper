@@ -222,11 +222,11 @@ namespace BayutPlugin
         /// <summary>
         /// can throw exception when user don't press retry
         /// 
-        /// int curr, int count, state object , string raw page
+        /// int start, int end, int current, state object , string raw page
         /// </summary>
         /// <param name="rootPageUrl"></param>
         /// <returns></returns>
-        public IEnumerable<Tuple<int, int, JObject, string>> EnumeratePages(string startingPageUrl, CancellationToken ct)
+        public IEnumerable<Tuple<int, int,int, JObject, string>> EnumeratePages(string startingPageUrl, CancellationToken ct)
         {
             string raw_first;
             bool should_ask_skip_page = true;
@@ -324,7 +324,7 @@ namespace BayutPlugin
                 TaskStatsInfo.incSize(raw_current.Length);
                 HtmlDocument newDoc = new HtmlDocument();
                 newDoc.LoadHtml(raw_current);
-                yield return new Tuple<int, int, JObject, string>(pg, max, full_current, raw_current);
+                yield return new Tuple<int, int,int, JObject, string>(min, max, pg, full_current, raw_current);
             }
 
         }
@@ -390,29 +390,24 @@ namespace BayutPlugin
         void ResolveElement(JToken prop, BProperty p , out int obj_cc, out long bytes )
         {
             p.agencyName = prop.SelectToken("$.agency.name")?.ToString()??"";
-            Debug.WriteLine("1");
             p.area = transformAreaToftsq(prop.SelectToken("area")?.ToString());
             p.baths = prop.SelectToken("$.baths")?.ToString() ?? "N/A";
             p.category = stringifyCategory(prop.SelectToken("$.category"));
             p.completionStatus = prop.SelectToken("$.completionStatus")?.ToString() ?? "N/A";
             p.contactName = prop.SelectToken("$.contactName")?.ToString();
-            Debug.WriteLine("2");
-            p.createdAt = prop.SelectToken("$.createdAt")?.ToString();
+            p.createdAt = transformDateTime(prop.SelectToken("$.createdAt")?.ToString());
             p.furnishingStatus = prop.SelectToken("$.furnishingStatus")?.ToString()??"N/A";
             p.hasMatchingFloorPlans = prop.SelectToken("$.hasMatchingFloorPlans")?.ToString();
             p.location = stringifyLocation(prop.SelectToken("$.location"));
             p.mobile = prop.SelectToken("$.phoneNumber.mobile")?.ToString();
-            Debug.WriteLine("3");
             p.phone = prop.SelectToken("$.phoneNumber.phone")?.ToString();
             p.price = prop.SelectToken("$.price")?.ToString() ?? "N/A";
             p.proxyMobile = prop.SelectToken("$.phoneNumber.proxyMobile")?.ToString()??"";
             p.purpose = prop.SelectToken("$.purpose")?.ToString() ?? "N/A";
-            Debug.WriteLine("4");
             p.referenceNumber = prop.SelectToken("$.referenceNumber")?.ToString()??"N/A";
             p.rentFrequency = prop.SelectToken("$.rentFrequency")?.ToString()??"N/A";
             p.rooms = prop.SelectToken("$.rooms")?.ToString()??"N/A";
-            p.updatedAt = prop.SelectToken("$.updatedAt")?.ToString() ?? "N/A";
-            Debug.WriteLine("5");
+            p.updatedAt = transformDateTime(prop.SelectToken("$.updatedAt")?.ToString()) ;
             p.permitNumber = prop.SelectToken("$.permitNumber")?.ToString() ?? "N/A";
             p.whatsapp = prop.SelectToken("$.phoneNumber.whatsapp")?.ToString();
             Debug.WriteLine($"{p.Title},{p.phone},{p.agencyName},{p.completionStatus},{p.contactName},{p.location},{p.category}");
@@ -449,6 +444,19 @@ namespace BayutPlugin
             if (!Double.TryParse(m2, out m2_d)) return "N/A";
              m2_d = m2_d * 10.764;
             return Math.Round(m2_d).ToString();
+        }
+
+        static DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0);
+        /// <summary>
+        /// es
+        /// </summary>
+        /// <param name="ts">like 1 655 106 004</param>
+        /// <returns></returns>
+        private string transformDateTime(string ts)
+        {
+            if (string.IsNullOrWhiteSpace(ts)) return "";
+            try{ return epoch.AddSeconds(int.Parse(ts)).ToShortDateString();}
+            catch (Exception) { return ""; }
         }
 
         private string stringifyLocation(JToken locationJObject)
@@ -546,22 +554,22 @@ namespace BayutPlugin
                     foreach (var page in EnumeratePages(TargetPage, ct))
                     {
                         ReportBuilderPageLevel.Clear();
-                        OnPageStarted($"p {page.Item1}/{page.Item2}");
-                        OnTaskDetailChanged($"Parsing page {page.Item1}");
+                        OnPageStarted($"p {page.Item3}/{page.Item2}");
+                        OnTaskDetailChanged($"Parsing page {page.Item3}");
                         Debug.WriteLine($"Enumerating CompactElements..");
                         Stopwatch sw = Stopwatch.StartNew();
                         List<Tuple<BProperty, string, JToken>> compactElements;
                         try
                         {
-                            compactElements = EnumerateCompactElements(page.Item3).ToList();
+                            compactElements = EnumerateCompactElements(page.Item4).ToList();
                         }
                         catch (Exception err)
                         {
                             string u_response = "skip"; //default
-                            CoreUtils.WriteLine($"EnumerateCompactElements: [{DateTime.Now}] at page:{page.Item4}, {err}");
+                            CoreUtils.WriteLine($"EnumerateCompactElements: [{DateTime.Now}] at page:{page.Item3}, {err}");
                             if (should_ask_skip_failed_elements_enumeration)
-                                CoreUtils.RequestPrompt(new PromptContent($"Page url: {page.Item4}{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} properties will be saved){Environment.NewLine}Error details: '{err.Message}"
-                            , $"Could not resolve page {page.Item1}!"
+                                CoreUtils.RequestPrompt(new PromptContent($"Page url: {page.Item5}{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} properties will be saved){Environment.NewLine}Error details: '{err.Message}"
+                            , $"Could not resolve page {page.Item3}!"
                             , new string[] { "Skip", "Skip all", "Stop task" }, PromptType.Error),
                             (response) => {
                                 Debug.WriteLine("resp:" + response);
@@ -583,7 +591,7 @@ namespace BayutPlugin
                             if (ct.IsCancellationRequested)
                             {
                                 Debug.WriteLine("saving csv");
-                                CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
+                                CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item3 > page.Item1);//start page is not current page
                                 Debug.WriteLine("saved current page conent:" + outputPath);
                                 Stage = ScrapTaskStage.Success;
                                 OnStageChanged(Stage);
@@ -613,8 +621,8 @@ namespace BayutPlugin
                                         });
                                 if (user_res.ToLower() == "stop task")
                                 {
-                                    CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
-                                    abortTask("task was ended", new List<BProperty>(), 1, page.Item2, true);
+                                    CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item3 > page.Item1);
+                                    abortTask("task was ended", new List<BProperty>(), page.Item1, page.Item3, true);
                                     return;
                                 }
                                 else if (user_res.ToLower() == "skip")
@@ -643,7 +651,7 @@ namespace BayutPlugin
                         var rct = sw.Elapsed - ect;
                         Debug.WriteLine($"Resolving CompactElements took {rct}");
                         Debug.WriteLine("saving csv");
-                        CSVUtils.CSVWriteRecords(outputPath, resolvedElements, page.Item1 > 1);
+                        CSVUtils.CSVWriteRecords(outputPath, resolvedElements,page.Item3>page.Item1);
                         Debug.WriteLine("saved current page conent:" + outputPath);
                     }
                     OnTaskDetailChanged(null);
