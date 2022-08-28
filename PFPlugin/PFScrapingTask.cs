@@ -162,7 +162,7 @@ namespace PFPlugin
             if (total_count == 0)
             {
                 int.TryParse(meta.SelectToken("$.total_count").ToString(), out total_count);
-
+            
             }
             Debug.WriteLine(meta);
             var elems = j.SelectTokens("$.data[*]");
@@ -413,8 +413,6 @@ namespace PFPlugin
             return;
         }
         protected  string TaskLockValue { get { return TargetPage; } }
-
-
         static Synchronizer<string> targetPageBasedLock = new Synchronizer<string>();
 
         public override async Task RunScraper(CancellationToken ct)
