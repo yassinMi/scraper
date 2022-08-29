@@ -79,7 +79,7 @@ namespace BayutPlugin
                     CSVUtils.CSVWriteRecords(Path.GetFileName(dump_file), dump, false);
                 CoreUtils.WriteLine($"aborted: [{DateTime.Now}], {saved_pages_range_str}, count: {dump.Count} ");
                 if (silent == false)
-                    CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{dump.Count} properties records at {saved_pages_range_str} are saved here:{dump_file}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
+                    CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{dump.Count} {Workspace.Current.Plugin.ElementNamePlural.ToLower()} records at {saved_pages_range_str} are saved here:{dump_file}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
 
             }
 
@@ -88,7 +88,7 @@ namespace BayutPlugin
                 //# nothing to save
                 CoreUtils.WriteLine($"aborted: [{DateTime.Now}], with no records");
                 if (silent == false)
-                    CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}{"no properties records were collected."}", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
+                    CoreUtils.RequestPrompt(new PromptContent($"{hint}{Environment.NewLine}no {Workspace.Current.Plugin.ElementNamePlural.ToLower()} records were collected.", "Task aborted", new string[] { "OK" }, PromptType.Error), s => { });
             }
             CoreUtils.WriteLine($"[REPORT][{DateTime.Now}]");
             CoreUtils.WriteLine($"t lvl report: {Environment.NewLine}{ReportBuilderTaskLevel.ToString()}");
@@ -308,7 +308,7 @@ namespace BayutPlugin
                     string u_response = "skip page"; //default
                     CoreUtils.WriteLine($"EnumeratePages: [{DateTime.Now}] {pageLink}, {err}");
                     if (should_ask_skip_page)
-                        CoreUtils.RequestPrompt(new PromptContent($"Page url: {pageLink}{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} properties will be saved){Environment.NewLine}Error details: '{err.Message}"
+                        CoreUtils.RequestPrompt(new PromptContent($"Page url: {pageLink}{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} {Workspace.Current.Plugin.ElementNamePlural.ToLower()} will be saved){Environment.NewLine}Error details: '{err.Message}"
                     , $"Could not fetch page ({pg})!"
                     , new string[] { "Retry", "Skip", "Skip all", "Stop task" }, PromptType.Error),
                     (response) => {
@@ -380,7 +380,7 @@ namespace BayutPlugin
                 //early title parsing or ui feedback mechanics.
                 p.Title = (prop.SelectToken("$.title")?.ToString()??"").Trim();
                 //id is not reuired (incase need in the future)
-                string id = prop.SelectToken("$.id").ToString();
+                string id = prop.SelectToken("$.id")?.ToString();
                 Debug.WriteLine("prop return");
                 yield return new Tuple<BProperty, string,JToken>(p,id, prop);
             }
@@ -389,80 +389,66 @@ namespace BayutPlugin
 
         void ResolveElement(JToken prop, BProperty p , out int obj_cc, out long bytes )
         {
-            p.agencyName = prop.SelectToken("$.agency.name")?.ToString()??"";
+            p.agencyName = prop.SelectToken("$.agency.name")?.ToString()?? "";
             p.area = transformAreaToftsq(prop.SelectToken("area")?.ToString());
-            p.baths = prop.SelectToken("$.baths")?.ToString() ?? "N/A";
-            p.category = stringifyCategory(prop.SelectToken("$.category"));
-            p.completionStatus = prop.SelectToken("$.completionStatus")?.ToString() ?? "N/A";
-            p.contactName = prop.SelectToken("$.contactName")?.ToString();
-            p.createdAt = transformDateTime(prop.SelectToken("$.createdAt")?.ToString());
-            p.furnishingStatus = prop.SelectToken("$.furnishingStatus")?.ToString()??"N/A";
-            p.hasMatchingFloorPlans = prop.SelectToken("$.hasMatchingFloorPlans")?.ToString();
-            p.location = stringifyLocation(prop.SelectToken("$.location"));
+            p.baths = prop.SelectToken("baths")?.ToString() ?? "";
+            p.category = stringifyCategory(prop.SelectToken("category"));
+            p.completionStatus = prop.SelectToken("completionStatus")?.ToString() ?? "";
+            p.contactName = prop.SelectToken("contactName")?.ToString()?? "";
+            p.createdAt = transformDateTime(prop.SelectToken("createdAt")?.ToString());
+            p.furnishingStatus = prop.SelectToken("furnishingStatus")?.ToString()??"";
+            p.hasMatchingFloorPlans = prop.SelectToken("hasMatchingFloorPlans")?.ToString();
+            p.location = stringifyLocation(prop.SelectToken("location"));
             p.mobile = prop.SelectToken("$.phoneNumber.mobile")?.ToString();
             p.phone = prop.SelectToken("$.phoneNumber.phone")?.ToString();
-            p.price = prop.SelectToken("$.price")?.ToString() ?? "N/A";
+            p.price = prop.SelectToken("$.price")?.ToString() ?? "";
             p.proxyMobile = prop.SelectToken("$.phoneNumber.proxyMobile")?.ToString()??"";
-            p.purpose = prop.SelectToken("$.purpose")?.ToString() ?? "N/A";
-            p.referenceNumber = prop.SelectToken("$.referenceNumber")?.ToString()??"N/A";
-            p.rentFrequency = prop.SelectToken("$.rentFrequency")?.ToString()??"N/A";
-            p.rooms = prop.SelectToken("$.rooms")?.ToString()??"N/A";
-            p.updatedAt = transformDateTime(prop.SelectToken("$.updatedAt")?.ToString()) ;
-            p.permitNumber = prop.SelectToken("$.permitNumber")?.ToString() ?? "N/A";
+            p.purpose = prop.SelectToken("$.purpose")?.ToString() ?? "";
+            p.referenceNumber = prop.SelectToken("$.referenceNumber")?.ToString()??"";
+            p.rentFrequency = prop.SelectToken("rentFrequency")?.ToString()??"";
+            p.rooms = prop.SelectToken("rooms")?.ToString()??"";
+            p.updatedAt = transformDateTime(prop.SelectToken("updatedAt")?.ToString()) ;
+            p.permitNumber = prop.SelectToken("permitNumber")?.ToString() ?? "";
             p.whatsapp = prop.SelectToken("$.phoneNumber.whatsapp")?.ToString();
             Debug.WriteLine($"{p.Title},{p.phone},{p.agencyName},{p.completionStatus},{p.contactName},{p.location},{p.category}");
             bytes = 0; obj_cc = 0;
         }
-
+        /// <summary>
+        /// es
+        /// </summary>
         private string stringifyCategory(JToken categoryJObject)
         {
             if (categoryJObject == null) return "";
-            
-            try
-            {
-                /*var elems = categoryJObject.SelectTokens("$.[*]");
-                IEnumerable<Tuple<int, string>> level_name_tuples =
-                    elems.Select(el => new Tuple<int, string>(int.Parse(el.SelectToken("level").ToString()), el.SelectToken("name").ToString()));
-                return string.Join(" > ", level_name_tuples.Select(e => e.Item2));*/
-                var elems = categoryJObject.SelectTokens("$.[*]");
-                return elems.Last().SelectToken("name")?.ToString() ?? "";
-            }
-            catch (Exception)
-            {
-                return "N/A";
-            }
+            try { return categoryJObject.SelectTokens("$.[*]").Last().SelectToken("name")?.ToString() ?? "N/A"; }
+            catch (Exception) { return "N/A"; }
         }
         /// <summary>
         /// es
         /// </summary>
-        /// <param name="m2"></param>
-        /// <returns></returns>
-        private string transformAreaToftsq(string m2)
+        private string transformAreaToftsq(string areaInm2)
         {
-            if (string.IsNullOrWhiteSpace(m2)) return "";
+            if (string.IsNullOrWhiteSpace(areaInm2)) return "";
             double m2_d = 0;
-            if (!Double.TryParse(m2, out m2_d)) return "N/A";
-             m2_d = m2_d * 10.764;
-            return Math.Round(m2_d).ToString();
+            if (!double.TryParse(areaInm2, out m2_d)) return "N/A";
+            return Math.Round(m2_d * 10.764).ToString();
         }
 
         static DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0);
         /// <summary>
         /// es
         /// </summary>
-        /// <param name="ts">like 1 655 106 004</param>
-        /// <returns></returns>
-        private string transformDateTime(string ts)
+        private string transformDateTime(string ts_in_seconds)
         {
-            if (string.IsNullOrWhiteSpace(ts)) return "";
-            try{ return epoch.AddSeconds(int.Parse(ts)).ToString("dd/MM/yyyy");}
+            if (string.IsNullOrWhiteSpace(ts_in_seconds)) return "";
+            try{ return epoch.AddSeconds(int.Parse(ts_in_seconds)).ToString("dd/MM/yyyy");}
             catch (Exception) { return ""; }
         }
-
+        /// <summary>
+        /// es
+        /// </summary>
         private string stringifyLocation(JToken locationJObject)
         {
             if (locationJObject == null) return "";
-
             try
             {
                 var elems = locationJObject.SelectTokens("$.[*]");
@@ -470,10 +456,7 @@ namespace BayutPlugin
                     elems.Select(el => new Tuple<int, string>(int.Parse(el.SelectToken("level").ToString()), el.SelectToken("name").ToString()));
                 return string.Join(", ", level_name_tuples.OrderByDescending(e=>e.Item1). Select(e => e.Item2));
             }
-            catch (Exception)
-            {
-                return "N/A";
-            }
+            catch (Exception) { return "N/A"; }
         }
 
 
@@ -568,7 +551,7 @@ namespace BayutPlugin
                             string u_response = "skip"; //default
                             CoreUtils.WriteLine($"EnumerateCompactElements: [{DateTime.Now}] at page:{page.Item3}, {err}");
                             if (should_ask_skip_failed_elements_enumeration)
-                                CoreUtils.RequestPrompt(new PromptContent($"Page url: {page.Item5}{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} properties will be saved){Environment.NewLine}Error details: '{err.Message}"
+                                CoreUtils.RequestPrompt(new PromptContent($"Page url: {page.Item5}{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} {Workspace.Current.Plugin.ElementNamePlural.ToLower()} will be saved){Environment.NewLine}Error details: '{err.Message}"
                             , $"Could not resolve page {page.Item3}!"
                             , new string[] { "Skip", "Skip all", "Stop task" }, PromptType.Error),
                             (response) => {
@@ -611,7 +594,7 @@ namespace BayutPlugin
                             {
                                 string user_res = "Skip";
                                 if (should_skip_areas_without_asking == false)
-                                    CoreUtils.RequestPrompt(new PromptContent($"Do you want to skip them?{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} properties will be saved){Environment.NewLine}Error detail: '{err.Message}'"
+                                    CoreUtils.RequestPrompt(new PromptContent($"Do you want to skip them?{Environment.NewLine}{Environment.NewLine}(if you stop now {global_couner} of {total_count} {Workspace.Current.Plugin.ElementNamePlural.ToLower()} will be saved){Environment.NewLine}Error detail: '{err.Message}'"
                                         , $"Resolving some fields filed for '{item.Item1.Title}'"
                                         , new string[] { "Skip", "Skip all", "Stop task" },
                                         PromptType.Question),
