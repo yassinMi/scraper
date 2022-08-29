@@ -378,7 +378,7 @@ namespace BayutPlugin
                 Debug.WriteLine("prop found");
                 BProperty p = new BProperty();
                 //early title parsing or ui feedback mechanics.
-                p.Title = prop.SelectToken("$.title").ToString();
+                p.Title = (prop.SelectToken("$.title")?.ToString()??"").Trim();
                 //id is not reuired (incase need in the future)
                 string id = prop.SelectToken("$.id").ToString();
                 Debug.WriteLine("prop return");
