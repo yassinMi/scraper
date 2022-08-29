@@ -410,6 +410,11 @@ namespace BayutPlugin
             p.updatedAt = transformDateTime(prop.SelectToken("updatedAt")?.ToString()) ;
             p.permitNumber = prop.SelectToken("permitNumber")?.ToString() ?? "";
             p.whatsapp = prop.SelectToken("$.phoneNumber.whatsapp")?.ToString();
+            p.country = prop.SelectToken("$.location[?(@.level==0)].name")?.ToString();
+            p.city = prop.SelectToken("$.location[?(@.level==1)].name")?.ToString();
+            p.community = prop.SelectToken("$.location[?(@.level==2)].name")?.ToString();
+            p.subCommunity = prop.SelectToken("$.location[?(@.level==3)].name")?.ToString();
+            p.tower = prop.SelectToken("$.location[?(@.level==4)].name")?.ToString();
             Debug.WriteLine($"{p.Title},{p.phone},{p.agencyName},{p.completionStatus},{p.contactName},{p.location},{p.category}");
             bytes = 0; obj_cc = 0;
         }

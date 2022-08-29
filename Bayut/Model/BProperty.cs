@@ -33,5 +33,11 @@ namespace BayutPlugin.Model
         public string updatedAt { get; set; }
         public string referenceNumber { get; set; }
         public string permitNumber { get; set; }
+        public string country { get; set; }
+        public string city { get; set; }
+        public string community { get; set; }
+        public string subCommunity { get; set; }
+        public string tower { get; set; }
+
     }
 }
