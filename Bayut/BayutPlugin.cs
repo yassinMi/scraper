@@ -23,7 +23,7 @@ namespace BayutPlugin
         }
         public override string ElementName { get { return "Property"; } } //todo replace ElementName name
         public override string ElementNamePlural { get { return "Properties"; } }
-        public override Version Version { get { return new Version(1, 0, 0); } }
+        public override Version Version { get { return new Version(1, 0, 1); } }
         public override ScrapingTaskBase GetTask(string targetPage)
         {
             return new BayutScrapingTask(targetPage);
