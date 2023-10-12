@@ -292,16 +292,16 @@ namespace TwoGisPlugin
             bytes = 0;
             obj_cc = 0;
         }
-        const string ELEMENT_CLASS = "_1hf7139";
-        const string ELEMENT_CLASS_SELECTED = "_1uckoc70";
-        const string ELEMENT_CLASS_HOVERED = "_oqztd3y"; //hovered not selected 
-        const string ELEMENT_CLASS_HOVERED_SELECTED = "_19keelio"; //hovered not selected
+        const string ELEMENT_CLASS = "_1kf6gff";
+        const string ELEMENT_CLASS_SELECTED = "_5b28jpo";
+        const string ELEMENT_CLASS_HOVERED = "_1wgk7h51"; //hovered not selected 
+        const string ELEMENT_CLASS_HOVERED_SELECTED = "_491awkc"; //hovered not selected
 
-        const string _elems_content_x = ".//div[@class='_1xzra4e']/div[@class='_1g0w9mx']/div[@class='_jcreqo']/div[@class='_1tdquig']/div[@class='_z72pvu']/div[@class='_3zzdxk']/div[@class='_1667t0u']/div[@class='_1rkbbi0x']/div[@class='_15gu4wr']";
+        //mi2023 not used //const string _elems_content_x = ".//div[@class='_1xzra4e']/div[@class='_1g0w9mx']/div[@class='_jcreqo']/div[@class='_1tdquig']/div[@class='_z72pvu']/div[@class='_3zzdxk']/div[@class='_1667t0u']/div[@class='_1rkbbi0x']/div[@class='_15gu4wr']";
         const string _details_section_x = ".//div[@class='_r47nf']//div[@class='_18lzknl']"; //works from doc level
         const string something_went_wrong_div_locator_x = "//div[contains(@class,'4wr')]//div[.//h1[text()='Something went wrong']]"; //in list of elements (not tested somewhere else)
 
-        const string ELEMENTS_WRAPPER_CLASS = "_z72pvu";
+        //mi2023 not used //const string ELEMENTS_WRAPPER_CLASS = "_z72pvu";
         static WebDriver mainWebDriver { get; set; } = null;
         static Synchronizer<string> _lock = new Synchronizer<string>();
         bool titleHasBeenResolved = false;
