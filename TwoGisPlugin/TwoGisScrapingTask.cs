@@ -1529,7 +1529,7 @@ namespace TwoGisPlugin
             Debug.WriteLine($"loc ..");
             try
             {
-                var case_normal = item.FindElements(By.XPath("./div[@class='_4l12l8']//span[@class='_1w9o2igt']"));
+                var case_normal = item.FindElements(By.XPath("./div[@class='_klarpw']//span[@class='_1w9o2igt']"));//2023
                 if (case_normal.Count > 0) {
                     if (case_normal.FirstOrDefault() == null) return "N/A";
                     string s= getElementText(case_normal.FirstOrDefault());
