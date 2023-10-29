@@ -1189,13 +1189,22 @@ namespace TwoGisPlugin
             }
             catch (Exception err)
             {
-                if (err is NoSuchElementException)
-                    CoreUtils.WriteLine($"switchToInfoTab: NoSuchElementException ");
-                else
+                try
                 {
-                    CoreUtils.WriteLine($"switchToInfoTab: unknown: {Environment.NewLine}{err} ");
+                    var ino_tab_item_locator_x_domain_independent = "//div[@class='_1kmhi0c'][.//a][2]";//from details_section
+                    info_tab_item = details_section.FindElement(By.XPath(ino_tab_item_locator_x_domain_independent));
                 }
-                return false;
+                catch (Exception)
+                {
+
+                    if (err is NoSuchElementException)
+                        CoreUtils.WriteLine($"switchToInfoTab: NoSuchElementException ");
+                    else
+                    {
+                        CoreUtils.WriteLine($"switchToInfoTab: unknown: {Environment.NewLine}{err} ");
+                    }
+                    return false;
+                }
             }
             if (info_tab_item == null) return false;
             try

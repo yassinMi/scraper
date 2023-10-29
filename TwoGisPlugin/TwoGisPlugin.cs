@@ -147,7 +147,7 @@ namespace TwoGisPlugin
             }
             string website = uri.Host.ToLower();
             if  (!(hosts.Contains(website))) return false;
-            if (!Regex.IsMatch(input, @"/search/\w+")) return false;
+            if (!Regex.IsMatch(input, @"/search/.+")) return false;
             //if (!Regex.IsMatch(input, @"/rubricId/\d+")) return false;
             return true;
         }
