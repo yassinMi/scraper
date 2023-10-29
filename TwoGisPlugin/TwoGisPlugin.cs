@@ -107,7 +107,8 @@ namespace TwoGisPlugin
                 return "2gis.ae";
             }
         }
-        static string[] hosts = { "2gis.com", "2gis.ae", "2gis.au" };
+        static string[] hosts = { "2gis.com", "2gis.ae", "2gis.au",
+            "2gis.ru", "2gis.kz" , "2gis.it", "2gis.cz", "2gis.cl", "2gis.uz", "2gis.kg", "2gis.az", "2gis.ua"};
 
         public override IEnumerable<FilterComponenetDescription> FiltersDescription
         {
