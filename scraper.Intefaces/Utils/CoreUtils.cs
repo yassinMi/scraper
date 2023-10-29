@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Trinet.Core.IO.Ntfs;
 
 namespace scraper.Core.Utils
 {
@@ -160,6 +161,20 @@ namespace scraper.Core.Utils
             return res;
         }
 
+        /// <summary>
+        /// removes the data streams that flags the file as downloaded form the internet
+        /// the data is
+        /// [ZoneTransfer]
+        /// ZoneId=3
+        /// the stream name is Zone.Identfier
+        //// can be read using command more < myFile.dll:Zone.Identfier
+        //// can be written using (echo [ZoneTransfer] && echo ZoneId=3) > myFile.dll:Zone.Identfier 
+        /// </summary>
+        /// <param name="file"></param>
+        public static void UnblockFile(FileInfo file)
+        {
+            file.DeleteAlternateDataStream("Zone.Identifier");
+        }
         public static string CreateMD5(string input)
         {
             // Use input string to calculate MD5 hash

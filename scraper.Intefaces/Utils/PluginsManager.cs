@@ -117,6 +117,7 @@ namespace scraper.Core.Utils
                 object pluginInstance = null;
             try
             {
+                CoreUtils.UnblockFile(new FileInfo(f));
                 var asm = Assembly.LoadFrom(f);
                 var first_IPluginType = asm.GetTypes().FirstOrDefault(t => typeof(Core.Plugin).IsAssignableFrom(t));
                 if (first_IPluginType == null) return null;
