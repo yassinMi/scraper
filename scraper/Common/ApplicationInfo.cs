@@ -33,7 +33,7 @@ namespace Mi.Common
         public static string APP_SHORT_DESCRIPTION { get; } = "An extensible, plugin-driven GUI web scraping tool";
         public static string APP_VERSION_NOTE { get; } = "";
     
-        public static string APP_VERSION { get; } = "0.1.6 " + (IsDev ? " [dev]" : "(29-08-2022)");
+        public static string APP_VERSION { get; } = "0.1.7 " + (IsDev ? " [dev]" : "(29-08-2022)");
         public static string APP_DEVELOPER_NAME { get; set; } = "YassinMi";
         public static string APP_GUI_DESIGNER_NAME { get; set; } = "YassinMi";
         public static string APP_GITHUB_URL { get; set; } = "https://github.com/yassinMi/scraper";
